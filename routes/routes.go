@@ -20,5 +20,12 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/adminlogin", handlers.LoginHandler)
 	r.GET("/dashboard", handlers.DashBoard)
 
+	r.GET("/getusers", handlers.GetUsers)
+	r.POST("/block", handlers.BlockUser)
+	r.POST("/unblock", handlers.UnBlockUser)
+
+	r.GET("/products", handlers.AllProducts)
+	r.POST("add-product", handlers.AddProducts)
+
 	return r
 }

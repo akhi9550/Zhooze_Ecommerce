@@ -12,15 +12,15 @@ import (
 func SendOtp(c *gin.Context) {
 	var phone models.OTPData
 	if err := c.ShouldBindJSON(&phone); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format 1", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
-
 	}
 	err := usecase.SendOtp(phone.PhoneNumber)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format 2", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
+		return
 	}
 	success := response.ClientResponse(http.StatusOK, "OTP sent successfully", nil, nil)
 	c.JSON(http.StatusOK, success)

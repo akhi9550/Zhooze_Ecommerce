@@ -12,6 +12,7 @@ import (
 
 func SendOtp(phone string) error {
 	cfg, err := config.LoadConfig()
+
 	if err != nil {
 		return err
 	}
@@ -24,6 +25,7 @@ func SendOtp(phone string) error {
 	}
 	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
 	_, err = helper.TwilioSendOTP(phone, cfg.SERVICESSID)
+	
 	if err != nil {
 		return errors.New("error occured while generating otp")
 	}

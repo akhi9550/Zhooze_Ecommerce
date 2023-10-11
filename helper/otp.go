@@ -17,6 +17,9 @@ func TwilioSetup(username string, password string) {
 	})
 }
 func TwilioSendOTP(phone string, serviceID string) (string, error) {
+	fmt.Println(phone)
+	fmt.Println(serviceID)
+
 	params := &twilioApi.CreateVerificationParams{}
 	params.SetTo("+91" + phone)
 	params.SetChannel("sms")

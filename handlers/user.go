@@ -48,6 +48,7 @@ func Userlogin(c *gin.Context) {
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
+		return
 	}
 	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
 	c.JSON(http.StatusCreated, success)

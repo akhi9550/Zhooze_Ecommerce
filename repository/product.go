@@ -47,3 +47,11 @@ func GetQuantityFromProductID(id int) (int, error) {
 	}
 	return quantity, nil
 }
+func SeeAllProducts() ([]models.ProductBrief, error) {
+	var products []models.ProductBrief
+	err := db.DB.Raw("SELECT * FROM products").Scan(&products).Error
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
+}

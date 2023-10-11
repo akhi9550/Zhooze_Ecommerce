@@ -1,15 +1,17 @@
 package domain
 
 type Products struct {
-	ID          uint    `json:"id" gorm:"unique;not null"`
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	CategoryID  uint    `json:"category_id"`
-	SKU         string  `json:"sku"`
-	Size        int     `json:"size"`
-	BrandID     uint    `json:"brand_id"`
-	Quantity    int     `json:"quantity"`
-	Price       float64 `json:"price"`
+	ID          uint     `json:"id" gorm:"unique;not null"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	CategoryID  uint     `json:"category_id"`
+	Category    Category `json:"-" gorm:"foreignkey:GenreID;constraint:OnDelete:CASCADE"`
+	SKU         string   `json:"sku"`
+	Size        int      `json:"size"`
+	BrandID     uint     `json:"brand_id"`
+	Stock       int      `json:"stock"`
+	Quantity    int      `json:"quantity"`
+	Price       float64  `json:"price"`
 	// Image         string  `json:"image" gorm:"not null"`
 	ProductStatus string `json:"product_status"`
 	IsDeleted     bool   `json:"is_deleted" gorm:"default:false"`

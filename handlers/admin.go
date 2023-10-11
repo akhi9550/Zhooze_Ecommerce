@@ -35,3 +35,40 @@ func DashBoard(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Admin dashboard displayed", adminDashboard, nil)
 	c.JSON(http.StatusOK, success)
 }
+func GetUsers(c *gin.Context) {
+	users, err := usecase.ShowAllUsers()
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't retrieve users", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all Users", users, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+
+func BlockUser(c *gin.Context) {
+	id := c.Query("id")
+	err := usecase.BlockedUser(id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "user could not be blocked", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	sucess := response.ClientResponse(http.StatusOK, "Successfully blocked the user", nil, nil)
+	c.JSON(http.StatusOK, sucess)
+
+}
+func UnBlockUser(c *gin.Context) {
+	id := c.Query("id")
+	err := usecase.UnBlockedUser(id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "user could not be unblocked", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	sucess := response.ClientResponse(http.StatusOK, "Successfully unblocked the user", nil, nil)
+	c.JSON(http.StatusOK, sucess)
+
+}
+

@@ -48,3 +48,10 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	}
 	return ProductFromCategory, nil
 }
+func SeeAllProducts() ([]models.ProductBrief, error) {
+	products, err := repository.SeeAllProducts()
+	if err != nil {
+		return []models.ProductBrief{}, err
+	}
+	return products, nil
+}

@@ -5,6 +5,7 @@ import (
 	"Zhooze/helper"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
+	"errors"
 	"fmt"
 
 	"github.com/jinzhu/copier"
@@ -49,4 +50,43 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 		DashboardUser:    userDetails,
 		DashboardProduct: productDetails,
 	}, nil
+}
+func ShowAllUsers() ([]models.UserDetailsResponse, error) {
+	users, err := repository.ShowAllUsersIn()
+	if err != nil {
+		return []models.UserDetailsResponse{}, err
+	}
+	return users, nil
+}
+func BlockedUser(id string) error {
+	user, err := repository.GetUserByID(id)
+	if err != nil {
+		return err
+	}
+	if user.Blocked {
+		return errors.New("already blocked")
+	} else {
+		user.Blocked = true
+	}
+	err = repository.UpdateBlockUserByID(user)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UnBlockedUser(id string) error {
+	user, err := repository.GetUserByID(id)
+	if err != nil {
+		return err
+	}
+	if user.Blocked {
+		user.Blocked = false
+	} else {
+		return errors.New("already unblocked")
+	}
+	err = repository.UpdateBlockUserByID(user)
+	if err != nil {
+		return err
+	}
+	return nil
 }

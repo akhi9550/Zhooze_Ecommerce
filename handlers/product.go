@@ -3,7 +3,6 @@ package handlers
 import (
 	"Zhooze/usecase"
 	"Zhooze/utils/response"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -26,7 +25,7 @@ func ShowAllProducts(c *gin.Context) {
 	}
 	products, err := usecase.ShowAllProducts(page, count)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't rretrieve products", nil, err.Error())
+		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't retrieve products", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
@@ -40,7 +39,6 @@ func FilterCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	fmt.Println(data, "data is")
 	productCategory, err := usecase.FilterCategory(data)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't retrieve products by category", nil, err.Error())
@@ -49,4 +47,18 @@ func FilterCategory(c *gin.Context) {
 	}
 	success := response.ClientResponse(http.StatusOK, "Successfully filtered the category", productCategory, nil)
 	c.JSON(http.StatusOK, success)
+}
+func AllProducts(c *gin.Context) {
+	products, err := usecase.SeeAllProducts()
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't retrieve products", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all products", products, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+func AddProducts() {
+
 }

@@ -9,7 +9,7 @@ type Products struct {
 	SKU         string   `json:"sku"`
 	Size        int      `json:"size"`
 	BrandID     uint     `json:"brand_id"`
-	Stock       int      `json:"stock"`
+	// Stock       int      `json:"stock"`
 	Quantity    int      `json:"quantity"`
 	Price       float64  `json:"price"`
 	// Image         string  `json:"image" gorm:"not null"`

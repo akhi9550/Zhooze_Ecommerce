@@ -55,3 +55,15 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
+// func AddProducts(product models.ProductBrief) (models.ProductResponse, error) {
+// 	var id int
+// 	// sku := product.CategoryName + product.Description + product.Name
+// 	err := db.DB.Raw("INSERT INTO products (name,description,category_id,category_name,sku,size,brand_id,quantity,price)VALUES(?,?,?,?,?,?,?,?,?)RETURNING id", product.Name, product.Description, product.CategoryID, product.CategoryName, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
+// 	if err != nil {
+// 		return models.ProductResponse{}, err
+// 	}
+// 	var ProductResponse models.ProductResponse
+// 	err = db.DB.Raw(`SELECT 
+	
+// 	`)
+// }

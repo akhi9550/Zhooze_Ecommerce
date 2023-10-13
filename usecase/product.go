@@ -55,10 +55,17 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-// func AddProducts(product models.ProductBrief) (models.ProductResponse, error) {
-// 	products, err := repository.AddProducts(product)
-// 	if err != nil {
-// 		return models.ProductResponse{}, err
-// 	}
-// 	return products, nil
-// }
+func AddProducts(product models.ProductReceiver) (models.ProductResponse, error) {
+	products, err := repository.AddProducts(product)
+	if err != nil {
+		return models.ProductResponse{}, err
+	}
+	return products, nil
+}
+func DeleteProducts(id string) error {
+	err := repository.DeleteProducts(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

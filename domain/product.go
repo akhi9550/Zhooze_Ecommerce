@@ -9,14 +9,12 @@ type Products struct {
 	SKU         string   `json:"sku"`
 	Size        int      `json:"size"`
 	BrandID     uint     `json:"brand_id"`
-	// Stock       int      `json:"stock"`
-	Quantity    int      `json:"quantity"`
-	Price       float64  `json:"price"`
-	// Image         string  `json:"image" gorm:"not null"`
+	Quantity int     `json:"quantity"`
+	Price    float64 `json:"price"`
 	ProductStatus string `json:"product_status"`
 	IsDeleted     bool   `json:"is_deleted" gorm:"default:false"`
 }
 type Category struct {
-	ID           uint   `json:"id" gorm:"unique;not null"`
-	CategoryName string `json:"category_name"`
+	ID       uint   `json:"id" gorm:"unique;not null"`
+	Category string `json:"category"`
 }

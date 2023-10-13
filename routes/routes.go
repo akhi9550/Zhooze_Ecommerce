@@ -26,6 +26,10 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.GET("/products", handlers.AllProducts)
 	r.POST("add-product", handlers.AddProducts)
+	r.DELETE("delete-product", handlers.DeleteProducts)
 
+	r.POST("/add-category", handlers.AddCategory)
+	r.PUT("/update-category", handlers.UpdateCategory)
+	r.DELETE("/delete-category", handlers.DeleteCategory)
 	return r
 }

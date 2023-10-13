@@ -4,6 +4,7 @@ import (
 	"Zhooze/db"
 	"Zhooze/utils/models"
 	"errors"
+	"strconv"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
@@ -55,15 +56,34 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-// func AddProducts(product models.ProductBrief) (models.ProductResponse, error) {
-// 	var id int
-// 	// sku := product.CategoryName + product.Description + product.Name
-// 	err := db.DB.Raw("INSERT INTO products (name,description,category_id,category_name,sku,size,brand_id,quantity,price)VALUES(?,?,?,?,?,?,?,?,?)RETURNING id", product.Name, product.Description, product.CategoryID, product.CategoryName, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
-// 	if err != nil {
-// 		return models.ProductResponse{}, err
-// 	}
-// 	var ProductResponse models.ProductResponse
-// 	err = db.DB.Raw(`SELECT 
-	
-// 	`)
-// }
+func AddProducts(product models.ProductReceiver) (models.ProductResponse, error) {
+	var id int
+	err := db.DB.Raw("INSERT INTO products (name, description, category_id,category_name, sku, size, brand_id, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.CategoryName, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
+	if err != nil {
+		return models.ProductResponse{}, err
+	}
+	var ProductResponses models.ProductResponse
+	err = db.DB.Raw(`SELECT id, name, description,category_name, sku, size, brand_id, quantity, price FROM products JOIN categories ON products.category_id = categories.id WHERE products.id=?`, id).Scan(&ProductResponses).Error
+	if err != nil {
+		return models.ProductResponse{}, err
+	}
+	return ProductResponses, nil
+}
+
+func DeleteProducts(id string) error {
+	product_id, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", product_id).Scan(&count).Error; err != nil {
+		return err
+	}
+	if count < 1 {
+		return errors.New("product for given id does not exist")
+	}
+	if err := db.DB.Exec("DELETE FROM products WHERE id=?", product_id).Error; err != nil {
+		return err
+	}
+	return nil
+}

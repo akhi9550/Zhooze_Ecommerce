@@ -71,4 +71,3 @@ func UnBlockUser(c *gin.Context) {
 	c.JSON(http.StatusOK, sucess)
 
 }
-

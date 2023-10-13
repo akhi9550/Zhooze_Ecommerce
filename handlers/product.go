@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Zhooze/usecase"
+	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
 	"strconv"
@@ -60,20 +61,32 @@ func AllProducts(c *gin.Context) {
 
 }
 
-// func AddProducts(c *gin.Context) {
-// 	var product models.ProductBrief
-// 	if err := c.ShouldBindJSON(&product); err != nil {
-// 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errs)
-// 		return
-// 	}
-// 	products, err := usecase.AddProducts(product)
-// 	if err != nil {
-// 		errs := response.ClientResponse(http.StatusInternalServerError, "Could not add the product", nil, err.Error())
-// 		c.JSON(http.StatusInternalServerError, errs)
-// 		return
-// 	}
-// 	success := response.ClientResponse(http.StatusOK, "Successfully added products", products, nil)
-// 	c.JSON(http.StatusOK, success)
+func AddProducts(c *gin.Context) {
+	var product models.ProductReceiver
+	if err := c.ShouldBindJSON(&product); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	products, err := usecase.AddProducts(product)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "Could not add the product", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully added products", products, nil)
+	c.JSON(http.StatusOK, success)
 
-// }
+}
+func DeleteProducts(c *gin.Context) {
+	id := c.Query("id")
+	err := usecase.DeleteProducts(id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "could not delete the specified products", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully deleted the product", nil, nil)
+	c.JSON(http.StatusOK, success)
+}
+

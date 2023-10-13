@@ -55,7 +55,7 @@ func GetUserByID(id string) (domain.User, error) {
 		return domain.User{}, err
 	}
 	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE id=$1", user_id).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE id=?", user_id).Scan(&count).Error; err != nil {
 
 		return domain.User{}, err
 	}
@@ -64,7 +64,7 @@ func GetUserByID(id string) (domain.User, error) {
 
 	}
 	var userDetails domain.User
-	if err := db.DB.Raw("SELECT * FROM users WHERE id=$1", user_id).Scan(&userDetails).Error; err != nil {
+	if err := db.DB.Raw("SELECT * FROM users WHERE id=?", user_id).Scan(&userDetails).Error; err != nil {
 		return domain.User{}, err
 	}
 	return userDetails, nil

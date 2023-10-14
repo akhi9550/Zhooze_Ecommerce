@@ -17,7 +17,6 @@ func AddCategory(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	/////////////////////////////////////////
 	cate, err := usecase.AddCategory(category)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Could not add the Category", nil, err.Error())

@@ -61,7 +61,7 @@ func AllProducts(c *gin.Context) {
 
 }
 
-func AddProducts(c *gin.Context) {
+func   AddProducts(c *gin.Context) {
 	var product models.ProductReceiver
 	if err := c.ShouldBindJSON(&product); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())

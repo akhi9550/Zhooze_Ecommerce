@@ -58,7 +58,7 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 }
 func AddProducts(product models.ProductReceiver) (models.ProductResponse, error) {
 	var id int
-	err := db.DB.Raw("INSERT INTO products (name, description, category_id,category_name, sku, size, brand_id, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.CategoryName, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
+	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
 	if err != nil {
 		return models.ProductResponse{}, err
 	}

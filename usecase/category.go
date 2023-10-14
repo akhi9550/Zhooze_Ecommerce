@@ -3,6 +3,7 @@ package usecase
 import (
 	"Zhooze/domain"
 	"Zhooze/repository"
+	"Zhooze/utils/models"
 	"errors"
 )
 
@@ -20,17 +21,17 @@ func DeleteCategory(id string) error {
 	}
 	return nil
 }
-func UpdateCategory(current string, new string) (domain.Category, error) {
+func UpdateCategory(current string, new string) (models.UpdateCategory, error) {
 	categries, err := repository.CheckCategory(current)
 	if err != nil {
-		return domain.Category{}, err
+		return models.UpdateCategory{}, err
 	}
 	if !categries {
-		return domain.Category{}, errors.New("category doesn't exist")
+		return models.UpdateCategory{}, errors.New("category doesn't exist")
 	}
 	newcat, err := repository.UpdateCategory(current, new)
 	if err != nil {
-		return domain.Category{}, err
+		return models.UpdateCategory{}, err
 	}
 	return newcat, nil
 }

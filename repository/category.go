@@ -3,6 +3,7 @@ package repository
 import (
 	"Zhooze/db"
 	"Zhooze/domain"
+	"Zhooze/utils/models"
 	"errors"
 	"strconv"
 )
@@ -38,16 +39,16 @@ func DeleteCategory(id string) error {
 	}
 	return nil
 }
-func UpdateCategory(current string, new string) (domain.Category, error) {
+func UpdateCategory(current string, new string) (models.UpdateCategory, error) {
 	if db.DB == nil {
-		return domain.Category{}, errors.New("database connection is nil")
+		return models.UpdateCategory{}, errors.New("database connection is nil")
 	}
 	if err := db.DB.Exec("UPDATE categories SET category=? WHERE category = ?", new, current).Error; err != nil {
-		return domain.Category{}, err
+		return models.UpdateCategory{}, err
 	}
-	var newcat domain.Category
+	var newcat models.UpdateCategory
 	if err := db.DB.Raw("SELECT category FROM categories WHERE category = ?", new).Scan(&newcat).Error; err != nil {
-		return domain.Category{}, nil
+		return models.UpdateCategory{}, nil
 	}
 	return newcat, nil
 }

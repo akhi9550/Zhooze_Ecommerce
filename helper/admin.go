@@ -4,7 +4,6 @@ import (
 	"Zhooze/config"
 	"Zhooze/utils/models"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -28,25 +27,30 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
+	fmt.Println("secret key===========", cfg.KEY_ADMIN)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(os.Getenv(cfg.KEY_ADMIN)))
+	tokenString, err := token.SignedString([]byte(cfg.KEY_ADMIN))
 	if err != nil {
 		fmt.Println("Error is", err)
 		return "", err
 	}
 	return tokenString, nil
 }
+
 func ValidateToken(tokenString string) (*authCustomClaimsAdmin, error) {
 	cfg, _ := config.LoadConfig()
+
 	token, err := jwt.ParseWithClaims(tokenString, &authCustomClaimsAdmin{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method:%v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(cfg.KEY_ADMIN), nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
+
 	if claims, ok := token.Claims.(*authCustomClaimsAdmin); ok && token.Valid {
 		return claims, nil
 	}

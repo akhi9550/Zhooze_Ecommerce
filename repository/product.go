@@ -87,3 +87,35 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
+func UpdateProduct(id uint, product models.ProductReceiver) error {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", id).Scan(&count).Error; err != nil {
+		return err
+	}
+	if count < 1 {
+		return errors.New("product for given id does not exist")
+	}
+	var reciever models.ProductBrief
+	if err := db.DB.Raw(`update products set name = $1,
+	description = $2,
+	category_id = $3,
+	sku = $4,
+	size = $5,
+	brand_id = $6,
+	quantity = $7,
+	price = $8
+	where id = $9 returning id`,
+		product.Name,
+		product.Description,
+		product.CategoryID,
+		product.SKU,
+		product.Size,
+		product.BrandID,
+		product.Quantity,
+		product.Price,
+		reciever.ID).Error; err != nil {
+		return err
+	}
+	return nil
+
+}

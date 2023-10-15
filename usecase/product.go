@@ -69,3 +69,10 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
+func UpdateProduct(id uint, product models.ProductReceiver) error {
+	err := repository.UpdateProduct(id, product)
+	if err != nil {
+		return err
+	}
+	return nil
+}

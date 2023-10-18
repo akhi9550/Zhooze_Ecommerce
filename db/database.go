@@ -18,10 +18,12 @@ func ConnectDatabase(confg config.Config) (*gorm.DB, error) {
 		return nil, fmt.Errorf("failed to connect to database:%w", err)
 	}
 	DB = db
-	// db.AutoMigrate(&domain.Admin{})
+	db.AutoMigrate(&domain.Admin{})
 	db.AutoMigrate(&domain.User{})
 	db.AutoMigrate(&domain.Product{})
 	db.AutoMigrate(&domain.Category{})
+	db.AutoMigrate(&domain.OrderItem{})
+	db.AutoMigrate(&domain.Order{})
 
 	return DB, err
 }

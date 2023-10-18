@@ -55,10 +55,10 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-func AddProducts(product models.ProductReceiver) (models.ProductResponse, error) {
+func AddProducts(product models.ProductReceiver) (models.ProductBrief, error) {
 	products, err := repository.AddProducts(product)
 	if err != nil {
-		return models.ProductResponse{}, err
+		return models.ProductBrief{}, err
 	}
 	return products, nil
 }

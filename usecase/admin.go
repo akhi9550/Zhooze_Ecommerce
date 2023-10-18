@@ -90,3 +90,65 @@ func UnBlockedUser(id string) error {
 	}
 	return nil
 }
+func GetAllOrderDetailsForAdmin(page int) ([]models.CombinedOrderDetails, error) {
+	orderDetail, err := repository.GetAllOrderDetailsBrief(page)
+	if err != nil {
+		return []models.CombinedOrderDetails{}, err
+	}
+	return orderDetail, nil
+}
+func ApproveOrder(orderId string) error {
+
+	ok, err := repository.CheckOrderID(orderId)
+	fmt.Println(ok)
+	if !ok {
+		return err
+	}
+
+	ShipmentStatus, err := repository.GetShipmentStatus(orderId)
+	if err != nil {
+		return err
+	}
+	if ShipmentStatus == "cancelled" {
+		return errors.New("the order is cancelled,cannot approve it")
+	}
+	if ShipmentStatus == "pending" {
+		return errors.New("the order is pending,cannot approve it")
+	}
+	if ShipmentStatus == "processing" {
+		err := repository.ApproveOrder(orderId)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
+	return nil
+}
+func CancelOrderFromAdmin(order_id string) error {
+	orderProduct, err := repository.GetProductDetailsFromOrders(order_id)
+	if err != nil {
+		return err
+	}
+	err = repository.CancelOrders(order_id)
+	if err != nil {
+		return err
+	}
+	// update the quantity to products since the order is cancelled
+	err = repository.UpdateQuantityOfProduct(orderProduct)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func RefundUser(orderID string) error {
+	paymentStatus, err := repository.GetPaymentStatus(orderID)
+	if err != nil {
+		return err
+	}
+	if paymentStatus == "refund-init" {
+		paymentStatus = "refunded"
+		return repository.RefundOrder(paymentStatus, orderID)
+	}
+	return errors.New("cannot refund the order")
+}

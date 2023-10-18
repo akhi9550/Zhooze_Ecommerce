@@ -78,3 +78,4 @@ func UpdateBlockUserByID(user domain.User) error {
 	}
 	return nil
 }
+

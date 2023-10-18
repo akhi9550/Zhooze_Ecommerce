@@ -12,7 +12,6 @@ import (
 )
 
 func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
-	fmt.Println(user, "haii")
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 	fmt.Println(email)
 	if err != nil {

@@ -17,20 +17,25 @@ func LoginHandler(adminDetails models.AdminLogin) (domain.TokenAdmin, error) {
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
+	fmt.Println("wwwwwwwwww")
 	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetails.Password))
 	if err != nil {
 		fmt.Println(err)
 		return domain.TokenAdmin{}, err
 	}
+
+	fmt.Println("qqqqqq")
 	var adminDetailsResponse models.AdminDetailsResponse
 	err = copier.Copy(&adminDetailsResponse, &adminCompareDetails)
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
+	fmt.Println("iiiiiiiiii")
 	tokenString, err := helper.GenerateTokenAdmin(adminDetailsResponse)
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
+
 	return domain.TokenAdmin{
 		Admin: adminDetailsResponse,
 		Token: tokenString,

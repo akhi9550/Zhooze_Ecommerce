@@ -45,10 +45,10 @@ type AddressInfoResponse struct {
 type AddressInfo struct {
 	Name      string `json:"name" validate:"required"`
 	HouseName string `json:"house_name" validate:"required"`
-	State     string `json:"state" validate:"required"`
-	Pin       string `json:"pin" validate:"required"`
 	Street    string `json:"street"`
 	City      string `json:"city"`
+	State     string `json:"state" validate:"required"`
+	Pin       string `json:"pin" validate:"required"`
 }
 type UsersProfileDetails struct {
 	Firstname string `json:"firstname" `

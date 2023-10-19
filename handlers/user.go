@@ -53,3 +53,69 @@ func Userlogin(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
 	c.JSON(http.StatusCreated, success)
 }
+func AddAddress(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	var address models.AddressInfo
+	if err := c.ShouldBindJSON(&address); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(address)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "constraints does not match", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err = usecase.AddAddress(userID.(int), address)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed adding address", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Address added successfully", nil, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+func GetAllAddress(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+
+	addressInfo, err := usecase.GetAllAddress(userID.(int))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "User Address", addressInfo, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+func UserDetails(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	UserDetails, err := usecase.UserDetails(userID.(int))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "User Details", UserDetails, nil)
+	c.JSON(http.StatusOK, success)
+}
+func UpdateUserDetails(c *gin.Context) {
+	user_id, _ := c.Get("user_id")
+	var user models.UsersProfileDetails
+	if err := c.ShouldBindJSON(&user); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	updateDetails, err := usecase.UpdateUserDetails(user, user_id.(int))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed update user", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Updated User Details", updateDetails, nil)
+	c.JSON(http.StatusOK, success)
+}

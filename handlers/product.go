@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"Zhooze/helper"
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
@@ -90,26 +89,27 @@ func DeleteProducts(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully deleted the product", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
-func UpdateProduct(c *gin.Context) {
-	var product models.ProductReceiver
-	if err := c.ShouldBindJSON(&product); err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	product_id := c.Param("id")
-	id, err := helper.StringToUInt(product_id)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "invalid input", err.Error(), id)
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	err = usecase.UpdateProduct(id, product)
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "faild to update product", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusOK, "Successfully updated products", nil, product)
-	c.JSON(http.StatusOK, success)
-}
+
+// func UpdateProduct(c *gin.Context) {
+// 	var product models.ProductReceiver
+// 	if err := c.ShouldBindJSON(&product); err != nil {
+// 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errs)
+// 		return
+// 	}
+// 	product_id := c.Param("id")
+// 	id, err := helper.StringToUInt(product_id)
+// 	if err != nil {
+// 		errs := response.ClientResponse(http.StatusBadRequest, "invalid input", err.Error(), id)
+// 		c.JSON(http.StatusBadRequest, errs)
+// 		return
+// 	}
+// 	err = usecase.UpdateProduct(id, product)
+// 	if err != nil {
+// 		errs := response.ClientResponse(http.StatusBadRequest, "faild to update product", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errs)
+// 		return
+// 	}
+// 	success := response.ClientResponse(http.StatusOK, "Successfully updated products", nil, product)
+// 	c.JSON(http.StatusOK, success)
+// }

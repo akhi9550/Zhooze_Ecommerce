@@ -14,9 +14,9 @@ type ProductBrief struct {
 }
 
 type ProductReceiver struct {
-	Name          string  `json:"name"`
+	Name          string  `json:"name" `
 	Description   string  `json:"description"`
-	CategoryName  string  `json:"category_name"`
+	CategoryID    uint    `json:"category_id"`
 	SKU           string  `json:"sku"`
 	Size          int     `json:"size"`
 	BrandID       uint    `json:"brand_id"`

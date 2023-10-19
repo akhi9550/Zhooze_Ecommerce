@@ -49,3 +49,63 @@ func FindUserByEmail(user models.LoginDetail) (models.UserLoginResponse, error) 
 	}
 	return userDetails, nil
 }
+func AddAddress(userID int, address models.AddressInfo) error {
+	err := db.DB.Exec("INSERT INTO addresses(user_id,name,house_name,street,city,state,pin)VALUES(?,?,?,?,?,?,?)", userID, address.Name, address.HouseName, address.Street, address.City, address.State, address.Pin).Error
+	if err != nil {
+		return errors.New("could not add address")
+	}
+	return nil
+}
+func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
+	var addressInfoResponse models.AddressInfoResponse
+	if err := db.DB.Raw("select * from addresses where user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+	return addressInfoResponse, nil
+}
+func UserDetails(userID int) (models.UsersProfileDetails, error) {
+	var userDetails models.UsersProfileDetails
+	err := db.DB.Raw("SELECT users.firstname,users.lastname,users.email,user.phone FROM users WHERE users.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
+	if err != nil {
+		return models.UsersProfileDetails{}, err
+	}
+	return userDetails, nil
+}
+func CheckUserAvailabilityWithUserID(userID int) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE id= ?", userID).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func UpdateUserEmail(email string, userID int) error {
+	err := db.DB.Exec("UPDATE users SET email= ? WHERE id = ?", email, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateUserPhone(phone string, userID int) error {
+	if err := db.DB.Exec("UPDATE users SET phone = ? WHERE id = ?", phone, userID).Error; err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateFirstName(name string, userID int) error {
+
+	err := db.DB.Exec("update users set firstname = ? where id = ?", name, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+func UpdateLastName(name string, userID int) error {
+
+	err := db.DB.Exec("update users set lastname = ? where id = ?", name, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

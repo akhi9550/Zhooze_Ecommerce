@@ -58,12 +58,12 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 }
 func AddProducts(product models.ProductReceiver) (models.ProductBrief, error) {
 	var id int
-	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryName, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price).Scan(&id).Error
+	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, quantity, price,product_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&id).Error
 	if err != nil {
 		return models.ProductBrief{}, err
 	}
 	var ProductResponses models.ProductBrief
-	err = db.DB.Raw(`SELECT id, name, description,category_name, sku, size, brand_id, quantity, price FROM products JOIN categories ON products.category_id = categories.id WHERE products.id=?`, id).Scan(&ProductResponses).Error
+	err = db.DB.Raw(`SELECT p.id, p.name, p.description, c.id, p.sku, p.size, b.brand_id, p.quantity, p.price, p.product_status FROM products p INNER JOIN categories c ON p.category_id = c.id INNER JOIN brands b ON p.brand_id = b.id WHERE p.id = ?`, id).Scan(&ProductResponses).Error
 	if err != nil {
 		return models.ProductBrief{}, err
 	}
@@ -98,7 +98,7 @@ func UpdateProduct(id uint, product models.ProductReceiver) error {
 	var reciever models.ProductBrief
 	if err := db.DB.Raw(`update products set name = $1,
 	description = $2,
-	category_name = $3,
+	category_id = $3,
 	sku = $4,
 	size = $5,
 	brand_id = $6,
@@ -107,7 +107,7 @@ func UpdateProduct(id uint, product models.ProductReceiver) error {
 	where id = $9 returning id`,
 		product.Name,
 		product.Description,
-		product.CategoryName,
+		product.CategoryID,
 		product.SKU,
 		product.Size,
 		product.BrandID,

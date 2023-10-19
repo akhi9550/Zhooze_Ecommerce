@@ -4,6 +4,7 @@ import (
 	"Zhooze/helper"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
+
 	"errors"
 	"fmt"
 
@@ -88,3 +89,69 @@ func UsersLogin(user models.LoginDetail) (*models.TokenUser, error) {
 		RefreshToken: refreshToken,
 	}, nil
 }
+func AddAddress(userID int, address models.AddressInfo) error {
+	err := repository.AddAddress(userID, address)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
+	addressInfo, err := repository.GetAllAddress(userId)
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+	return addressInfo, nil
+
+}
+func UserDetails(userID int) (models.UsersProfileDetails, error) {
+	return repository.UserDetails(userID)
+}
+func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (models.UsersProfileDetails, error) {
+	userExist := repository.CheckUserAvailabilityWithUserID(userID)
+	if !userExist {
+		return models.UsersProfileDetails{}, errors.New("user doesn't exist")
+	}
+	if userDetails.Email != "" {
+		repository.UpdateUserEmail(userDetails.Email, userID)
+	}
+	if userDetails.Firstname != "" {
+		repository.UpdateFirstName(userDetails.Firstname, userID)
+	}
+	if userDetails.Firstname != "" {
+		repository.UpdateLastName(userDetails.Lastname, userID)
+	}
+
+	if userDetails.Phone != "" {
+		repository.UpdateUserPhone(userDetails.Phone, userID)
+	}
+	return repository.UserDetails(userID)
+}
+
+// func UpdatePassword(ctx context.Context,body models.UpdatePassword)error{
+// var userID int
+// var ok bool
+// if userID,ok=ctx.Value("userID").(int);!ok{
+// return errors.New("errro retrieving user details")
+// }
+// userPassword, err := repository.UserPassword(userID)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(body.OldPassword))
+// 	if err != nil {
+// 		return errors.New("password incorrect")
+// 	}
+// 	if body.NewPassword != body.ConfirmNewPassword {
+// 		return errors.New("password not matching")
+// 	}
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(body.NewPassword), 10)
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if err := repository.UpdateUserPassword(string(hashedPassword), userID); err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+// 	return nil
+// }

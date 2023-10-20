@@ -7,13 +7,8 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-//	func GetTokenFromHeader(header string) string {
-//		if len(header) > 7 && header[:7] == "Bearer" {
-//			return header[7:]
-//		}
-//		return header
-//	}
 func ExtractUserIDFromToken(tokenString string) (int, error) {
+
 	cfg, _ := config.LoadConfig()
 	// Parse the token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {

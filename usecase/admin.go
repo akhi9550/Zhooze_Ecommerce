@@ -13,25 +13,30 @@ import (
 )
 
 func LoginHandler(adminDetails models.AdminLogin) (domain.TokenAdmin, error) {
+	// getting details of the admin based on the email provided
 	adminCompareDetails, err := repository.LoginHandler(adminDetails)
 	if err != nil {
-		return domain.TokenAdmin{}, err
-	}
-	fmt.Println("wwwwwwwwww")
-	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetails.Password))
-	if err != nil {
-		fmt.Println(err)
+
 		return domain.TokenAdmin{}, err
 	}
 
-	fmt.Println("qqqqqq")
+	// compare password from database and that provided from admins
+
+	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetails.Password))
+	if err != nil {
+		return domain.TokenAdmin{}, err
+	}
+
 	var adminDetailsResponse models.AdminDetailsResponse
+
+	//  copy all details except password and sent it back to the front end
 	err = copier.Copy(&adminDetailsResponse, &adminCompareDetails)
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}
-	fmt.Println("iiiiiiiiii")
+
 	tokenString, err := helper.GenerateTokenAdmin(adminDetailsResponse)
+
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}

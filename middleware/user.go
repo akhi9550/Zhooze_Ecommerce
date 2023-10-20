@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"Zhooze/config"
+	"Zhooze/helper"
 	"net/http"
 	"strings"
 
@@ -121,8 +122,14 @@ func UserAuthMiddleware(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
+	userID, err := helper.ExtractUserIDFromToken(tokenString)
+	if err != nil {
+		c.JSON(http.StatusForbidden, gin.H{"error": "some internal problem"})
+		c.Abort()
+		return
+	}
 	c.Set("role", role)
+	c.Set("user_id", userID)
 
 	c.Next()
 }

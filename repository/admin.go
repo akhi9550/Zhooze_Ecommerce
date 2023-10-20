@@ -11,7 +11,7 @@ import (
 
 func LoginHandler(adminDetails models.AdminLogin) (domain.Admin, error) {
 	var details domain.Admin
-	if err := db.DB.Raw("SELECT * FROM users WHERE email=? AND isadmin='true'", adminDetails.Email).Scan(&details).Error; err != nil {
+	if err := db.DB.Raw("SELECT * FROM users WHERE email=? AND isadmin= true", adminDetails.Email).Scan(&details).Error; err != nil {
 		return domain.Admin{}, err
 	}
 	return details, nil
@@ -78,4 +78,3 @@ func UpdateBlockUserByID(user domain.User) error {
 	}
 	return nil
 }
-

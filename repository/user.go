@@ -5,7 +5,6 @@ import (
 	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
-	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -36,7 +35,6 @@ func UserSignUp(user models.UserSignUp) (models.UserDetailsResponse, error) {
 	var SignupDetail models.UserDetailsResponse
 	err := db.DB.Raw("INSERT INTO users(firstname,lastname,email,password,phone)VALUES(?,?,?,?,?)RETURNING id,firstname,lastname,email,password,phone", user.Firstname, user.Lastname, user.Email, user.Password, user.Phone).Scan(&SignupDetail).Error
 	if err != nil {
-		fmt.Println("Respository error:", err)
 		return models.UserDetailsResponse{}, err
 	}
 	return SignupDetail, nil

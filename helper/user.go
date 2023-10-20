@@ -73,12 +73,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// type AuthUserClaims struct {
-// 	Id    int    `json:"id"`
-// 	Email string `json:"email"`
-// 	Role  string `json:"role"`
-// 	jwt.StandardClaims
-// }
+type AuthUserClaims struct {
+	Id    int    `json:"id"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+	jwt.StandardClaims
+}
 
 func PasswordHash(password string) (string, error) {
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
@@ -88,10 +88,10 @@ func PasswordHash(password string) (string, error) {
 	hash := string(hashPassword)
 	return hash, nil
 }
-func GenerateTokenUsers(user models.UserDetailsResponse, expirationTime time.Time) (string, error) {
+func GenerateTokenUsers(user models.UserLoginResponse, expirationTime time.Time) (string, error) {
 	cfg, _ := config.LoadConfig()
 	claims := jwt.MapClaims{
-		"id":        user.Id,
+		"user_id":   user.UserId,
 		"email":     user.Email,
 		"role":      "client",
 		"ExpiresAt": expirationTime.Unix(),
@@ -106,7 +106,7 @@ func GenerateTokenUsers(user models.UserDetailsResponse, expirationTime time.Tim
 }
 func GenerateAccessToken(user models.UserDetailsResponse) (string, error) {
 	expirationTime := time.Now().Add(15 * time.Minute)
-	tokenString, err := GenerateTokenUsers(models.UserDetailsResponse{}, expirationTime)
+	tokenString, err := GenerateTokenUsers(models.UserLoginResponse{}, expirationTime)
 	if err != nil {
 		return "", err
 	}
@@ -114,7 +114,7 @@ func GenerateAccessToken(user models.UserDetailsResponse) (string, error) {
 }
 func GenerateRefreshToken(user models.UserDetailsResponse) (string, error) {
 	expirationTime := time.Now().Add(24 * 90 * time.Hour)
-	tokenString, err := GenerateTokenUsers(models.UserDetailsResponse{}, expirationTime)
+	tokenString, err := GenerateTokenUsers(models.UserLoginResponse{}, expirationTime)
 	if err != nil {
 		return "", err
 	}

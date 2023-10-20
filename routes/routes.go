@@ -9,30 +9,12 @@ import (
 )
 
 func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
-	//user
-	r.POST("/signup", handlers.UserSignup)
-	r.POST("/userlogin", handlers.Userlogin)
-
-	r.POST("/send-otp", handlers.SendOtp)
-	r.POST("verify-otp", handlers.VerifyOtp)
-
-	r.GET("/products", handlers.AllProducts)
-	r.GET("/page/:page", handlers.ShowAllProducts) //arranging order
-	r.POST("/filter", handlers.FilterCategory)
-
-	r.GET("/address", middleware.UserAuthMiddleware, handlers.GetAllAddress)
-	r.POST("/add-address", middleware.UserAuthMiddleware, handlers.AddAddress)
-	r.GET("/user-details", middleware.UserAuthMiddleware, handlers.UserDetails)
-	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware, handlers.UpdateUserDetails)
-	// r.POST("/update-password",handlers.UpdatePassword)
 
 	//admin
 	r.POST("/adminlogin", handlers.LoginHandler)
-	// r.Use(middleware.AdminAuthMiddleware)
-	// {
-	r.GET("/dashboard", handlers.DashBoard)
+	r.GET("/dashboard", middleware.AdminAuthMiddleware(), handlers.DashBoard)
 
-	r.GET("/getusers", handlers.GetUsers)
+	r.GET("/getusers", middleware.AdminAuthMiddleware(), handlers.GetUsers)
 	r.POST("/block", handlers.BlockUser)
 	r.POST("/unblock", handlers.UnBlockUser)
 
@@ -49,7 +31,25 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/approve-order/:order_id", handlers.ApproveOrder)
 	r.GET("/cancel-order/:order_id", handlers.CancelOrderFromAdmin)
 	r.PUT("/refund-order/:order_id", handlers.RefundUser)
-	// }
+
+	//user
+
+	r.POST("/signup", handlers.UserSignup)
+	r.POST("/userlogin", handlers.Userlogin)
+
+	r.POST("/send-otp", handlers.SendOtp)
+	r.POST("verify-otp", handlers.VerifyOtp)
+
+	r.GET("/products", handlers.AllProducts)
+	r.GET("/page/:page", handlers.ShowAllProducts) //arranging order
+	r.POST("/filter", handlers.FilterCategory)
+
+	r.GET("/address", middleware.UserAuthMiddleware, handlers.GetAllAddress)
+	r.POST("/add-address", middleware.UserAuthMiddleware, handlers.AddAddress)
+	r.GET("/user-details", middleware.UserAuthMiddleware, handlers.UserDetails)
+	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware, handlers.UpdateUserDetails)
+
+	// r.POST("/update-password",handlers.UpdatePassword)
 
 	return r
 }

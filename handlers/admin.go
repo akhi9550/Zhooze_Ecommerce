@@ -4,14 +4,12 @@ import (
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func LoginHandler(c *gin.Context) {
-	fmt.Println("qqqqqqqqqqq")
 	var adminDetails models.AdminLogin
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Details not in correct format", nil, err.Error())

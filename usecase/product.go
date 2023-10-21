@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"Zhooze/domain"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 )
@@ -55,10 +56,10 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-func AddProducts(product models.ProductReceiver) (models.ProductBrief, error) {
+func AddProducts(product models.ProductReceiver) (domain.Product, error) {
 	products, err := repository.AddProducts(product)
 	if err != nil {
-		return models.ProductBrief{}, err
+		return domain.Product{}, err
 	}
 	return products, nil
 }

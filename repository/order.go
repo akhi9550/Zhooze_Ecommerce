@@ -98,3 +98,22 @@ func RefundOrder(paymentStatus string, orderID string) error {
 	}
 	return nil
 }
+func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails, error) {
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * count
+	var orderDatails []models.OrderDetails
+	db.DB.Raw("SELECT order_id,final_price,shipment_status,payment_status FROM orders WHERE user_id = ? limit ? offset ?", userID, count, offset).Scan(&orderDatails)
+	var fullOrderDetails []models.FullOrderDetails
+	for _, ok := range orderDatails {
+		var OrderProductDetails []models.OrderProductDetails
+		db.DB.Raw("select order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price from order_items inner join products on order_items.product_id = products.id where order_items.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
+		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: ok, OrderProductDetails: OrderProductDetails})
+	}
+	return fullOrderDetails, nil
+}
+func UserOrderRelationship(orderID string,userID int)(int,error){
+	var testUserID int
+	err:=db.DB.Raw("SELECT user_id FROM orders WHERE ordr'_id = ?"ordeorderID).scan(&testUserID).Error
+}

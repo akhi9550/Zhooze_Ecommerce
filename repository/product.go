@@ -2,6 +2,7 @@ package repository
 
 import (
 	"Zhooze/db"
+	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
 	"strconv"
@@ -56,16 +57,17 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-func AddProducts(product models.ProductReceiver) (models.ProductBrief, error) {
+func AddProducts(product models.ProductReceiver) (domain.Product, error) {
 	var id int
 	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, quantity, price,product_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&id).Error
 	if err != nil {
-		return models.ProductBrief{}, err
+		return domain.Product{}, err
 	}
-	var ProductResponses models.ProductBrief
-	err = db.DB.Raw(`SELECT p.id, p.name, p.description, c.id, p.sku, p.size, b.brand_id, p.quantity, p.price, p.product_status FROM products p INNER JOIN categories c ON p.category_id = c.id INNER JOIN brands b ON p.brand_id = b.id WHERE p.id = ?`, id).Scan(&ProductResponses).Error
+	var ProductResponses domain.Product
+
+	err = db.DB.Raw(`SELECT p.id, p.name, p.description, c.id, p.sku, p.size, b.brand_id, p.quantity, p.price, p.product_status FROM products p INNER JOIN categories c ON p.category_id = c.id INNER JOIN brands b ON p.brand_id = b.id WHERE p.id = ?`, ProductResponses.ID).Scan(&ProductResponses).Error
 	if err != nil {
-		return models.ProductBrief{}, err
+		return domain.Product{}, err
 	}
 	return ProductResponses, nil
 }

@@ -99,3 +99,35 @@ func CancelOrder(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Cancel Successfull", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
+func CheckOut(c *gin.Context){
+	userID, _ := c.Get("user_id")
+	checkoutDetails, err := usecase.Checkout(userID.(int))
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Checkout Page loaded successfully", checkoutDetails, nil)
+	c.JSON(http.StatusOK, successRes)
+}
+func PlaceOrder(c *gin.Context) {
+	userID, _ := c.Get("user_id")
+	userId := userID.(int)
+	orderId := c.Param("order_id")
+	paymentMethod := c.Param("payment")
+	
+	fmt.Println("payment is ", paymentMethod, "order id is is ", orderId)
+	
+	if paymentMethod == "cash_on_delivery" {
+		Invoice, err := usecase.ExecutePurchaseCOD(userId, orderId)
+		if err != nil {
+			errorRes := response.ClientResponse(http.StatusInternalServerError, "error in making cod ", nil, err.Error())
+			c.JSON(http.StatusInternalServerError, errorRes)
+			return
+		}
+		successRes := response.ClientResponse(http.StatusOK, "Placed Order with cash on delivery", Invoice, nil)
+		c.JSON(http.StatusOK, successRes)
+	}
+}

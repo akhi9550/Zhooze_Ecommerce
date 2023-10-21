@@ -3,6 +3,7 @@ package repository
 import (
 	"Zhooze/db"
 	"Zhooze/utils/models"
+	"errors"
 )
 
 func CheckOrderID(orderId string) (bool, error) {
@@ -113,7 +114,49 @@ func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails
 	}
 	return fullOrderDetails, nil
 }
-func UserOrderRelationship(orderID string,userID int)(int,error){
+func UserOrderRelationship(orderID string, userID int) (int, error) {
 	var testUserID int
-	err:=db.DB.Raw("SELECT user_id FROM orders WHERE ordr'_id = ?"ordeorderID).scan(&testUserID).Error
+	err := db.DB.Raw("SELECT user_id FROM orders WHERE ordr'_id = ?", orderID).Scan(&testUserID).Error
+	if err != nil {
+		return -1, err
+	}
+	return testUserID, nil
+}
+func GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
+	var addressResponse []models.AddressInfoResponse
+	err := db.DB.Raw(`SELECT * FROM addresses WHERE user_id = $1`, userID).Scan(&addressResponse).Error
+	if err != nil {
+		return []models.AddressInfoResponse{}, err
+	}
+
+	return addressResponse, nil
+}
+func GetAllPaymentOption() ([]models.PaymentDetails, error) {
+	var paymentMethods []models.PaymentDetails
+	err := db.DB.Raw("select * from payment_methods").Scan(&paymentMethods).Error
+	if err != nil {
+		return []models.PaymentDetails{}, err
+	}
+
+	return paymentMethods, nil
+
+}
+func GetAddressFromOrderId(orderId string) (models.AddressInfoResponse, error) {
+	var addressInfoResponse models.AddressInfoResponse
+	var addressId int
+	if err := db.DB.Raw("select address_id from orders where order_id =?", orderId).Scan(&addressId).Error; err != nil {
+		return models.AddressInfoResponse{}, errors.New("first in orders")
+	}
+	if err := db.DB.Raw("select * from addresses where id=?", addressId).Scan(&addressInfoResponse).Error; err != nil {
+		return models.AddressInfoResponse{}, errors.New("second  in address")
+	}
+	return addressInfoResponse, nil
+}
+func GetOrderDetailOfAproduct(orderId string) (models.OrderDetails, error) {
+	var OrderDetails models.OrderDetails
+
+	if err := db.DB.Raw("select order_id,final_price,shipment_status,payment_status from orders where order_id = ?", orderId).Scan(&OrderDetails).Error; err != nil {
+		return models.OrderDetails{}, err
+	}
+	return OrderDetails, nil
 }

@@ -20,7 +20,7 @@ type ProductReceiver struct {
 	SKU           string  `json:"sku"`
 	Size          int     `json:"size"`
 	BrandID       uint    `json:"brand_id"`
-	Quantity      int     `json:"quantity"`
+	Stock         int     `json:"stock"`
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
 }
@@ -31,4 +31,12 @@ type Category struct {
 type SetNewName struct {
 	Current string `json:"current"`
 	New     string `json:"new"`
+}
+type ProductUpdate struct {
+	ProductId int `json:"product_id"`
+	Stock     int `json:"stock"`
+}
+type ProductUpdateReciever struct {
+	ProductID int
+	Stock     int
 }

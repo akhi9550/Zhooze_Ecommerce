@@ -46,7 +46,7 @@ func UpdateCategory(current string, new string) (domain.Category, error) {
 		return domain.Category{}, err
 	}
 	var newcat domain.Category
-	if err := db.DB.Raw("SELECT category FROM categories WHERE category = ?", new).Scan(&newcat).Error; err != nil {
+	if err := db.DB.Raw("SELECT id,category FROM categories WHERE category = ?", new).Scan(&newcat).Error; err != nil {
 		return domain.Category{}, nil
 	}
 	return newcat, nil

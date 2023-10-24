@@ -43,11 +43,19 @@ func GetProductFromCategory(id int) ([]models.ProductBrief, error) {
 }
 func GetQuantityFromProductID(id int) (int, error) {
 	var quantity int
-	err := db.DB.Raw("SELECT quantity FROM products WHERE id= ?", id).Scan(&quantity).Error
+	err := db.DB.Raw("SELECT stock FROM products WHERE id= ?", id).Scan(&quantity).Error
 	if err != nil {
 		return 0.0, err
 	}
 	return quantity, nil
+}
+func GetPriceOfProductFromID(prodcut_id int) (float64, error) {
+	var productPrice float64
+
+	if err := db.DB.Raw("select price from products where id = ?", prodcut_id).Scan(&productPrice).Error; err != nil {
+		return 0.0, err
+	}
+	return productPrice, nil
 }
 func SeeAllProducts() ([]models.ProductBrief, error) {
 	var products []models.ProductBrief
@@ -57,15 +65,15 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-func AddProducts(product models.ProductReceiver) (domain.Product, error) {
-	var id int
-	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, quantity, price,product_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Quantity, product.Price, product.ProductStatus).Scan(&id).Error
+func AddProducts(product domain.Product) (domain.Product, error) {
+	var p models.ProductReceiver
+	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, stock, price,product_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING name, description, category_id, sku, size, brand_id, stock, price,product_status", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Stock, product.Price, product.ProductStatus).Scan(&p).Error
 	if err != nil {
 		return domain.Product{}, err
 	}
 	var ProductResponses domain.Product
 
-	err = db.DB.Raw(`SELECT p.id, p.name, p.description, c.id, p.sku, p.size, b.brand_id, p.quantity, p.price, p.product_status FROM products p INNER JOIN categories c ON p.category_id = c.id INNER JOIN brands b ON p.brand_id = b.id WHERE p.id = ?`, ProductResponses.ID).Scan(&ProductResponses).Error
+	err = db.DB.Raw("SELECT * FROM products WHERE products.name = ?", p.Name).Scan(&ProductResponses).Error
 	if err != nil {
 		return domain.Product{}, err
 	}
@@ -89,35 +97,30 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
-func UpdateProduct(id uint, product models.ProductReceiver) error {
-	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", id).Scan(&count).Error; err != nil {
-		return err
+func CheckProductExist(pid int) (bool, error) {
+	var a int
+	err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", pid).Scan(&a).Error
+	if err != nil {
+		return false, err
 	}
-	if count < 1 {
-		return errors.New("product for given id does not exist")
+	if a == 0 {
+		return false, err
 	}
-	var reciever models.ProductBrief
-	if err := db.DB.Raw(`update products set name = $1,
-	description = $2,
-	category_id = $3,
-	sku = $4,
-	size = $5,
-	brand_id = $6,
-	quantity = $7,
-	price = $8
-	where id = $9 returning id`,
-		product.Name,
-		product.Description,
-		product.CategoryID,
-		product.SKU,
-		product.Size,
-		product.BrandID,
-		product.Quantity,
-		product.Price,
-		reciever.ID).Error; err != nil {
-		return err
+	return true, err
+}
+func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
+	if db.DB == nil {
+		return models.ProductUpdateReciever{}, errors.New("database connection is nil")
 	}
-	return nil
-
+	if err := db.DB.Exec("UPDATE products SET stock = stock + $1 WHERE id = $2", stock, pid).Error; err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+	var newdetails models.ProductUpdateReciever
+	var newQuantity int
+	if err := db.DB.Raw("SELECT stock FROM products WHERE id =?", pid).Scan(&newQuantity).Error; err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+	newdetails.ProductID = pid
+	newdetails.Stock = newQuantity
+	return newdetails, nil
 }

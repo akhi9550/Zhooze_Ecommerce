@@ -56,14 +56,14 @@ func AddAddress(userID int, address models.AddressInfo) error {
 }
 func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
 	var addressInfoResponse models.AddressInfoResponse
-	if err := db.DB.Raw("select * from addresses where user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
+	if err := db.DB.Raw("SELECT * FROM addresses WHERE user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
 		return models.AddressInfoResponse{}, err
 	}
 	return addressInfoResponse, nil
 }
 func UserDetails(userID int) (models.UsersProfileDetails, error) {
 	var userDetails models.UsersProfileDetails
-	err := db.DB.Raw("SELECT users.firstname,users.lastname,users.email,user.phone FROM users WHERE users.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
+	err := db.DB.Raw("SELECT u.firstname,u.lastname,u.email,u.phone FROM users u WHERE users.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
 	if err != nil {
 		return models.UsersProfileDetails{}, err
 	}
@@ -105,5 +105,40 @@ func UpdateLastName(name string, userID int) error {
 		return err
 	}
 	return nil
+
+}
+func ChangePassword(id int, password string) error {
+	err := db.DB.Exec("UPDATE users SET password = $1 WHERE id = $2", password, id).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func GetPassword(id int) (string, error) {
+	var userPassword string
+	err := db.DB.Raw("SELECT password FROM users WHERE id = ?", id).Scan(&userPassword).Error
+	if err != nil {
+		return "", err
+	}
+	return userPassword, nil
+}
+func UpdateQuantityAdd(id, prdt_id int) error {
+
+	query := "UPDATE Carts SET quantity = quantity + 1 WHERE user_id=$1 AND product_id = $2 "
+	result := db.DB.Exec(query, id, prdt_id)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	return nil
+}
+func FindUserByMobileNumber(phone string) bool {
+
+	var count int
+	if err := db.DB.Raw("SELECT count(*) FROM users WHERE phone = ?", phone).Scan(&count).Error; err != nil {
+		return false
+	}
+
+	return count > 0
 
 }

@@ -9,7 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
+//admin
 func AddCategory(c *gin.Context) {
 	var category domain.Category
 	if err := c.ShouldBindJSON(&category); err != nil {

@@ -4,6 +4,7 @@ import (
 	"Zhooze/domain"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
+	"errors"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
@@ -56,12 +57,12 @@ func SeeAllProducts() ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
-func AddProducts(product models.ProductReceiver) (domain.Product, error) {
-	products, err := repository.AddProducts(product)
+func AddProducts(product domain.Product) (domain.Product, error) {
+	productResponse, err := repository.AddProducts(product)
 	if err != nil {
 		return domain.Product{}, err
 	}
-	return products, nil
+	return productResponse, nil
 }
 func DeleteProducts(id string) error {
 	err := repository.DeleteProducts(id)
@@ -70,10 +71,18 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
-func UpdateProduct(id uint, product models.ProductReceiver) error {
-	err := repository.UpdateProduct(id, product)
+func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
+	result, err := repository.CheckProductExist(pid)
 	if err != nil {
-		return err
+		return models.ProductUpdateReciever{}, err
 	}
-	return nil
+	if !result {
+		return models.ProductUpdateReciever{}, errors.New("there is no product as you mentioned")
+	}
+	newcat, err := repository.UpdateProduct(pid, stock)
+	if err != nil {
+		return models.ProductUpdateReciever{}, err
+	}
+	return newcat, err
+
 }

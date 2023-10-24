@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"Zhooze/config"
 	"Zhooze/helper"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
@@ -127,31 +128,70 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 	}
 	return repository.UserDetails(userID)
 }
+func ChangePassword(id int, old string, password string, repassword string) error {
+	userPassword, err := repository.GetPassword(id)
+	if err != nil {
+		return errors.New("internal error")
+	}
+	err = helper.CompareHashAndPassword(userPassword, old)
+	if err != nil {
+		return errors.New("password incorrect")
+	}
+	if password != repassword {
+		return errors.New("password doesn't match")
+	}
+	newpassword, err := helper.PasswordHash(password)
+	if err != nil {
+		return errors.New("error in hashing password")
+	}
+	return repository.ChangePassword(id, string(newpassword))
+}
+func UpdateQuantityAdd(id, prodcut_id int) error {
 
-// func UpdatePassword(ctx context.Context,body models.UpdatePassword)error{
-// var userID int
-// var ok bool
-// if userID,ok=ctx.Value("userID").(int);!ok{
-// return errors.New("errro retrieving user details")
-// }
-// userPassword, err := repository.UserPassword(userID)
+	err := repository.UpdateQuantityAdd(id, prodcut_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+func ForgotPasswordSend(phone string) error {
+	cfg, _ := config.LoadConfig()
+	ok := repository.FindUserByMobileNumber(phone)
+	if !ok {
+		return errors.New("the user does not exist")
+	}
+
+	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
+	_, err := helper.TwilioSendOTP(phone, cfg.SERVICESSID)
+	if err != nil {
+		return errors.New("error ocurred while generating OTP")
+	}
+	return nil
+}
+// func ForgotPasswordVerifyAndChange(models.ForgotVerify) error {
+// 	cfg, _ := config.LoadConfig()
+// 	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
+// 	err := helper.TwilioVerifyOTP(cfg.SERVICESSID, models.OTPCode, models.Phone)
 // 	if err != nil {
-// 		return err
+// 		return errors.New("error while verifying")
 // 	}
-// 	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(body.OldPassword))
+
+// 	id, err := repository(models.Phone)
 // 	if err != nil {
-// 		return errors.New("password incorrect")
+// 		return errors.New("cannot find user from mobile number")
 // 	}
-// 	if body.NewPassword != body.ConfirmNewPassword {
-// 		return errors.New("password not matching")
-// 	}
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(body.NewPassword), 10)
+
+// 	newpassword, err := helper.PasswordHashing(model.NewPassword)
 // 	if err != nil {
-// 		return err
+// 		return errors.New("error in hashing password")
 // 	}
-// 	if err := repository.UpdateUserPassword(string(hashedPassword), userID); err != nil {
-// 		fmt.Println(err)
-// 		return err
+
+// 	// if user is authenticated then change the password i the database
+// 	if err := repository.ChangePassword(id, string(newpassword)); err != nil {
+// 		return errors.New("could not change password")
 // 	}
+
 // 	return nil
 // }

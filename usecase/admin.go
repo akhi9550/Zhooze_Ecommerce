@@ -15,6 +15,7 @@ import (
 func LoginHandler(adminDetails models.AdminLogin) (domain.TokenAdmin, error) {
 	// getting details of the admin based on the email provided
 	adminCompareDetails, err := repository.LoginHandler(adminDetails)
+	fmt.Println("asdfa", adminCompareDetails)
 	if err != nil {
 
 		return domain.TokenAdmin{}, err
@@ -23,6 +24,7 @@ func LoginHandler(adminDetails models.AdminLogin) (domain.TokenAdmin, error) {
 	// compare password from database and that provided from admins
 
 	err = bcrypt.CompareHashAndPassword([]byte(adminCompareDetails.Password), []byte(adminDetails.Password))
+	fmt.Println("😒😒😒😒", err)
 	if err != nil {
 		return domain.TokenAdmin{}, err
 	}

@@ -37,10 +37,10 @@ type AddressInfoResponse struct {
 	ID        uint   `json:"id"`
 	Name      string `json:"name" validate:"required"`
 	HouseName string `json:"house_name" validate:"required"`
-	State     string `json:"state" validate:"required"`
-	Pin       string `json:"pin" validate:"required"`
 	Street    string `json:"street"`
 	City      string `json:"city"`
+	State     string `json:"state" validate:"required"`
+	Pin       string `json:"pin" validate:"required"`
 }
 type AddressInfo struct {
 	Name      string `json:"name" validate:"required"`
@@ -74,4 +74,19 @@ type CheckoutDetails struct {
 	Cart                []Cart
 	Grand_Total         float64
 	Total_Price         float64
+}
+type ChangePassword struct {
+	Oldpassword string `json:"old_password"`
+	Password    string `json:"password"`
+	Repassword  string `json:"re_password"`
+}
+
+type ForgotPasswordSend struct {
+	Phone string `json:"phone"`
+}
+
+type ForgotVerify struct {
+	Phone       string `json:"phone"`
+	Otp         string `json:"otp"`
+	NewPassword string `json:"newpassword"`
 }

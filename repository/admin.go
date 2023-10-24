@@ -35,7 +35,7 @@ func DashBoardProductDetails() (models.DashBoardProduct, error) {
 	if err != nil {
 		return models.DashBoardProduct{}, nil
 	}
-	err = db.DB.Raw("SELECT COUNT(*) FROM products WHERE quantity=0").Scan(&productDetails.OutofStockProduct).Error
+	err = db.DB.Raw("SELECT COUNT(*) FROM products WHERE stock=0").Scan(&productDetails.OutofStockProduct).Error
 	if err != nil {
 		return models.DashBoardProduct{}, nil
 	}

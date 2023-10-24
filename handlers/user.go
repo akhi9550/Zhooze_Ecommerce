@@ -5,6 +5,7 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -119,3 +120,60 @@ func UpdateUserDetails(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Updated User Details", updateDetails, nil)
 	c.JSON(http.StatusOK, success)
 }
+func ChangePassword(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "check path parameter", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	var changePassword models.ChangePassword
+	if err := c.BindJSON(&changePassword); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	if err := usecase.ChangePassword(id, changePassword.Oldpassword, changePassword.Password, changePassword.Repassword); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the password", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "password changed Successfully ", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+}
+func ForgotPasswordSend(c *gin.Context) {
+	var model models.ForgotPasswordSend
+	if err := c.BindJSON(&model); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err := usecase.ForgotPasswordSend(model.Phone)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not send OTP", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "OTP sent successfully", nil, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
+// func ForgotPasswordVerifyAndChange(c *gin.Context) {
+// 	var model models.ForgotVerify
+// 	if err := c.BindJSON(&model); err != nil {
+// 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errorRes)
+// 		return
+// 	}
+
+// 	err := usecase.ForgotPasswordVerifyAndChange(model)
+// 	if err != nil {
+// 		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not verify OTP", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errorRes)
+// 		return
+// 	}
+
+// 	successRes := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
+// 	c.JSON(http.StatusOK, successRes)
+// }

@@ -119,7 +119,7 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 	if userDetails.Firstname != "" {
 		repository.UpdateFirstName(userDetails.Firstname, userID)
 	}
-	if userDetails.Firstname != "" {
+	if userDetails.Lastname != "" {
 		repository.UpdateLastName(userDetails.Lastname, userID)
 	}
 
@@ -128,6 +128,35 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 	}
 	return repository.UserDetails(userID)
 }
+
+// //////////////////////////////////////////////
+func UpdateAddress(addressDetails models.AddressInfo, addressID,userID int) (models.AddressInfoResponse, error) {
+	addressExist := repository.CheckAddressAvailabilityWithAddressID(addressID,userID)
+	if !addressExist {
+		return models.AddressInfoResponse{}, errors.New("address doesn't exist")
+	}
+	if addressDetails.Name != "" {
+		repository.UpdateName(addressDetails.Name, addressID)
+	}
+	if addressDetails.HouseName != "" {
+		repository.UpdateHouseName(addressDetails.HouseName, addressID)
+	}
+	if addressDetails.Street != "" {
+		repository.UpdateStreet(addressDetails.Street, addressID)
+	}
+	if addressDetails.City != "" {
+		repository.UpdateCity(addressDetails.City, addressID)
+	}
+	if addressDetails.State != "" {
+		repository.UpdateState(addressDetails.State, addressID)
+	}
+	if addressDetails.Pin != "" {
+		repository.UpdatePin(addressDetails.Pin, addressID)
+	}
+	return repository.AddressDetails(addressID)
+}
+
+// //////////////////////////////////////////////
 func ChangePassword(id int, old string, password string, repassword string) error {
 	userPassword, err := repository.GetPassword(id)
 	if err != nil {
@@ -156,6 +185,16 @@ func UpdateQuantityAdd(id, prodcut_id int) error {
 	return nil
 
 }
+func UpdateQuantityless(id, prodcut_id int) error {
+
+	err := repository.UpdateQuantityless(id, prodcut_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
 func ForgotPasswordSend(phone string) error {
 	cfg, _ := config.LoadConfig()
 	ok := repository.FindUserByMobileNumber(phone)
@@ -170,6 +209,7 @@ func ForgotPasswordSend(phone string) error {
 	}
 	return nil
 }
+
 // func ForgotPasswordVerifyAndChange(models.ForgotVerify) error {
 // 	cfg, _ := config.LoadConfig()
 // 	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)

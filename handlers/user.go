@@ -120,6 +120,25 @@ func UpdateUserDetails(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Updated User Details", updateDetails, nil)
 	c.JSON(http.StatusOK, success)
 }
+func UpdateAddress(c *gin.Context) {
+	user_id, _ := c.Get("user_id")
+	addressid := c.Param("address_id")
+	addressID, _ := strconv.Atoi(addressid)
+	var address models.AddressInfo
+	if err := c.ShouldBindJSON(&address); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	UpdateAddress, err := usecase.UpdateAddress(address, addressID, user_id.(int))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed update useraddress", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Updated User Address", UpdateAddress, nil)
+	c.JSON(http.StatusOK, success)
+}
 func ChangePassword(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -159,6 +178,7 @@ func ForgotPasswordSend(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
 // func ForgotPasswordVerifyAndChange(c *gin.Context) {
 // 	var model models.ForgotVerify
 // 	if err := c.BindJSON(&model); err != nil {

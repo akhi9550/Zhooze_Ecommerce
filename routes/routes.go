@@ -16,7 +16,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	//usermanagefrom
 	r.GET("/getusers", middleware.AdminAuthMiddleware(), handlers.GetUsers)
 	r.POST("/block", middleware.AdminAuthMiddleware(), handlers.BlockUser)
-	r.POST("/unblock", handlers.UnBlockUser)
+	r.POST("/unblock", middleware.AdminAuthMiddleware(), handlers.UnBlockUser)
 	//Category
 	r.POST("/add-category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
 	r.PUT("/update-category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
@@ -53,17 +53,21 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/add-address", middleware.UserAuthMiddleware(), handlers.AddAddress)
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
 	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
+	r.PATCH("/edit-address/:address_id", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
 
 	//ORDERS
 	r.GET("/orders/:page", middleware.UserAuthMiddleware(), handlers.GetOrderDetails)
 	r.PUT("/cancel-orders/:id", middleware.UserAuthMiddleware(), handlers.CancelOrder)
 	r.GET("/checkout", middleware.UserAuthMiddleware(), handlers.CheckOut)
 	r.GET("/place-order/:order_id/:payment", middleware.UserAuthMiddleware(), handlers.PlaceOrder)
+
 	//CART
 	r.POST("/addtocart/:id", middleware.UserAuthMiddleware(), handlers.AddToCart)
 	r.DELETE("/removefromcart/:id", middleware.UserAuthMiddleware(), handlers.RemoveFromCart)
 	r.POST("/updatequantityadd", middleware.UserAuthMiddleware(), handlers.UpdateQuantityAdd)
+	r.POST("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
 	r.GET("/displaycart", middleware.UserAuthMiddleware(), handlers.DisplayCart)
 	r.DELETE("/emptycart", middleware.UserAuthMiddleware(), handlers.EmptyCart)
+
 	return r
 }

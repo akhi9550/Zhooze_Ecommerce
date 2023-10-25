@@ -20,7 +20,7 @@ func CancelOrders(orderID string, userID int) error {
 		return err
 	}
 	if userTest != userID {
-		return errors.New("the order is not dome by this user")
+		return errors.New("the order is not come by this user")
 	}
 	orderProductDetails, err := repository.GetProductDetailsFromOrders(orderID)
 	if err != nil {
@@ -91,9 +91,8 @@ func ExecutePurchaseCOD(userID int, orderID string) (models.Invoice, error) {
 		return models.Invoice{}, err
 	}
 	if !ok {
-		return models.Invoice{}, errors.New("cart doesnt exist")
+		return models.Invoice{}, errors.New("cart doesn't exist")
 	}
-
 	err = repository.EmptyCart(userID)
 	if err != nil {
 		return models.Invoice{}, err

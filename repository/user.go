@@ -63,7 +63,7 @@ func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
 }
 func UserDetails(userID int) (models.UsersProfileDetails, error) {
 	var userDetails models.UsersProfileDetails
-	err := db.DB.Raw("SELECT u.firstname,u.lastname,u.email,u.phone FROM users u WHERE users.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
+	err := db.DB.Raw("SELECT u.firstname,u.lastname,u.email,u.phone FROM users u WHERE u.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
 	if err != nil {
 		return models.UsersProfileDetails{}, err
 	}
@@ -107,6 +107,64 @@ func UpdateLastName(name string, userID int) error {
 	return nil
 
 }
+func CheckAddressAvailabilityWithAddressID(addressID, userID int) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM addresses WHERE id = ? AND user_id = ?", addressID, userID).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func UpdateName(name string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET name= ? WHERE id = ?", name, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateHouseName(HouseName string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET house_name= ? WHERE id = ?", HouseName, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateStreet(street string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET street= ? WHERE id = ?", street, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateCity(city string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET city= ? WHERE id = ?", city, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateState(state string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET state= ? WHERE id = ?", state, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdatePin(pin string, addressID int) error {
+	err := db.DB.Exec("UPDATE addresses SET pin= ? WHERE id = ?", pin, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func AddressDetails(addressID int) (models.AddressInfoResponse, error) {
+	var addressDetails models.AddressInfoResponse
+	err := db.DB.Raw("SELECT a.id, a.name, a.house_name, a.street, a.city, a.state, a.pin FROM addresses a WHERE a.id = ?", addressID).Row().Scan(&addressDetails.ID, &addressDetails.Name, &addressDetails.HouseName, &addressDetails.Street, &addressDetails.City, &addressDetails.State, &addressDetails.Pin)
+	if err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+	return addressDetails, nil
+}
+
 func ChangePassword(id int, password string) error {
 	err := db.DB.Exec("UPDATE users SET password = $1 WHERE id = $2", password, id).Error
 	if err != nil {
@@ -123,13 +181,17 @@ func GetPassword(id int) (string, error) {
 	return userPassword, nil
 }
 func UpdateQuantityAdd(id, prdt_id int) error {
-
-	query := "UPDATE Carts SET quantity = quantity + 1 WHERE user_id=$1 AND product_id = $2 "
-	result := db.DB.Exec(query, id, prdt_id)
-	if result.Error != nil {
-		return result.Error
+	err := db.DB.Exec("UPDATE Carts SET quantity = quantity + 1 WHERE id=$1 AND product_id = $2 ", id, prdt_id).Error
+	if err != nil {
+		return err
 	}
-
+	return nil
+}
+func UpdateQuantityless(id, prdt_id int) error {
+	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE id=$1 AND product_id = $2 ", id, prdt_id).Error
+	if err != nil {
+		return err
+	}
 	return nil
 }
 func FindUserByMobileNumber(phone string) bool {

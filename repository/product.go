@@ -57,8 +57,8 @@ func GetPriceOfProductFromID(prodcut_id int) (float64, error) {
 	}
 	return productPrice, nil
 }
-func SeeAllProducts() ([]models.ProductBrief, error) {
-	var products []models.ProductBrief
+func SeeAllProducts() ([]domain.Product, error) {
+	var products []domain.Product
 	err := db.DB.Raw("SELECT * FROM products").Scan(&products).Error
 	if err != nil {
 		return nil, err

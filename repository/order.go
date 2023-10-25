@@ -77,7 +77,7 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 	}
 	offset := (page - 1) * 2
 	var orderDatails []models.CombinedOrderDetails
-	err := db.DB.Raw("select orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin from orders inner join users on orders.user_id = users.id inner join addresses on users.id = addresses.user_id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
+	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin FROM orders inner join users on orders.user_id = users.id inner join addresses on users.id = addresses.user_id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
 	if err != nil {
 		return []models.CombinedOrderDetails{}, nil
 	}
@@ -109,7 +109,7 @@ func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails
 	var fullOrderDetails []models.FullOrderDetails
 	for _, ok := range orderDatails {
 		var OrderProductDetails []models.OrderProductDetails
-		db.DB.Raw("select orderitems.product_id,products.name as product_name,orderitems.quantity,orderitems.total_price from orderitems inner join products on orderitems.product_id = products.id where orderitems.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
+		db.DB.Raw("SELECT o.product_id,products.name as product_name,o.quantity,o.total_price FROM order_items o inner join products on o.product_id = products.id where o.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
 		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: ok, OrderProductDetails: OrderProductDetails})
 	}
 	return fullOrderDetails, nil
@@ -133,7 +133,7 @@ func GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
 }
 func GetAllPaymentOption() ([]models.PaymentDetails, error) {
 	var paymentMethods []models.PaymentDetails
-	err := db.DB.Raw("select * from payment_methods").Scan(&paymentMethods).Error
+	err := db.DB.Raw("SELECT * FROM payment_methods").Scan(&paymentMethods).Error
 	if err != nil {
 		return []models.PaymentDetails{}, err
 	}
@@ -144,10 +144,10 @@ func GetAllPaymentOption() ([]models.PaymentDetails, error) {
 func GetAddressFromOrderId(orderId string) (models.AddressInfoResponse, error) {
 	var addressInfoResponse models.AddressInfoResponse
 	var addressId int
-	if err := db.DB.Raw("select address_id from orders where order_id =?", orderId).Scan(&addressId).Error; err != nil {
+	if err := db.DB.Raw("SELECT address_id FROM orders WHERE order_id =?", orderId).Scan(&addressId).Error; err != nil {
 		return models.AddressInfoResponse{}, errors.New("first in orders")
 	}
-	if err := db.DB.Raw("select * from addresses where id=?", addressId).Scan(&addressInfoResponse).Error; err != nil {
+	if err := db.DB.Raw("SELECT * FROM addresses WHERE id=?", addressId).Scan(&addressInfoResponse).Error; err != nil {
 		return models.AddressInfoResponse{}, errors.New("second  in address")
 	}
 	return addressInfoResponse, nil
@@ -155,7 +155,7 @@ func GetAddressFromOrderId(orderId string) (models.AddressInfoResponse, error) {
 func GetOrderDetailOfAproduct(orderId string) (models.OrderDetails, error) {
 	var OrderDetails models.OrderDetails
 
-	if err := db.DB.Raw("select order_id,final_price,shipment_status,payment_status from orders where order_id = ?", orderId).Scan(&OrderDetails).Error; err != nil {
+	if err := db.DB.Raw("SELECT order_id,final_price,shipment_status,payment_status FROM orders WHERE order_id = ?", orderId).Scan(&OrderDetails).Error; err != nil {
 		return models.OrderDetails{}, err
 	}
 	return OrderDetails, nil

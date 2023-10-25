@@ -99,7 +99,7 @@ func CancelOrder(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Cancel Successfull", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
-func CheckOut(c *gin.Context){
+func CheckOut(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	checkoutDetails, err := usecase.Checkout(userID.(int))
 
@@ -117,13 +117,11 @@ func PlaceOrder(c *gin.Context) {
 	userId := userID.(int)
 	orderId := c.Param("order_id")
 	paymentMethod := c.Param("payment")
-	
-	fmt.Println("payment is ", paymentMethod, "order id is is ", orderId)
-	
+	fmt.Println("payment is ", paymentMethod, "order id is ", orderId)
 	if paymentMethod == "cash_on_delivery" {
 		Invoice, err := usecase.ExecutePurchaseCOD(userId, orderId)
 		if err != nil {
-			errorRes := response.ClientResponse(http.StatusInternalServerError, "error in making cod ", nil, err.Error())
+			errorRes := response.ClientResponse(http.StatusInternalServerError, "error in making code ", nil, err.Error())
 			c.JSON(http.StatusInternalServerError, errorRes)
 			return
 		}

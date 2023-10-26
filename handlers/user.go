@@ -157,43 +157,43 @@ func ChangePassword(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	successRes := response.ClientResponse(http.StatusOK, "password changed Successfully ", nil, nil)
-	c.JSON(http.StatusOK, successRes)
+	success := response.ClientResponse(http.StatusOK, "password changed Successfully ", nil, nil)
+	c.JSON(http.StatusOK, success)
 }
 func ForgotPasswordSend(c *gin.Context) {
 	var model models.ForgotPasswordSend
 	if err := c.BindJSON(&model); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
+		errs:= response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 	err := usecase.ForgotPasswordSend(model.Phone)
 	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not send OTP", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
+		errs := response.ClientResponse(http.StatusBadRequest, "Could not send OTP", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "OTP sent successfully", nil, nil)
-	c.JSON(http.StatusOK, successRes)
+	success := response.ClientResponse(http.StatusOK, "OTP sent successfully", nil, nil)
+	c.JSON(http.StatusOK, success)
 
 }
 
-// func ForgotPasswordVerifyAndChange(c *gin.Context) {
-// 	var model models.ForgotVerify
-// 	if err := c.BindJSON(&model); err != nil {
-// 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errorRes)
-// 		return
-// 	}
+func ForgotPasswordVerifyAndChange(c *gin.Context) {
+	var model models.ForgotVerify
+	if err := c.BindJSON(&model); err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 
-// 	err := usecase.ForgotPasswordVerifyAndChange(model)
-// 	if err != nil {
-// 		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not verify OTP", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errorRes)
-// 		return
-// 	}
+	err := usecase.ForgotPasswordVerifyAndChange(model)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Could not verify OTP", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
 
-// 	successRes := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
-// 	c.JSON(http.StatusOK, successRes)
-// }
+	success := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
+	c.JSON(http.StatusOK, success)
+}

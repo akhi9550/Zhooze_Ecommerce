@@ -68,6 +68,14 @@ func CompareHashAndPassword(a string, b string) error {
 	}
 	return nil
 }
+func PasswordHashing(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	if err != nil {
+		return "", errors.New("internal server error")
+	}
+	hash := string(hashedPassword)
+	return hash, nil
+}
 
 // package helper
 

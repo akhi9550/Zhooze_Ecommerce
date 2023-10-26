@@ -204,3 +204,10 @@ func FindUserByMobileNumber(phone string) bool {
 	return count > 0
 
 }
+func FindIdFromPhone(phone string) (int, error) {
+	var id int
+	if err := db.DB.Raw("SELECT id FROM users WHERE phone=?", phone).Scan(&id).Error; err != nil {
+		return id, err
+	}
+	return id, nil
+}

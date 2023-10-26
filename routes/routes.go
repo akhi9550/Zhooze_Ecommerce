@@ -42,7 +42,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.PUT("/changepassword", handlers.ChangePassword)
 	r.GET("/forgot-password", handlers.ForgotPasswordSend)
-	// r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
+	r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
 
 	r.GET("/products", handlers.AllProducts)
 	r.GET("/page/:page", handlers.ShowAllProducts) //arranging page and count

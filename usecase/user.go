@@ -130,8 +130,8 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 }
 
 // //////////////////////////////////////////////
-func UpdateAddress(addressDetails models.AddressInfo, addressID,userID int) (models.AddressInfoResponse, error) {
-	addressExist := repository.CheckAddressAvailabilityWithAddressID(addressID,userID)
+func UpdateAddress(addressDetails models.AddressInfo, addressID, userID int) (models.AddressInfoResponse, error) {
+	addressExist := repository.CheckAddressAvailabilityWithAddressID(addressID, userID)
 	if !addressExist {
 		return models.AddressInfoResponse{}, errors.New("address doesn't exist")
 	}
@@ -201,7 +201,6 @@ func ForgotPasswordSend(phone string) error {
 	if !ok {
 		return errors.New("the user does not exist")
 	}
-
 	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
 	_, err := helper.TwilioSendOTP(phone, cfg.SERVICESSID)
 	if err != nil {
@@ -210,28 +209,28 @@ func ForgotPasswordSend(phone string) error {
 	return nil
 }
 
-// func ForgotPasswordVerifyAndChange(models.ForgotVerify) error {
-// 	cfg, _ := config.LoadConfig()
-// 	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
-// 	err := helper.TwilioVerifyOTP(cfg.SERVICESSID, models.OTPCode, models.Phone)
-// 	if err != nil {
-// 		return errors.New("error while verifying")
-// 	}
+func ForgotPasswordVerifyAndChange(model models.ForgotVerify) error {
+	cfg, _ := config.LoadConfig()
+	helper.TwilioSetup(cfg.ACCOUNTSID, cfg.AUTHTOKEN)
+	err := helper.TwilioVerifyOTP(cfg.SERVICESSID, model.Otp, model.Phone)
+	if err != nil {
+		return errors.New("error while verifying")
+	}
 
-// 	id, err := repository(models.Phone)
-// 	if err != nil {
-// 		return errors.New("cannot find user from mobile number")
-// 	}
+	id, err := repository.FindIdFromPhone(model.Phone)
+	if err != nil {
+		return errors.New("cannot find user from mobile number")
+	}
 
-// 	newpassword, err := helper.PasswordHashing(model.NewPassword)
-// 	if err != nil {
-// 		return errors.New("error in hashing password")
-// 	}
+	newpassword, err := helper.PasswordHashing(model.NewPassword)
+	if err != nil {
+		return errors.New("error in hashing password")
+	}
 
-// 	// if user is authenticated then change the password i the database
-// 	if err := repository.ChangePassword(id, string(newpassword)); err != nil {
-// 		return errors.New("could not change password")
-// 	}
+	// if user is authenticated then change the password i the database
+	if err := repository.ChangePassword(id, string(newpassword)); err != nil {
+		return errors.New("could not change password")
+	}
 
-// 	return nil
-// }
+	return nil
+}

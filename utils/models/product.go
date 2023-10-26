@@ -4,11 +4,10 @@ type ProductBrief struct {
 	ID            uint    `json:"id" gorm:"unique;not null"`
 	Name          string  `json:"name"`
 	Description   string  `json:"description"`
-	CategoryName  string  `json:"category_name"`
 	SKU           string  `json:"sku"`
 	Size          int     `json:"size"`
 	BrandID       uint    `json:"brand_id"`
-	Quantity      int     `json:"quantity"`
+	Stock         int     `json:"stock"`
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
 }

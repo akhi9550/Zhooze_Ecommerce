@@ -112,6 +112,6 @@ func UpdateQuantityless(c *gin.Context) {
 		return
 	}
 
-	success := response.ClientResponse(http.StatusOK, "Successfully added quantity", nil, nil)
+	success := response.ClientResponse(http.StatusOK, "Successfully less quantity", nil, nil)
 	c.JSON(http.StatusOK, success)
 }

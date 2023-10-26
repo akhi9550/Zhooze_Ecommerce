@@ -8,7 +8,7 @@ import (
 func DisplayCart(userID int) ([]models.Cart, error) {
 
 	var count int
-	if err := db.DB.Raw("select count(*) from carts where user_id = ? ", userID).First(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? ", userID).First(&count).Error; err != nil {
 		return []models.Cart{}, err
 	}
 

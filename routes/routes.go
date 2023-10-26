@@ -10,29 +10,34 @@ import (
 
 func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
-	//admin
+	//ADMIN
+
 	r.POST("/adminlogin", handlers.LoginHandler)
 	r.GET("/dashboard", middleware.AdminAuthMiddleware(), handlers.DashBoard)
+
 	//usermanagefrom
 	r.GET("/getusers", middleware.AdminAuthMiddleware(), handlers.GetUsers)
 	r.POST("/block", middleware.AdminAuthMiddleware(), handlers.BlockUser)
 	r.POST("/unblock", middleware.AdminAuthMiddleware(), handlers.UnBlockUser)
+
 	//Category
 	r.POST("/add-category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
 	r.PUT("/update-category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
 	r.DELETE("/delete-category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
+
 	//Product
 	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.AllProducts)
 	r.POST("add-product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
 	r.PATCH("/update-product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
 	r.DELETE("/delete-product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)
+
 	//Order
 	r.GET("/order/:page", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
 	r.GET("/approve-order/:order_id", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order/:order_id", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
 	r.PUT("/refund-order/:order_id", middleware.AdminAuthMiddleware(), handlers.RefundUser)
 
-	//user
+	//USER
 
 	r.POST("/signup", handlers.UserSignup)
 	r.POST("/userlogin", handlers.Userlogin)
@@ -40,10 +45,12 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/send-otp", handlers.SendOtp)
 	r.POST("verify-otp", handlers.VerifyOtp)
 
-	r.PUT("/changepassword", handlers.ChangePassword)
+	//security
 	r.GET("/forgot-password", handlers.ForgotPasswordSend)
 	r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
+	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
+	//products
 	r.GET("/products", handlers.AllProducts)
 	r.GET("/page/:page", handlers.ShowAllProducts) //arranging page and count
 	r.POST("/filter", handlers.FilterCategory)

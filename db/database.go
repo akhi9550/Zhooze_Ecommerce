@@ -22,7 +22,6 @@ func ConnectDatabase(confg config.Config) (*gorm.DB, error) {
 	db.AutoMigrate(&domain.User{})
 	db.AutoMigrate(&domain.Product{})
 	db.AutoMigrate(&domain.Category{})
-	db.AutoMigrate(&domain.LineItems{})
 	db.AutoMigrate(&domain.Address{})
 	db.AutoMigrate(&domain.Cart{})
 	db.AutoMigrate(&domain.OrderItem{})

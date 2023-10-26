@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"Zhooze/helper"
+	"Zhooze/utils/response"
 	"fmt"
 	"net/http"
 
@@ -19,7 +20,6 @@ func UserAuthMiddleware() gin.HandlerFunc {
 			var err error
 			tokenString, err = c.Cookie("Authorization")
 			if err != nil {
-
 				c.AbortWithStatus(http.StatusUnauthorized)
 				return
 			}
@@ -27,6 +27,8 @@ func UserAuthMiddleware() gin.HandlerFunc {
 		userID, userEmail, err := helper.ExtractUserIDFromToken(tokenString)
 		if err != nil {
 			fmt.Println("error is ", err)
+			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token ", nil, err.Error())
+			c.JSON(http.StatusUnauthorized, response)
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}
@@ -38,49 +40,3 @@ func UserAuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
-
-// func UserAuthMiddleware(c *gin.Context) {
-// 	cfg, _ := config.LoadConfig()
-// 	tokenString := c.GetHeader("Authorization")
-// 	if tokenString == "" {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Missing authorization token"})
-// 		c.Abort()
-// 		return
-// 	}
-// 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-
-// 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-
-// 		return []byte(cfg.KEY), nil
-// 	})
-
-// 	if err != nil || !token.Valid {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization token"})
-// 		c.Abort()
-// 		return
-// 	}
-
-// 	claims, ok := token.Claims.(jwt.MapClaims)
-// 	if !ok || !token.Valid {
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid authorization token"})
-// 		c.Abort()
-// 		return
-// 	}
-
-// 	role, ok := claims["role"].(string)
-// 	if !ok || role != "client" {
-// 		c.JSON(http.StatusForbidden, gin.H{"error": "Unauthorized access"})
-// 		c.Abort()
-// 		return
-// 	}
-// 	userID, err := helper.ExtractUserIDFromToken(tokenString)
-// 	if err != nil {
-// 		c.JSON(http.StatusForbidden, gin.H{"error": "some internal problem"})
-// 		c.Abort()
-// 		return
-// 	}
-// 	c.Set("role", role)
-// 	c.Set("user_id", userID)
-
-// 	c.Next()
-// }

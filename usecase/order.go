@@ -44,7 +44,7 @@ func CancelOrders(orderID string, userID int) error {
 	if err != nil {
 		return err
 	}
-	err = repository.UpdateQuantityOfProduct(orderProductDetails)
+	err = repository.UpdateStockOfProduct(orderProductDetails)
 	if err != nil {
 		return err
 	}

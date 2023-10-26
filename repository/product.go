@@ -47,6 +47,7 @@ func GetQuantityFromProductID(id int) (int, error) {
 	if err != nil {
 		return 0.0, err
 	}
+
 	return quantity, nil
 }
 func GetPriceOfProductFromID(prodcut_id int) (float64, error) {

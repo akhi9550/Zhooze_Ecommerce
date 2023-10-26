@@ -34,7 +34,7 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 		fmt.Println("Error is", err)
 		return "", err
 	}
-	
+
 	return tokenString, nil
 }
 

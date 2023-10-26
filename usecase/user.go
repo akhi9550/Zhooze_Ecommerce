@@ -97,10 +97,10 @@ func AddAddress(userID int, address models.AddressInfo) error {
 	}
 	return nil
 }
-func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
+func GetAllAddress(userId int) ([]models.AddressInfoResponse, error) {
 	addressInfo, err := repository.GetAllAddress(userId)
 	if err != nil {
-		return models.AddressInfoResponse{}, err
+		return []models.AddressInfoResponse{}, err
 	}
 	return addressInfo, nil
 
@@ -129,7 +129,6 @@ func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (mode
 	return repository.UserDetails(userID)
 }
 
-// //////////////////////////////////////////////
 func UpdateAddress(addressDetails models.AddressInfo, addressID, userID int) (models.AddressInfoResponse, error) {
 	addressExist := repository.CheckAddressAvailabilityWithAddressID(addressID, userID)
 	if !addressExist {
@@ -156,7 +155,7 @@ func UpdateAddress(addressDetails models.AddressInfo, addressID, userID int) (mo
 	return repository.AddressDetails(addressID)
 }
 
-// //////////////////////////////////////////////
+
 func ChangePassword(id int, old string, password string, repassword string) error {
 	userPassword, err := repository.GetPassword(id)
 	if err != nil {

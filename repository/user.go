@@ -54,10 +54,10 @@ func AddAddress(userID int, address models.AddressInfo) error {
 	}
 	return nil
 }
-func GetAllAddress(userId int) (models.AddressInfoResponse, error) {
-	var addressInfoResponse models.AddressInfoResponse
+func GetAllAddress(userId int) ([]models.AddressInfoResponse, error) {
+	var addressInfoResponse []models.AddressInfoResponse
 	if err := db.DB.Raw("SELECT * FROM addresses WHERE user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
-		return models.AddressInfoResponse{}, err
+		return []models.AddressInfoResponse{}, err
 	}
 	return addressInfoResponse, nil
 }

@@ -147,7 +147,7 @@ func CancelOrderFromAdmin(order_id string) error {
 		return err
 	}
 	// update the quantity to products since the order is cancelled
-	err = repository.UpdateQuantityOfProduct(orderProduct)
+	err = repository.UpdateStockOfProduct(orderProduct)
 	if err != nil {
 		return err
 	}

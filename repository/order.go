@@ -25,7 +25,7 @@ func GetShipmentStatus(orderId string) (string, error) {
 }
 
 func ApproveOrder(order_id string) error {
-	err := db.DB.Exec("UPDATE orders SET shipment_status = 'order placed' , approval = true WHERE order_id = ?", order_id).Error
+	err := db.DB.Exec("UPDATE orders SET shipment_status = 'order placed' , approval = 'true' WHERE order_id = ?", order_id).Error
 	if err != nil {
 		return err
 	}
@@ -58,14 +58,14 @@ func GetProductDetailsFromOrders(order_id string) ([]models.OrderProducts, error
 	}
 	return OrderProductDetails, nil
 }
-func UpdateQuantityOfProduct(orderProducts []models.OrderProducts) error {
+func UpdateStockOfProduct(orderProducts []models.OrderProducts) error {
 	for _, ok := range orderProducts {
 		var quantity int
-		if err := db.DB.Raw("SELECT quantity FROM products WHERE id = ?", ok.ProductId).Scan(&quantity).Error; err != nil {
+		if err := db.DB.Raw("SELECT stock FROM products WHERE id = ?", ok.ProductId).Scan(&quantity).Error; err != nil {
 			return err
 		}
 		ok.Quantity += quantity
-		if err := db.DB.Exec("UPDATE products SET quantity  = ? WHERE id = ?", ok.Quantity, ok.ProductId).Error; err != nil {
+		if err := db.DB.Exec("UPDATE products SET stock  = ? WHERE id = ?", ok.Quantity, ok.ProductId).Error; err != nil {
 			return err
 		}
 	}

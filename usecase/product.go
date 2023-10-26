@@ -14,7 +14,7 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	}
 	for i := range products {
 		p := &products[i]
-		if p.Quantity == 0 {
+		if p.Stock == 0 {
 			p.ProductStatus = "out of stock"
 		} else {
 			p.ProductStatus = "in stock"
@@ -33,18 +33,18 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 		if err != nil {
 			return []models.ProductBrief{}, err
 		}
-		for _, product := range product {
-			quantity, err := repository.GetQuantityFromProductID(int(product.ID))
+		for _, products := range product {
+			stock, err := repository.GetQuantityFromProductID(int(products.ID))
 			if err != nil {
 				return []models.ProductBrief{}, err
 			}
-			if quantity == 0 {
-				product.ProductStatus = "out of stock"
+			if stock == 0 {
+				products.ProductStatus = "out of stock"
 			} else {
-				product.ProductStatus = "in stock"
+				products.ProductStatus = "in stock"
 			}
-			if product.ID != 0 {
-				ProductFromCategory = append(ProductFromCategory, product)
+			if products.ID != 0 {
+				ProductFromCategory = append(ProductFromCategory, products)
 			}
 		}
 	}

@@ -11,6 +11,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+// @Summary		User Signup
+// @Description	user can signup by giving their details
+// @Tags			User
+// @Accept			json
+// @Produce		    json
+// @Param			signup  body  models.UserSignUp  true	"signup"
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/signup    [POST]
 func UserSignup(c *gin.Context) {
 	var SignupDetail models.UserSignUp
 	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
@@ -33,6 +42,16 @@ func UserSignup(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "User successfully signed up", user, nil)
 	c.JSON(http.StatusCreated, success)
 }
+
+// @Summary		User Login
+// @Description	user can log in by giving their details
+// @Tags			User
+// @Accept			json
+// @Produce		    json
+// @Param			login  body  models.LoginDetail  true	"login"
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/userlogin [POST]
 func Userlogin(c *gin.Context) {
 	var UserLoginDetail models.LoginDetail
 	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
@@ -54,6 +73,17 @@ func Userlogin(c *gin.Context) {
 	success := response.ClientResponse(http.StatusCreated, "User successfully logged in with password", user, nil)
 	c.JSON(http.StatusCreated, success)
 }
+
+// @Summary		Add Address
+// @Description	user can add their addresses
+// @Tags			User Profile
+// @Accept			json
+// @Produce		    json
+// @Param			address  body  models.AddressInfo  true	"address"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/add-address [POST]
 func AddAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	var address models.AddressInfo
@@ -78,6 +108,16 @@ func AddAddress(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 
 }
+
+// @Summary		Get Addresses
+// @Description	user can get all their addresses
+// @Tags			User Profile
+// @Accept          json
+// @Produce         json
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router		/address       [GET]
 func GetAllAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 
@@ -92,6 +132,16 @@ func GetAllAddress(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary User Details
+// @Description User Details from User Profile
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user-details   [GET]
 func UserDetails(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	UserDetails, err := usecase.UserDetails(userID.(int))
@@ -103,6 +153,17 @@ func UserDetails(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "User Details", UserDetails, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary Update User Details
+// @Description Update User Details by sending in user id
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param address body models.UsersProfileDetails true "User Details Input"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /edit-user-profile [PATCH]
 func UpdateUserDetails(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	var user models.UsersProfileDetails
@@ -120,9 +181,21 @@ func UpdateUserDetails(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Updated User Details", updateDetails, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary Update User Address
+// @Description Update User address by sending in address id
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param id query string true "address id"
+// @Param address body models.AddressInfo true "User Address Input"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /edit-address [PATCH]
 func UpdateAddress(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
-	addressid := c.Param("address_id")
+	addressid := c.Query("address_id")
 	addressID, _ := strconv.Atoi(addressid)
 	var address models.AddressInfo
 	if err := c.ShouldBindJSON(&address); err != nil {
@@ -139,6 +212,17 @@ func UpdateAddress(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Updated User Address", UpdateAddress, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary Change User Password
+// @Description Change User Password
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param body body models.ChangePassword true "User Password Change"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /changepassword     [PUT]
 func ChangePassword(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -160,10 +244,21 @@ func ChangePassword(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "password changed Successfully ", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary		Forgot password Send OTP
+// @Description	user can change their password if user forgot the password and login
+// @Tags			User
+// @Accept			json
+// @Produce		    json
+// @Param			model  body  models.ForgotPasswordSend  true	"forgot-send"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/forgot-password   [GET]
 func ForgotPasswordSend(c *gin.Context) {
 	var model models.ForgotPasswordSend
 	if err := c.BindJSON(&model); err != nil {
-		errs:= response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
@@ -179,6 +274,16 @@ func ForgotPasswordSend(c *gin.Context) {
 
 }
 
+// @Summary		Forgot password Verfy and Change
+// @Description	user can change their password if user forgot the password and login
+// @Tags			User
+// @Accept			json
+// @Produce		    json
+// @Param			model  body  models.ForgotVerify  true	"forgot-verify"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/forgot-password   [POST]
 func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	var model models.ForgotVerify
 	if err := c.BindJSON(&model); err != nil {

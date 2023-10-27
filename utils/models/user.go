@@ -84,9 +84,8 @@ type ChangePassword struct {
 type ForgotPasswordSend struct {
 	Phone string `json:"phone"`
 }
-
 type ForgotVerify struct {
-	Phone       string `json:"phone"`
-	Otp         string `json:"otp"`
-	NewPassword string `json:"newpassword"`
+	Phone       string `json:"phone" binding:"required" validate:"required"`
+	Otp         string `json:"otp" binding:"required"`
+	NewPassword string `json:"newpassword" binding:"required" validate:"min=6,max=20"`
 }

@@ -22,6 +22,21 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	}
 	return products, nil
 }
+func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
+	products, err := repository.ShowAllProductsFromAdmin(page, count)
+	if err != nil {
+		return []models.ProductBrief{}, err
+	}
+	for i := range products {
+		p := &products[i]
+		if p.Stock == 0 {
+			p.ProductStatus = "out of stock"
+		} else {
+			p.ProductStatus = "in stock"
+		}
+	}
+	return products, nil
+}
 func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	err := repository.CheckValidateCategory(data)
 	if err != nil {

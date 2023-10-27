@@ -9,7 +9,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
 //admin
+// @Summary		Add Category
+// @Description	Admin can add new categories for products
+// @Tags			Admin Category Management
+// @Accept			json
+// @Produce		    json
+// @Param			category	body	domain.Category	true	"category"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/add-category [POST]
 func AddCategory(c *gin.Context) {
 	var category domain.Category
 	if err := c.ShouldBindJSON(&category); err != nil {
@@ -27,6 +38,17 @@ func AddCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 
 }
+
+// @Summary		Delete Category
+// @Description	Admin can delete a category
+// @Tags			Admin Category Management
+// @Accept			json
+// @Produce		    json
+// @Param			id	query	string	true	"id"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/delete-category     [DELETE]
 func DeleteCategory(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.DeleteCategory(id)
@@ -39,6 +61,17 @@ func DeleteCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 
 }
+
+// @Summary		Update Category
+// @Description	Admin can update name of a category into new name
+// @Tags			Admin Category Management
+// @Accept			json
+// @Produce		    json
+// @Param			set_new_name	body	models.SetNewName	true	"set new name"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/update-category     [PUT]
 func UpdateCategory(c *gin.Context) {
 	var categoryUpdate models.SetNewName
 	if err := c.ShouldBindJSON(&categoryUpdate); err != nil {

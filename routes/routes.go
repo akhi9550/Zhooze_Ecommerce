@@ -5,12 +5,15 @@ import (
 	"Zhooze/middleware"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 )
 
 func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//ADMIN
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	r.POST("/adminlogin", handlers.LoginHandler)
 	r.GET("/dashboard", middleware.AdminAuthMiddleware(), handlers.DashBoard)
@@ -26,18 +29,18 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.DELETE("/delete-category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
 
 	//Product
-	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.AllProducts)
+	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
 	r.POST("add-product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
 	r.PATCH("/update-product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
 	r.DELETE("/delete-product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)
 
 	//Order
-	r.GET("/order/:page", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
-	r.GET("/approve-order/:order_id", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
-	r.GET("/cancel-order/:order_id", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
-	r.PUT("/refund-order/:order_id", middleware.AdminAuthMiddleware(), handlers.RefundUser)
+	r.GET("/order", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
+	r.GET("/approve-order", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
+	r.GET("/cancel-order", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
+	r.PUT("/refund-order", middleware.AdminAuthMiddleware(), handlers.RefundUser)
 
-	//USER
+	//USER//
 
 	r.POST("/signup", handlers.UserSignup)
 	r.POST("/userlogin", handlers.Userlogin)
@@ -52,29 +55,29 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//products
 	r.GET("/products", handlers.AllProducts)
-	r.GET("/page/:page", handlers.ShowAllProducts) //arranging page and count
+	r.GET("/page", handlers.ShowAllProducts) //arranging page and count
 	r.POST("/filter", handlers.FilterCategory)
 
-	//address
+	//profile
 	r.GET("/address", middleware.UserAuthMiddleware(), handlers.GetAllAddress)
 	r.POST("/add-address", middleware.UserAuthMiddleware(), handlers.AddAddress)
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
 	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
-	r.PATCH("/edit-address/:address_id", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
+	r.PATCH("/edit-address", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
 
 	//ORDERS
-	r.GET("/orders/:page", middleware.UserAuthMiddleware(), handlers.GetOrderDetails)
-	r.PUT("/cancel-orders/:id", middleware.UserAuthMiddleware(), handlers.CancelOrder)
+	r.GET("/orders", middleware.UserAuthMiddleware(), handlers.GetOrderDetails)
+	r.PUT("/cancel-orders", middleware.UserAuthMiddleware(), handlers.CancelOrder)
 	r.GET("/checkout", middleware.UserAuthMiddleware(), handlers.CheckOut)
-	r.GET("/place-order/:order_id/:payment", middleware.UserAuthMiddleware(), handlers.PlaceOrder)
+	r.GET("/place-order", middleware.UserAuthMiddleware(), handlers.PlaceOrder)
 
 	//CART
-	r.POST("/addtocart/:id", middleware.UserAuthMiddleware(), handlers.AddToCart)
-	r.DELETE("/removefromcart/:id", middleware.UserAuthMiddleware(), handlers.RemoveFromCart)
-	r.POST("/updatequantityadd", middleware.UserAuthMiddleware(), handlers.UpdateQuantityAdd)
-	r.POST("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
+	r.POST("/addtocart", middleware.UserAuthMiddleware(), handlers.AddToCart)
+	r.DELETE("/removefromcart", middleware.UserAuthMiddleware(), handlers.RemoveFromCart)
 	r.GET("/displaycart", middleware.UserAuthMiddleware(), handlers.DisplayCart)
 	r.DELETE("/emptycart", middleware.UserAuthMiddleware(), handlers.EmptyCart)
-
+	///////
+	r.PUT("/updatequantityadd", middleware.UserAuthMiddleware(), handlers.UpdateQuantityAdd)
+	r.PUT("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
 	return r
 }

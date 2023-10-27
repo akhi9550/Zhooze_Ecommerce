@@ -9,8 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// @Summary		Add To Cart
+// @Description	Add products to carts  for the purchase
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Param			id	query		string	true	"product-id"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/addtocart  [post]
 func AddToCart(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
 	product_id, err := strconv.Atoi(id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadGateway, "Product id is given in the wrong format", nil, err.Error())
@@ -27,8 +37,19 @@ func AddToCart(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Added porduct Successfully to the cart", cartResponse, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary		Remove From Cart
+// @Description	Remove products to carts  for the purchase
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Param			id	query		string	true	"product-id"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/removefromcart    [DELETE]
 func RemoveFromCart(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Query("id")
 	product_id, err := strconv.Atoi(id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "product not in right format", nil, err.Error())
@@ -45,6 +66,16 @@ func RemoveFromCart(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "product removed successfully", updatedCart, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary		Display Cart
+// @Description	Display products to carts
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/displaycart  [GET]
 func DisplayCart(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	cart, err := usecase.DisplayCart(userID.(int))
@@ -56,6 +87,16 @@ func DisplayCart(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Cart items displayed successfully", cart, nil)
 	c.JSON(http.StatusOK, success)
 }
+
+// @Summary		Empty Cart
+// @Description	Empty products to carts  for the purchase
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/emptycart   [DELETE]
 func EmptyCart(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	cart, err := usecase.EmptyCart(userID.(int))
@@ -68,6 +109,18 @@ func EmptyCart(c *gin.Context) {
 	c.JSON(http.StatusOK, successRes)
 
 }
+
+// @Summary		Add quantity in cart by one
+// @Description	user can add 1 quantity of product to their cart
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Param			id	query	string	true	"id"
+// @Param			product	query	string	true	"product_id"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/updatequantityadd   [PUT]
 func UpdateQuantityAdd(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -92,6 +145,17 @@ func UpdateQuantityAdd(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+// @Summary		Subtract quantity in cart by one
+// @Description	user can subtract 1 quantity of product from their cart
+// @Tags			User Cart Management
+// @Accept			json
+// @Produce		    json
+// @Param			id	query	string	true	"id"
+// @Param			product	query	string	true	"product_id"
+// @Security		Bearer
+// @Success		200	{object}	response.Response{}
+// @Failure		500	{object}	response.Response{}
+// @Router			/updatequantityless  [PUT]
 func UpdateQuantityless(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {

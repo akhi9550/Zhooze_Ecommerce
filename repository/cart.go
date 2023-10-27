@@ -102,7 +102,6 @@ func TotalPriceForProductInCart(userID int, productID int) (float64, error) {
 	if err := db.DB.Raw("select sum(total_price) as total_price from carts where user_id = ? and product_id = ?", userID, productID).Scan(&totalPrice).Error; err != nil {
 		return 0.0, err
 	}
-
 	return totalPrice, nil
 }
 func UpdateCart(quantity int, price float64, userID int, product_id int) error {

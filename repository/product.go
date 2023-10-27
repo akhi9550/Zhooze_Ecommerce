@@ -20,6 +20,18 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	}
 	return productBrief, nil
 }
+func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * count
+	var productBrief []models.ProductBrief
+	err := db.DB.Raw(`SELECT * FROM products limit ? offset ?`, count, offset).Scan(&productBrief).Error
+	if err != nil {
+		return nil, err
+	}
+	return productBrief, nil
+}
 func CheckValidateCategory(data map[string]int) error {
 	for _, id := range data {
 		var count int

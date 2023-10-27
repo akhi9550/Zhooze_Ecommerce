@@ -7,8 +7,21 @@ import (
 	"fmt"
 	"log"
 
+	_ "Zhooze/cmd/docs"
+
 	"github.com/gin-gonic/gin"
 )
+
+// @title Go + Gin E-Commerce API
+// @version 1.0.0
+// @description Zhooze is an E-commerce platform to purchase and sell shoes
+// @contact.name API Support
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @host localhost:8000
+// @BasePath /
+// @query.collection.format multi
 
 func main() {
 	cfig, err := config.LoadConfig()

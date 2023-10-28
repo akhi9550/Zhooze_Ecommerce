@@ -34,7 +34,7 @@ type FullOrderDetails struct {
 }
 type OrderProducts struct {
 	ProductId string `json:"product_id"`
-	Quantity  int    `json:"quantity"`
+	Stock     int    `json:"stock"`
 }
 
 type Invoice struct {

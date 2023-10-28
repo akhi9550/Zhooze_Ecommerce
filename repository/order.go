@@ -64,8 +64,8 @@ func UpdateStockOfProduct(orderProducts []models.OrderProducts) error {
 		if err := db.DB.Raw("SELECT stock FROM products WHERE id = ?", ok.ProductId).Scan(&quantity).Error; err != nil {
 			return err
 		}
-		ok.Quantity += quantity
-		if err := db.DB.Exec("UPDATE products SET stock  = ? WHERE id = ?", ok.Quantity, ok.ProductId).Error; err != nil {
+		ok.Stock += quantity
+		if err := db.DB.Exec("UPDATE products SET stock  = ? WHERE id = ?", ok.Stock, ok.ProductId).Error; err != nil {
 			return err
 		}
 	}
@@ -159,4 +159,42 @@ func GetOrderDetailOfAproduct(orderId string) (models.OrderDetails, error) {
 		return models.OrderDetails{}, err
 	}
 	return OrderDetails, nil
+}
+func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, error) {
+	var orderDetails models.CombinedOrderDetails
+	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.state,addresses.pin,addresses.street,addresses.city from orders inner join users on orders.user_id = users.id inner join addresses on users.id = addresses.user_id where order_id = ?", orderID).Scan(&orderDetails).Error
+	if err != nil {
+		return models.CombinedOrderDetails{}, err
+	}
+	return orderDetails, nil
+}
+func AddRazorPayDetails(orderID string, razorPayOrderID string) error {
+	err := db.DB.Exec("INSERT INTO razer_pays (order_id,razor_id) VALUES(?,?)", orderID, razorPayOrderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func CheckPaymentStatus(orderID string) (string, error) {
+	var paymentStatus string
+	err := db.DB.Raw("SELECT payment_status FROM orders WHERE order_id = ?", orderID).Scan(&paymentStatus).Error
+	if err != nil {
+		return "", err
+	}
+	return paymentStatus, nil
+}
+func UpdatePaymentDetails(orderID string, paymentID string) error {
+	err := db.DB.Exec("UPDATE razer_pays set payment_id = ? WHERE order_id= ?", paymentID, orderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateShipmentAndPaymentByOrderID(shipmentStatus string, paymentStatus string, orderID string) error {
+	err := db.DB.Exec("UPDATE orders SET payment_status = ?,shipment_status = ?, WHERE order_id = ?", paymentStatus, shipmentStatus, orderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

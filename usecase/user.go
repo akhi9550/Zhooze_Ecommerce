@@ -155,7 +155,6 @@ func UpdateAddress(addressDetails models.AddressInfo, addressID, userID int) (mo
 	return repository.AddressDetails(addressID)
 }
 
-
 func ChangePassword(id int, old string, password string, repassword string) error {
 	userPassword, err := repository.GetPassword(id)
 	if err != nil {

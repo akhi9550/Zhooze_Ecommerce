@@ -12,55 +12,59 @@ import (
 
 func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
-	//ADMIN
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	//***********************************ADMIN***********************************//
 
 	r.POST("/adminlogin", handlers.LoginHandler)
 	r.GET("/dashboard", middleware.AdminAuthMiddleware(), handlers.DashBoard)
+	r.GET("/sales-report/:period", middleware.AdminAuthMiddleware(), handlers.FilteredSalesReport)
 
-	//usermanagefrom
+	//USERMANAGEMENT
 	r.GET("/getusers", middleware.AdminAuthMiddleware(), handlers.GetUsers)
 	r.POST("/block", middleware.AdminAuthMiddleware(), handlers.BlockUser)
 	r.POST("/unblock", middleware.AdminAuthMiddleware(), handlers.UnBlockUser)
 
-	//Category
+	//CATEGORY
 	r.POST("/add-category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
 	r.PUT("/update-category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
 	r.DELETE("/delete-category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
 
-	//Product
+	//PRODUCT
 	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
 	r.POST("add-product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
 	r.PATCH("/update-product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
 	r.DELETE("/delete-product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)
 
-	//Order
+	//ORDER
 	r.GET("/order", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
 	r.GET("/approve-order", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
 	r.PUT("/refund-order", middleware.AdminAuthMiddleware(), handlers.RefundUser)
-	//IMAGE CROPPING
-	r.POST("/image-crop",middleware.AdminAuthMiddleware(),handlers.CropImage)
 
-	//USER//
+	//IMAGE CROPPING
+	r.POST("/image-crop", middleware.AdminAuthMiddleware(), handlers.CropImage)
+
+	//***********************************USER***********************************//
 
 	r.POST("/signup", handlers.UserSignup)
 	r.POST("/userlogin", handlers.Userlogin)
 
+	//OTP
 	r.POST("/send-otp", handlers.SendOtp)
 	r.POST("verify-otp", handlers.VerifyOtp)
 
-	//security
+	//SECURITY
 	r.GET("/forgot-password", handlers.ForgotPasswordSend)
 	r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
 	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
-	//products
+	//PRODUCT
 	r.GET("/products", handlers.AllProducts)
 	r.GET("/page", handlers.ShowAllProducts) //arranging page and count
 	r.POST("/filter", handlers.FilterCategory)
 
-	//profile
+	//PROFILE
 	r.GET("/address", middleware.UserAuthMiddleware(), handlers.GetAllAddress)
 	r.POST("/add-address", middleware.UserAuthMiddleware(), handlers.AddAddress)
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
@@ -83,7 +87,13 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.PUT("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
 
 	//PAYMENT
-	r.GET("/razorpay",handlers.MakePaymentRazorPay)
-	r.GET("/update_status",handlers.VerifyPayment)
+	r.GET("/razorpay", handlers.MakePaymentRazorPay)
+	r.GET("/update_status", handlers.VerifyPayment)
+
+	//WISHLIST
+	r.GET("/wishlist", middleware.UserAuthMiddleware(), handlers.GetWishList)
+	r.POST("/wishlist-add", middleware.UserAuthMiddleware(), handlers.AddToWishlist)
+	r.DELETE("/wishlist-remove", middleware.UserAuthMiddleware(), handlers.RemoveFromWishlist)
+
 	return r
 }

@@ -137,3 +137,12 @@ func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	newdetails.Stock = newQuantity
 	return newdetails, nil
 }
+func DoesProductExist(productID int) (bool, error) {
+	var count int
+	err := db.DB.Raw("select count(*) from products where id = ?", productID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}

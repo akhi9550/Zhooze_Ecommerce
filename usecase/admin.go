@@ -156,3 +156,12 @@ func RefundUser(orderID string) error {
 	}
 	return errors.New("cannot refund the order")
 }
+func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
+	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
+	fmt.Println("❤️", timePeriod)
+	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
+	if err != nil {
+		return models.SalesReport{}, err
+	}
+	return saleReport, nil
+}

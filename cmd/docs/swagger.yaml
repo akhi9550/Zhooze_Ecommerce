@@ -770,6 +770,33 @@ paths:
       summary: Get Users
       tags:
       - Admin User Management
+  /image-crop:
+    post:
+      consumes:
+      - application/json
+      description: Croping Image
+      parameters:
+      - description: image-id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Croping Added Images
+      tags:
+      - Image
   /order:
     get:
       consumes:
@@ -994,6 +1021,33 @@ paths:
       summary: Remove From Cart
       tags:
       - User Cart Management
+  /sales-report/{period}:
+    get:
+      consumes:
+      - application/json
+      description: Get Filtered sales report by week, month and year
+      parameters:
+      - description: sales report
+        in: path
+        name: period
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Filtered Sales Report
+      tags:
+      - Admin Dash Board
   /send-otp:
     post:
       consumes:
@@ -1266,6 +1320,81 @@ paths:
       summary: Verify OTP
       tags:
       - User OTP Login
+  /wishlist:
+    get:
+      consumes:
+      - application/json
+      description: Display wish List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Display Wishlist
+      tags:
+      - WishList Management
+  /wishlist-add:
+    post:
+      consumes:
+      - application/json
+      description: Add To wish List
+      parameters:
+      - description: product id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add to Wishlist
+      tags:
+      - WishList Management
+  /wishlist-remove:
+    delete:
+      consumes:
+      - application/json
+      description: Delete From wish List
+      parameters:
+      - description: product id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete From Wishlist
+      tags:
+      - WishList Management
 securityDefinitions:
   Bearer:
     in: header

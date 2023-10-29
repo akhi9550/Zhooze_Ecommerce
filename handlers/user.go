@@ -302,3 +302,4 @@ func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
+

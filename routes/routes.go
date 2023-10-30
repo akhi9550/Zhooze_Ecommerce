@@ -18,7 +18,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.POST("/adminlogin", handlers.LoginHandler)
 	r.GET("/dashboard", middleware.AdminAuthMiddleware(), handlers.DashBoard)
-	r.GET("/sales-report/:period", middleware.AdminAuthMiddleware(), handlers.FilteredSalesReport)
+	r.GET("/sales-report", middleware.AdminAuthMiddleware(), handlers.FilteredSalesReport)
 
 	//USERMANAGEMENT
 	r.GET("/getusers", middleware.AdminAuthMiddleware(), handlers.GetUsers)
@@ -57,7 +57,6 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	//SECURITY
 	r.GET("/forgot-password", handlers.ForgotPasswordSend)
 	r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
-	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
 	//PRODUCT
 	r.GET("/products", handlers.AllProducts)
@@ -70,6 +69,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
 	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
 	r.PATCH("/edit-address", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
+	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
 	//ORDERS
 	r.GET("/orders", middleware.UserAuthMiddleware(), handlers.GetOrderDetails)
@@ -82,7 +82,6 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.DELETE("/removefromcart", middleware.UserAuthMiddleware(), handlers.RemoveFromCart)
 	r.GET("/displaycart", middleware.UserAuthMiddleware(), handlers.DisplayCart)
 	r.DELETE("/emptycart", middleware.UserAuthMiddleware(), handlers.EmptyCart)
-	///////
 	r.PUT("/updatequantityadd", middleware.UserAuthMiddleware(), handlers.UpdateQuantityAdd)
 	r.PUT("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
 

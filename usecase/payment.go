@@ -15,7 +15,7 @@ func MakePaymentRazorPay(orderID string, userID int) (models.CombinedOrderDetail
 	if err != nil {
 		return models.CombinedOrderDetails{}, "", err
 	}
-	client := razorpay.NewClient(cfg.KEY_ID_fOR_PAY, cfg.SECRET_KEY_FOR_PAY)
+	client := razorpay.NewClient(cfg.KEY_ID_FOR_PAY, cfg.SECRET_KEY_FOR_PAY)
 
 	data := map[string]interface{}{
 		"amount":   int(combainedOrderDetails.FinalPrice) * 100,

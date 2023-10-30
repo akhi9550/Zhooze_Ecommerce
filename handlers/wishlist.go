@@ -42,7 +42,7 @@ func GetWishList(c *gin.Context) {
 // @Router /wishlist-add [POST]
 func AddToWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
-	product_id := c.Query("product_id")
+	product_id := c.Query("id")
 	productID, err := strconv.Atoi(product_id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "product id is in wrong format", nil, err.Error())

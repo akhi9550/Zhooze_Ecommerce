@@ -3,6 +3,7 @@ package repository
 import (
 	"Zhooze/db"
 	"Zhooze/domain"
+	"Zhooze/helper"
 	"Zhooze/utils/models"
 	"errors"
 	"fmt"
@@ -104,6 +105,39 @@ func DashBoardOrder() (models.DashboardOrder, error) {
 		return models.DashboardOrder{}, nil
 	}
 	return orderDetail, nil
+}
+func TotalRevenue() (models.DashboardRevenue, error) {
+	var revenueDetails models.DashboardRevenue
+	startTime := time.Now().AddDate(0, 0, -1)
+	endTime := time.Now()
+	err := db.DB.Raw("SELECT COALESCE(SUM(final_price),0) FROM orders WHERE payment_status = 'paid' AND approval = true AND created_at >=? AND created_at <=?", startTime, endTime).Scan(&revenueDetails.TodayRevenue).Error
+	if err != nil {
+		return models.DashboardRevenue{}, nil
+	}
+	startTime, endTime = helper.GetTimeFromPeriod("month")
+	err = db.DB.Raw("SELECT COALESCE (SUM(final_price),0) FROM orders WHERE payment_status = 'paid' AND approval = true AND created_at >=? AND created_at <=?", startTime, endTime).Scan(&revenueDetails.MonthRevenue).Error
+	if err != nil {
+		return models.DashboardRevenue{}, nil
+	}
+	startTime, endTime = helper.GetTimeFromPeriod("year")
+	err = db.DB.Raw("SELECT COALESCE (SUM(final_price),0) FROM orders WHERE payment_status = 'paid' AND approval = true AND created_at >=? AND created_at <=?", startTime, endTime).Scan(&revenueDetails.YearRevenue).Error
+	if err != nil {
+		return models.DashboardRevenue{}, nil
+	}
+	return revenueDetails, nil
+}
+
+func AmountDetails() (models.DashboardAmount, error) {
+	var amountDetails models.DashboardAmount
+	err := db.DB.Raw("SELECT COALESCE (SUM(final_price),0) FROM orders WHERE payment_status = 'paid' AND approval = true").Scan(&amountDetails.CreditedAmount).Error
+	if err != nil {
+		return models.DashboardAmount{}, nil
+	}
+	err = db.DB.Raw("SELECT COALESCE(SUM(final_price),0) FROM orders WHERE payment_status = 'not paid' AND shipment_status = 'processing' OR shipment_status = 'pending' OR shipment_status = 'order placed'").Scan(&amountDetails.PendingAmount).Error
+	if err != nil {
+		return models.DashboardAmount{}, nil
+	}
+	return amountDetails, nil
 }
 func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesReport, error) {
 	var salesReport models.SalesReport

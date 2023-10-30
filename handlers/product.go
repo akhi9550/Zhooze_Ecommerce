@@ -50,7 +50,7 @@ func ShowAllProducts(c *gin.Context) {
 // @Tags User Product
 // @Accept json
 // @Produce json
-// @Param id query string true "Category id"
+// @Param data body map[string]int true "Category IDs and quantities"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /filter   [POST]

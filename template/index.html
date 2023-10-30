@@ -42,10 +42,10 @@
       var userid = document.getElementById("user").innerHTML;
       var orderid = document.getElementById("order").innerHTML;
       var options = {
-        key: "rzp_test_c5jQD9K6aSArYd", // Enter the Key ID generated from the Dashboard
+        key: "rzp_test_edVOqei6TEXnA5", // Enter the Key ID generated from the Dashboard
         amount: "{{.final_price}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
         currency: "INR",
-        name: "Acme Corp",
+        name: "Zhooze",
         description: "Test Transaction",
         image: "https://example.com/your_logo",
         order_id: "{{.razor_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
@@ -58,7 +58,7 @@
         prefill: {
           name: "akhil",
           email: "akhilc248@gmail.com",
-          contact: "9061358507",
+          contact: "9512512455",
         },
         notes: {
           address: "Razorpay Corporate Office",
@@ -85,7 +85,7 @@
       function verifyPayment(res, orderid) {
         $.ajax({
           //passes details as url params
-          url: `/payment-success?order_id=${orderid}&payment_id=${res.razorpay_payment_id}&order_id=${res.razorpay_order_id}
+          url: `/update_status?order_id=${orderid}&payment_id=${res.razorpay_payment_id}&order_id=${res.razorpay_order_id}
       &signature=${res.razorpay_signature}`,
           method: "GET",
 
@@ -104,7 +104,6 @@
             }
           },
         });
-        console.log('1111111111111111111')
       }
     </script>
     <script

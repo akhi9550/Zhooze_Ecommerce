@@ -488,12 +488,6 @@ paths:
       consumes:
       - application/json
       description: Retrieve admin dashboard
-      parameters:
-      - description: Page number
-        in: query
-        name: page
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -673,11 +667,14 @@ paths:
       - application/json
       description: Retrieve all product Details with pagination to users
       parameters:
-      - description: Category id
-        in: query
-        name: id
+      - description: Category IDs and quantities
+        in: body
+        name: data
         required: true
-        type: string
+        schema:
+          additionalProperties:
+            type: integer
+          type: object
       produces:
       - application/json
       responses:
@@ -778,7 +775,7 @@ paths:
       parameters:
       - description: image-id
         in: query
-        name: id
+        name: image_id
         required: true
         type: string
       produces:
@@ -832,7 +829,7 @@ paths:
       parameters:
       - description: page number
         in: query
-        name: id
+        name: page
         required: true
         type: string
       - description: page size
@@ -1021,14 +1018,14 @@ paths:
       summary: Remove From Cart
       tags:
       - User Cart Management
-  /sales-report/{period}:
+  /sales-report:
     get:
       consumes:
       - application/json
       description: Get Filtered sales report by week, month and year
       parameters:
       - description: sales report
-        in: path
+        in: query
         name: period
         required: true
         type: string
@@ -1047,7 +1044,7 @@ paths:
       - Bearer: []
       summary: Filtered Sales Report
       tags:
-      - Admin Dash Board
+      - Admin
   /send-otp:
     post:
       consumes:

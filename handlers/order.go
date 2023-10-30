@@ -21,7 +21,7 @@ import (
 // @Failure 500 {object} response.Response{}
 // @Router /approve-order [GET]
 func ApproveOrder(c *gin.Context) {
-	orderId := c.Query("order_id")
+	orderId := c.Query("id")
 	err := usecase.ApproveOrder(orderId)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't approve the order", nil, err.Error())
@@ -43,7 +43,7 @@ func ApproveOrder(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /cancel-order    [GET]
 func CancelOrderFromAdmin(c *gin.Context) {
-	order_id := c.Query("order_id")
+	order_id := c.Query("id")
 	err := usecase.CancelOrderFromAdmin(order_id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't cancel the order", nil, err.Error())
@@ -92,7 +92,7 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /refund-order    [GET]
 func RefundUser(c *gin.Context) {
-	OrderID := c.Query("order_id")
+	OrderID := c.Query("id")
 	err := usecase.RefundUser(OrderID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Refund was not possible", nil, err.Error())
@@ -109,12 +109,13 @@ func RefundUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id query string true "page number"
+// @Param page query string true "page number"
 // @Param pageSize query string true "page size"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /orders   [GET]
 func GetOrderDetails(c *gin.Context) {
+
 	pageStr := c.Query("page")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {

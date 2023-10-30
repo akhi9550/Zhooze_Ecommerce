@@ -17,7 +17,7 @@ import (
 // @Accept			json
 // @Produce		    json
 // @Security		Bearer
-// @Param			id	query		string	true	"image-id"
+// @Param			image_id	query		string	true	"image-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/image-crop    [POST]

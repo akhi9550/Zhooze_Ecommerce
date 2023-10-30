@@ -538,15 +538,6 @@ const docTemplate = `{
                     "Admin"
                 ],
                 "summary": "Admin Dashboard",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -829,11 +820,16 @@ const docTemplate = `{
                 "summary": "Get Products Details to users category based",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Category id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
+                        "description": "Category IDs and quantities",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "integer"
+                            }
+                        }
                     }
                 ],
                 "responses": {
@@ -996,7 +992,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "image-id",
-                        "name": "id",
+                        "name": "image_id",
                         "in": "query",
                         "required": true
                     }
@@ -1082,7 +1078,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "page number",
-                        "name": "id",
+                        "name": "page",
                         "in": "query",
                         "required": true
                     },
@@ -1365,7 +1361,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/sales-report/{period}": {
+        "/sales-report": {
             "get": {
                 "security": [
                     {
@@ -1380,7 +1376,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin Dash Board"
+                    "Admin"
                 ],
                 "summary": "Filtered Sales Report",
                 "parameters": [
@@ -1388,7 +1384,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "sales report",
                         "name": "period",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],

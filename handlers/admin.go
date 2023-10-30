@@ -42,7 +42,6 @@ func LoginHandler(c *gin.Context) {
 // @Accept			json
 // @Produce		json
 // @Security		Bearer
-// @Param			page	query		string	true	"Page number"
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
 // @Router			/dashboard [GET]
@@ -126,16 +125,16 @@ func UnBlockUser(c *gin.Context) {
 
 // @Summary Filtered Sales Report
 // @Description Get Filtered sales report by week, month and year
-// @Tags Admin Dash Board
+// @Tags Admin
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param period path string true "sales report"
+// @Param period query string true "sales report"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /sales-report/{period}   [GET]
+// @Router /sales-report    [GET]
 func FilteredSalesReport(c *gin.Context) {
-	timePeriod := c.Param("period")
+	timePeriod := c.Query("period")
 	salesReport, err := usecase.FilteredSalesReport(timePeriod)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "sales report could not be retrieved", nil, err.Error())

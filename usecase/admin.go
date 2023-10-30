@@ -50,9 +50,24 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 	if err != nil {
 		return models.CompleteAdminDashboard{}, err
 	}
+	orderDetails, err := repository.DashBoardOrder()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+	totalRevenue, err := repository.TotalRevenue()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
+	amountDetails, err := repository.AmountDetails()
+	if err != nil {
+		return models.CompleteAdminDashboard{}, err
+	}
 	return models.CompleteAdminDashboard{
 		DashboardUser:    userDetails,
 		DashboardProduct: productDetails,
+		DashboardOrder:   orderDetails,
+		DashboardRevenue: totalRevenue,
+		DashboardAmount:  amountDetails,
 	}, nil
 }
 func ShowAllUsers() ([]models.UserDetailsResponse, error) {
@@ -158,8 +173,8 @@ func RefundUser(orderID string) error {
 }
 func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
-	fmt.Println("❤️", timePeriod)
 	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
+	fmt.Println("🛍️🛍️🛍️", saleReport)
 	if err != nil {
 		return models.SalesReport{}, err
 	}

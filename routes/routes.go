@@ -13,7 +13,7 @@ import (
 func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
+	r.LoadHTMLGlob("template/*")
 	//***********************************ADMIN***********************************//
 
 	r.POST("/adminlogin", handlers.LoginHandler)

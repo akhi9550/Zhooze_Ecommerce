@@ -3,6 +3,7 @@ package handlers
 import (
 	"Zhooze/usecase"
 	"Zhooze/utils/response"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -30,8 +31,10 @@ func MakePaymentRazorPay(c *gin.Context) {
 	})
 }
 func VerifyPayment(c *gin.Context) {
-	orderID := c.Query("order_id")
+	orderID := c.Query("id")
 	paymentID := c.Query("payment_id")
+	fmt.Println("😁😁😁😁", orderID, paymentID)
+
 	err := usecase.SavePaymentDetails(paymentID, orderID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "could not update payment details", nil, err.Error())

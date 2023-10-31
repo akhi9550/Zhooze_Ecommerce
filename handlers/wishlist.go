@@ -39,7 +39,7 @@ func GetWishList(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /wishlist-add [POST]
+// @Router /wishlist [POST]
 func AddToWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	product_id := c.Query("id")
@@ -68,7 +68,7 @@ func AddToWishlist(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /wishlist-remove [DELETE]
+// @Router /wishlist [DELETE]
 func RemoveFromWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	product_id := c.Query("id")

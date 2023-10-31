@@ -166,5 +166,6 @@ func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, erro
 	if err != nil {
 		return models.CombinedOrderDetails{}, err
 	}
+
 	return orderDetails, nil
 }

@@ -10,39 +10,44 @@ import (
 	"github.com/razorpay/razorpay-go"
 )
 
-func MakePaymentRazorPay(orderID string, userID int) (models.CombinedOrderDetails, string, error) {
+func MakePaymentRazorPay(orderID string) (models.CombinedOrderDetails, string, error) {
 	cfg, _ := config.LoadConfig()
-	combainedOrderDetails, err := repository.GetOrderDetailsByOrderId(orderID)
+	combinedOrderDetails, err := repository.GetOrderDetailsByOrderId(orderID)
 	if err != nil {
 		return models.CombinedOrderDetails{}, "", err
 	}
+
 	client := razorpay.NewClient(cfg.KEY_ID_FOR_PAY, cfg.SECRET_KEY_FOR_PAY)
 
 	data := map[string]interface{}{
-		"amount":   int(combainedOrderDetails.FinalPrice) * 100,
+		"amount":   int(combinedOrderDetails.FinalPrice) * 100,
 		"currency": "INR",
 		"receipt":  "some_receipt_id",
 	}
 	body, err := client.Order.Create(data, nil)
 	if err != nil {
+
 		return models.CombinedOrderDetails{}, "", err
 	}
+
 	razorPayOrderID := body["id"].(string)
+
 	err = repository.AddRazorPayDetails(orderID, razorPayOrderID)
 	if err != nil {
 		return models.CombinedOrderDetails{}, "", err
 	}
-	return models.CombinedOrderDetails{}, razorPayOrderID, nil
+
+	return combinedOrderDetails, razorPayOrderID, nil
+
 }
 
-func SavePaymentDetails(paymentID string, razorID string, orderID string) error {
-	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️", paymentID, razorID)
-	status, err := repository.CheckPaymentStatus(razorID, orderID)
+func SavePaymentDetails(orderID string, paymentID string) error {
+	status, err := repository.CheckPaymentStatus(orderID)
 	if err != nil {
 		return err
 	}
 	if status == "not paid" {
-		err = repository.UpdatePaymentDetails(razorID, paymentID)
+		err = repository.UpdatePaymentDetails(orderID, paymentID)
 		if err != nil {
 			return err
 		}
@@ -52,5 +57,6 @@ func SavePaymentDetails(paymentID string, razorID string, orderID string) error 
 		}
 		return nil
 	}
+	fmt.Println("already paid")
 	return errors.New("already paid")
 }

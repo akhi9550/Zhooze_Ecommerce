@@ -20,7 +20,7 @@ import (
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/add-category [POST]
+// @Router			/category [POST]
 func AddCategory(c *gin.Context) {
 	var category domain.Category
 	if err := c.ShouldBindJSON(&category); err != nil {
@@ -48,7 +48,7 @@ func AddCategory(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/delete-category     [DELETE]
+// @Router			/category     [DELETE]
 func DeleteCategory(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.DeleteCategory(id)
@@ -71,7 +71,7 @@ func DeleteCategory(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/update-category     [PUT]
+// @Router			/category     [PUT]
 func UpdateCategory(c *gin.Context) {
 	var categoryUpdate models.SetNewName
 	if err := c.ShouldBindJSON(&categoryUpdate); err != nil {

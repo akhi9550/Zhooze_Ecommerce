@@ -26,9 +26,9 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/unblock", middleware.AdminAuthMiddleware(), handlers.UnBlockUser)
 
 	//CATEGORY
-	r.POST("/add-category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
-	r.PUT("/update-category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
-	r.DELETE("/delete-category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
+	r.POST("/category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
+	r.PUT("/category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
+	r.DELETE("/category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
 
 	//PRODUCT
 	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
@@ -91,8 +91,8 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//WISHLIST
 	r.GET("/wishlist", middleware.UserAuthMiddleware(), handlers.GetWishList)
-	r.POST("/wishlist-add", middleware.UserAuthMiddleware(), handlers.AddToWishlist)
-	r.DELETE("/wishlist-remove", middleware.UserAuthMiddleware(), handlers.RemoveFromWishlist)
+	r.POST("/wishlist", middleware.UserAuthMiddleware(), handlers.AddToWishlist)
+	r.DELETE("/wishlist", middleware.UserAuthMiddleware(), handlers.RemoveFromWishlist)
 
 	return r
 }

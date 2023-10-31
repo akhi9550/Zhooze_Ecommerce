@@ -196,34 +196,6 @@ paths:
       summary: Add Address
       tags:
       - User Profile
-  /add-category:
-    post:
-      consumes:
-      - application/json
-      description: Admin can add new categories for products
-      parameters:
-      - description: category
-        in: body
-        name: category
-        required: true
-        schema:
-          $ref: '#/definitions/domain.Category'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add Category
-      tags:
-      - Admin Category Management
   /add-product:
     post:
       consumes:
@@ -434,6 +406,87 @@ paths:
       summary: Cancel order
       tags:
       - User Order Management
+  /category:
+    delete:
+      consumes:
+      - application/json
+      description: Admin can delete a category
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete Category
+      tags:
+      - Admin Category Management
+    post:
+      consumes:
+      - application/json
+      description: Admin can add new categories for products
+      parameters:
+      - description: category
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Category'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add Category
+      tags:
+      - Admin Category Management
+    put:
+      consumes:
+      - application/json
+      description: Admin can update name of a category into new name
+      parameters:
+      - description: set new name
+        in: body
+        name: set_new_name
+        required: true
+        schema:
+          $ref: '#/definitions/models.SetNewName'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Update Category
+      tags:
+      - Admin Category Management
   /changepassword:
     put:
       consumes:
@@ -504,33 +557,6 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
-  /delete-category:
-    delete:
-      consumes:
-      - application/json
-      description: Admin can delete a category
-      parameters:
-      - description: id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Delete Category
-      tags:
-      - Admin Category Management
   /delete-product:
     delete:
       consumes:
@@ -1124,34 +1150,6 @@ paths:
       summary: UnBlock an existing user
       tags:
       - Admin User Management
-  /update-category:
-    put:
-      consumes:
-      - application/json
-      description: Admin can update name of a category into new name
-      parameters:
-      - description: set new name
-        in: body
-        name: set_new_name
-        required: true
-        schema:
-          $ref: '#/definitions/models.SetNewName'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Update Category
-      tags:
-      - Admin Category Management
   /update-product:
     post:
       consumes:
@@ -1318,54 +1316,6 @@ paths:
       tags:
       - User OTP Login
   /wishlist:
-    get:
-      consumes:
-      - application/json
-      description: Display wish List
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Display Wishlist
-      tags:
-      - WishList Management
-  /wishlist-add:
-    post:
-      consumes:
-      - application/json
-      description: Add To wish List
-      parameters:
-      - description: product id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add to Wishlist
-      tags:
-      - WishList Management
-  /wishlist-remove:
     delete:
       consumes:
       - application/json
@@ -1390,6 +1340,52 @@ paths:
       security:
       - Bearer: []
       summary: Delete From Wishlist
+      tags:
+      - WishList Management
+    get:
+      consumes:
+      - application/json
+      description: Display wish List
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Display Wishlist
+      tags:
+      - WishList Management
+    post:
+      consumes:
+      - application/json
+      description: Add To wish List
+      parameters:
+      - description: product id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add to Wishlist
       tags:
       - WishList Management
 securityDefinitions:

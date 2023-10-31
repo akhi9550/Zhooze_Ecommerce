@@ -56,9 +56,9 @@
           verifyPayment(response, orderid);
         },
         prefill: {
-          name: "akhil",
-          email: "akhilc248@gmail.com",
-          contact: "9512512455",
+          name: "akhil c",
+          email: "cakhi60@gmail.com",
+          contact: "9061358507",
         },
         notes: {
           address: "Razorpay Corporate Office",
@@ -85,7 +85,7 @@
       function verifyPayment(res, orderid) {
         $.ajax({
           //passes details as url params
-          url: `/update_status?order_id=${orderid}&payment_id=${res.razorpay_payment_id}&id=${res.razorpay_order_id}
+          url: `/update_status?order_id=${orderid}&payment_id=${res.razorpay_payment_id}&razor_id=${res.razorpay_order_id}
       &signature=${res.razorpay_signature}`,
           method: "GET",
 

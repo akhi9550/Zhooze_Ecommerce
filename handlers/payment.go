@@ -11,16 +11,16 @@ import (
 )
 
 func MakePaymentRazorPay(c *gin.Context) {
-	orderID := c.Query("id")
+	orderID := c.Query("order_id")
 	userID := c.Query("user_id")
 	user_Id, _ := strconv.Atoi(userID)
-
 	orderDetail, razorID, err := usecase.MakePaymentRazorPay(orderID, user_Id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "could not generate order details", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
+	fmt.Println("🤷‍♂️🤷‍♂️", orderDetail, razorID)
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"final_price": orderDetail.FinalPrice * 100,
 		"razor_id":    razorID,
@@ -31,12 +31,14 @@ func MakePaymentRazorPay(c *gin.Context) {
 	})
 }
 func VerifyPayment(c *gin.Context) {
-	orderID := c.Query("id")
+	orderID := c.Query("order_id")
 	paymentID := c.Query("payment_id")
-	fmt.Println("😁😁😁😁", orderID, paymentID)
+	razorID := c.Query("razor_id")
+	fmt.Println("😁😁😁😁", "o..", orderID, "r...", razorID, "p....", paymentID)
 
-	err := usecase.SavePaymentDetails(paymentID, orderID)
+	err := usecase.SavePaymentDetails(paymentID, razorID, orderID)
 	if err != nil {
+		fmt.Println("👺👺👺👺")
 		errs := response.ClientResponse(http.StatusInternalServerError, "could not update payment details", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
 		return

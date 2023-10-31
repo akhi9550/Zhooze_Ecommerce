@@ -5,6 +5,7 @@ import (
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 	"errors"
+	"fmt"
 
 	"github.com/razorpay/razorpay-go"
 )
@@ -27,7 +28,6 @@ func MakePaymentRazorPay(orderID string, userID int) (models.CombinedOrderDetail
 		return models.CombinedOrderDetails{}, "", err
 	}
 	razorPayOrderID := body["id"].(string)
-
 	err = repository.AddRazorPayDetails(orderID, razorPayOrderID)
 	if err != nil {
 		return models.CombinedOrderDetails{}, "", err
@@ -35,13 +35,14 @@ func MakePaymentRazorPay(orderID string, userID int) (models.CombinedOrderDetail
 	return models.CombinedOrderDetails{}, razorPayOrderID, nil
 }
 
-func SavePaymentDetails(paymentID string, orderID string) error {
-	status, err := repository.CheckPaymentStatus(orderID)
+func SavePaymentDetails(paymentID string, razorID string, orderID string) error {
+	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️🤷‍♂️", paymentID, razorID)
+	status, err := repository.CheckPaymentStatus(razorID, orderID)
 	if err != nil {
 		return err
 	}
 	if status == "not paid" {
-		err = repository.UpdatePaymentDetails(orderID, paymentID)
+		err = repository.UpdatePaymentDetails(razorID, paymentID)
 		if err != nil {
 			return err
 		}

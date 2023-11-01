@@ -165,7 +165,7 @@ info:
   contact:
     name: API Support
   description: Zhooze is an E-commerce platform to purchase and sell shoes
-  title: Go + Gin E-Commerce API
+  title: Go + Gin Zhooze E-Commerce API
   version: 1.0.0
 paths:
   /add-address:
@@ -196,34 +196,6 @@ paths:
       summary: Add Address
       tags:
       - User Profile
-  /add-product:
-    post:
-      consumes:
-      - application/json
-      description: Add product from admin side
-      parameters:
-      - description: Product details
-        in: body
-        name: product
-        required: true
-        schema:
-          $ref: '#/definitions/domain.Product'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add Products
-      tags:
-      - Admin Product Management
   /address:
     get:
       consumes:
@@ -557,33 +529,6 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
-  /delete-product:
-    delete:
-      consumes:
-      - application/json
-      description: Delete a product from the admin side
-      parameters:
-      - description: product id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Delete product
-      tags:
-      - Admin Product Management
   /displaycart:
     get:
       consumes:
@@ -716,34 +661,6 @@ paths:
       tags:
       - User Product
   /forgot-password:
-    get:
-      consumes:
-      - application/json
-      description: user can change their password if user forgot the password and
-        login
-      parameters:
-      - description: forgot-send
-        in: body
-        name: model
-        required: true
-        schema:
-          $ref: '#/definitions/models.ForgotPasswordSend'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Forgot password Send OTP
-      tags:
-      - User
     post:
       consumes:
       - application/json
@@ -770,6 +687,35 @@ paths:
       security:
       - Bearer: []
       summary: Forgot password Verfy and Change
+      tags:
+      - User
+  /forgot-password-otp:
+    post:
+      consumes:
+      - application/json
+      description: user can change their password if user forgot the password and
+        login
+      parameters:
+      - description: forgot-send
+        in: body
+        name: model
+        required: true
+        schema:
+          $ref: '#/definitions/models.ForgotPasswordSend'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Forgot password Send OTP
       tags:
       - User
   /getusers:
@@ -941,11 +887,17 @@ paths:
       summary: Checkout section
       tags:
       - User Order Management
-  /products:
-    get:
+  /product:
+    delete:
       consumes:
       - application/json
-      description: Retrieve all product Details with pagination to users
+      description: Delete a product from the admin side
+      parameters:
+      - description: product id
+        in: query
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -957,10 +909,11 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get Products Details to users
+      security:
+      - Bearer: []
+      summary: Delete product
       tags:
-      - User Product
-  /products-ad:
+      - Admin Product Management
     get:
       consumes:
       - application/json
@@ -987,11 +940,86 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
       summary: Get Products Details to users
       tags:
       - Admin Product Management
-  /refund-order:
+    patch:
+      consumes:
+      - application/json
+      description: Update quantity of already existing product
+      parameters:
+      - description: Product details
+        in: body
+        name: productUpdate
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Update Products quantity
+      tags:
+      - Admin Product Management
+    post:
+      consumes:
+      - application/json
+      description: Add product from admin side
+      parameters:
+      - description: Product details
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add Products
+      tags:
+      - Admin Product Management
+  /products:
     get:
+      consumes:
+      - application/json
+      description: Retrieve all product Details with pagination to users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Products Details to users
+      tags:
+      - User Product
+  /refund-order:
+    put:
       consumes:
       - application/json
       description: Refund an offer by admin
@@ -1150,34 +1178,6 @@ paths:
       summary: UnBlock an existing user
       tags:
       - Admin User Management
-  /update-product:
-    post:
-      consumes:
-      - application/json
-      description: Update quantity of already existing product
-      parameters:
-      - description: Product details
-        in: body
-        name: productUpdate
-        required: true
-        schema:
-          $ref: '#/definitions/models.ProductUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Update Products quantity
-      tags:
-      - Admin Product Management
   /updatequantityadd:
     put:
       consumes:

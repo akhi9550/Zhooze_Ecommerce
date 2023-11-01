@@ -254,7 +254,7 @@ func ChangePassword(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/forgot-password   [GET]
+// @Router			/forgot-password   [POST]
 func ForgotPasswordSend(c *gin.Context) {
 	var model models.ForgotPasswordSend
 	if err := c.BindJSON(&model); err != nil {
@@ -283,7 +283,7 @@ func ForgotPasswordSend(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/forgot-password   [POST]
+// @Router			/forgot-password-verify   [POST]
 func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	var model models.ForgotVerify
 	if err := c.BindJSON(&model); err != nil {
@@ -302,4 +302,3 @@ func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
-

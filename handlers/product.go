@@ -96,11 +96,12 @@ func AllProducts(c *gin.Context) {
 // @Tags Admin Product Management
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param page query string true "Page number"
 // @Param count query string true "Page Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /products-ad   [GET]
+// @Router /product   [GET]
 func ShowAllProductsFromAdmin(c *gin.Context) {
 	pageString := c.Query("page")
 	page, err := strconv.Atoi(pageString)
@@ -134,7 +135,7 @@ func ShowAllProductsFromAdmin(c *gin.Context) {
 // @Param product body domain.Product true "Product details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /add-product [POST]
+// @Router /product [POST]
 func AddProducts(c *gin.Context) {
 	var product domain.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
@@ -162,7 +163,7 @@ func AddProducts(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /delete-product    [DELETE]
+// @Router /product    [DELETE]
 func DeleteProducts(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.DeleteProducts(id)
@@ -184,7 +185,7 @@ func DeleteProducts(c *gin.Context) {
 // @Param productUpdate body models.ProductUpdate true "Product details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /update-product [POST]
+// @Router /product [PATCH]
 func UpdateProduct(c *gin.Context) {
 	var p models.ProductUpdate
 	if err := c.BindJSON(&p); err != nil {

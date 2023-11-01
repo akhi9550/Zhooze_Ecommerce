@@ -4,9 +4,11 @@ import (
 	"Zhooze/db"
 	"Zhooze/utils/models"
 	"errors"
+	"fmt"
 )
 
 func CheckOrderID(orderId string) (bool, error) {
+	fmt.Println("😊😊😊", orderId)
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM orders WHERE order_id = ?", orderId).Scan(&count).Error
 	if err != nil {
@@ -51,6 +53,7 @@ func CancelOrders(order_id string) error {
 	}
 	return nil
 }
+
 func GetProductDetailsFromOrders(order_id string) ([]models.OrderProducts, error) {
 	var OrderProductDetails []models.OrderProducts
 	if err := db.DB.Raw("SELECT product_id,quantity FROM order_items WHERE order_id = ?", order_id).Scan(&OrderProductDetails).Error; err != nil {
@@ -77,7 +80,7 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 	}
 	offset := (page - 1) * 2
 	var orderDatails []models.CombinedOrderDetails
-	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin FROM orders inner join users on orders.user_id = users.id inner join addresses on users.id = addresses.user_id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
+	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin FROM orders INNER JOIN users ON orders.user_id = users.id INNER JOIN addresses ON users.id = addresses.user_id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
 	if err != nil {
 		return []models.CombinedOrderDetails{}, nil
 	}

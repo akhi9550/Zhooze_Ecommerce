@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @title Go + Gin E-Commerce API
+// @title Go + Gin Zhooze E-Commerce API
 // @version 1.0.0
 // @description Zhooze is an E-commerce platform to purchase and sell shoes
 // @contact.name API Support

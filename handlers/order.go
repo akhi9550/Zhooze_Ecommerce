@@ -90,7 +90,7 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Param id query string true "Order ID"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /refund-order    [GET]
+// @Router /refund-order    [PUT]
 func RefundUser(c *gin.Context) {
 	OrderID := c.Query("id")
 	err := usecase.RefundUser(OrderID)

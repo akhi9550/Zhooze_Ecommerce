@@ -117,13 +117,6 @@ func GetAllOrderDetailsForAdmin(page int) ([]models.CombinedOrderDetails, error)
 	return orderDetail, nil
 }
 func ApproveOrder(orderId string) error {
-
-	ok, err := repository.CheckOrderID(orderId)
-	fmt.Println(ok)
-	if !ok {
-		return err
-	}
-
 	ShipmentStatus, err := repository.GetShipmentStatus(orderId)
 	if err != nil {
 		return err
@@ -145,6 +138,11 @@ func ApproveOrder(orderId string) error {
 	return nil
 }
 func CancelOrderFromAdmin(order_id string) error {
+	ok, err := repository.CheckOrderID(order_id)
+	fmt.Println(err)
+	if !ok {
+		return err
+	}
 	orderProduct, err := repository.GetProductDetailsFromOrders(order_id)
 	if err != nil {
 		return err

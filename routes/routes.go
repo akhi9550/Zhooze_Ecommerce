@@ -31,12 +31,13 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.DELETE("/category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)
 
 	//PRODUCT
-	r.GET("/products-ad", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
-	r.POST("add-product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
-	r.PATCH("/update-product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
-	r.DELETE("/delete-product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)
+	r.GET("/product", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
+	r.POST("product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
+	r.PATCH("/product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
+	r.DELETE("/product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)
 
 	//ORDER
+
 	r.GET("/order", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
 	r.GET("/approve-order", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
@@ -55,8 +56,8 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("verify-otp", handlers.VerifyOtp)
 
 	//SECURITY
-	r.GET("/forgot-password", handlers.ForgotPasswordSend)
-	r.POST("/forgot-password", handlers.ForgotPasswordVerifyAndChange)
+	r.POST("/forgot-password", handlers.ForgotPasswordSend)
+	r.POST("/forgot-password-verify", handlers.ForgotPasswordVerifyAndChange)
 
 	//PRODUCT
 	r.GET("/products", handlers.AllProducts)

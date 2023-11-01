@@ -15,6 +15,11 @@ func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails
 	return OrderDetails, nil
 }
 func CancelOrders(orderID string, userID int) error {
+	ok, err := repository.CheckOrderID(orderID)
+	fmt.Println(ok)
+	if !ok {
+		return err
+	}
 	userTest, err := repository.UserOrderRelationship(orderID, userID)
 	if err != nil {
 		return err

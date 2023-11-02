@@ -116,19 +116,13 @@ func EmptyCart(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			id	query	string	true	"id"
 // @Param			product	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/updatequantityadd   [PUT]
 func UpdateQuantityAdd(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
+	id, _ := c.Get("user_id")
 	product, err := strconv.Atoi(c.Query("product"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
@@ -136,12 +130,17 @@ func UpdateQuantityAdd(c *gin.Context) {
 		return
 	}
 
-	if err := usecase.UpdateQuantityAdd(id, product); err != nil {
+	if err := usecase.UpdateQuantityAdd(id.(int), product); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 
+	if err := usecase.UpdateTotalPriceAdd(id.(int), product); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
 	success := response.ClientResponse(http.StatusOK, "Successfully added quantity", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
@@ -151,19 +150,13 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			id	query	string	true	"id"
 // @Param			product	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/updatequantityless  [PUT]
 func UpdateQuantityless(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
+	id, _ := c.Get("user_id")
 	product, err := strconv.Atoi(c.Query("product"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
@@ -171,7 +164,12 @@ func UpdateQuantityless(c *gin.Context) {
 		return
 	}
 
-	if err := usecase.UpdateQuantityless(id, product); err != nil {
+	if err := usecase.UpdateQuantityless(id.(int), product); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	if err := usecase.UpdateTotalPriceLess(id.(int), product); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

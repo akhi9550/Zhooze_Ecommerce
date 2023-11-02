@@ -22,9 +22,9 @@ type Order struct {
 	PaymentMethodID uint          `json:"paymentmethod_id"`
 	PaymentMethod   PaymentMethod `json:"-" gorm:"foreignkey:PaymentMethodID"`
 	GrandTotal      float64       `json:"grand_total"`
-	FinalPrice      float64       `json:"discount_price"`
+	FinalPrice      float64       `json:"final_price"`
 	ShipmentStatus  string        `json:"status"`
-	PaymentStatus   string        `json:"payment_status"`
+	PaymentStatus   string        `json:"payment_status" gorm:"default:'not paid'"`
 	Approval        bool          `json:"approval"`
 }
 

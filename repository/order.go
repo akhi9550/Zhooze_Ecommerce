@@ -4,11 +4,9 @@ import (
 	"Zhooze/db"
 	"Zhooze/utils/models"
 	"errors"
-	"fmt"
 )
 
 func CheckOrderID(orderId string) (bool, error) {
-	fmt.Println("😊😊😊", orderId)
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM orders WHERE order_id = ?", orderId).Scan(&count).Error
 	if err != nil {
@@ -36,7 +34,7 @@ func ApproveOrder(order_id string) error {
 
 func CancelOrders(order_id string) error {
 	status := "cancelled"
-	err := db.DB.Exec("UPDATE orders SET shipment_status = ? ,approval='false' WHERE order_id = ? ", status, order_id).Error
+	err := db.DB.Exec("UPDATE orders SET shipment_status = ? , approval='false' WHERE order_id = ? ", status, order_id).Error
 	if err != nil {
 		return err
 	}
@@ -80,7 +78,7 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 	}
 	offset := (page - 1) * 2
 	var orderDatails []models.CombinedOrderDetails
-	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin FROM orders INNER JOIN users ON orders.user_id = users.id INNER JOIN addresses ON users.id = addresses.user_id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
+	err := db.DB.Raw("SELECT orders.order_id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.street,addresses.city,addresses.state,addresses.pin FROM orders INNER JOIN users ON orders.user_id = users.id INNER JOIN addresses ON orders.address_id = addresses.id limit ? offset ?", 2, offset).Scan(&orderDatails).Error
 	if err != nil {
 		return []models.CombinedOrderDetails{}, nil
 	}
@@ -112,7 +110,7 @@ func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails
 	var fullOrderDetails []models.FullOrderDetails
 	for _, ok := range orderDatails {
 		var OrderProductDetails []models.OrderProductDetails
-		db.DB.Raw("SELECT o.product_id,products.name as product_name,o.quantity,o.total_price FROM order_items o inner join products on o.product_id = products.id where o.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
+		db.DB.Raw("SELECT order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price FROM order_items  INNER JOIN products ON order_items.product_id = products.id where oder_items.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
 		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: ok, OrderProductDetails: OrderProductDetails})
 	}
 	return fullOrderDetails, nil

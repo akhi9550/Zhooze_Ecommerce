@@ -109,13 +109,12 @@ func RefundUser(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param page query string true "page number"
-// @Param pageSize query string true "page size"
+// @Param page query string true "Page"
+// @Param count query string true "Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /orders   [GET]
 func GetOrderDetails(c *gin.Context) {
-
 	pageStr := c.Query("page")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
@@ -130,8 +129,7 @@ func GetOrderDetails(c *gin.Context) {
 		return
 	}
 	id, _ := c.Get("user_id")
-	UserID := id.(int)
-	OrderDetails, err := usecase.GetOrderDetails(UserID, page, pageSize)
+	OrderDetails, err := usecase.GetOrderDetails(id.(int), page, pageSize)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)

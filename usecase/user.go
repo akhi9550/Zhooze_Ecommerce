@@ -155,6 +155,21 @@ func UpdateAddress(addressDetails models.AddressInfo, addressID, userID int) (mo
 	return repository.AddressDetails(addressID)
 }
 
+func DeleteAddress(addressID, userID int) error {
+	addressExist, err := repository.AddressExistInUserProfile(addressID, userID)
+	if err != nil {
+		return err
+	}
+	if !addressExist {
+		return errors.New("address does not exist in user profile")
+	}
+	err = repository.RemoveFromUserProfile(userID, addressID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func ChangePassword(id int, old string, password string, repassword string) error {
 	userPassword, err := repository.GetPassword(id)
 	if err != nil {
@@ -183,16 +198,29 @@ func UpdateQuantityAdd(id, prodcut_id int) error {
 	return nil
 
 }
+func UpdateTotalPriceAdd(id, product_id int) error {
+	err := repository.UpdateTotalPrice(id, product_id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func UpdateQuantityless(id, prodcut_id int) error {
 
 	err := repository.UpdateQuantityless(id, prodcut_id)
 	if err != nil {
 		return err
 	}
-
 	return nil
-
 }
+func UpdateTotalPriceLess(id, product_id int) error {
+	err := repository.UpdateTotalPrice(id, product_id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func ForgotPasswordSend(phone string) error {
 	cfg, _ := config.LoadConfig()
 	ok := repository.FindUserByMobileNumber(phone)

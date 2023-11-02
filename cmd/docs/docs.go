@@ -17,7 +17,89 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/add-address": {
+        "/address": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "user can get all their addresses",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Get Addresses",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Update User address by sending in address id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Profile"
+                ],
+                "summary": "Update User Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "address id",
+                        "name": "address_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "User Address Input",
+                        "name": "address",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddressInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -60,16 +142,14 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/address": {
-            "get": {
+            },
+            "delete": {
                 "security": [
                     {
                         "Bearer": []
                     }
                 ],
-                "description": "user can get all their addresses",
+                "description": "Delete From User Profile",
                 "consumes": [
                     "application/json"
                 ],
@@ -79,7 +159,16 @@ const docTemplate = `{
                 "tags": [
                     "User Profile"
                 ],
-                "summary": "Get Addresses",
+                "summary": "Delete User Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "address id",
+                        "name": "address_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -627,60 +716,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/edit-address": {
-            "patch": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Update User address by sending in address id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User Profile"
-                ],
-                "summary": "Update User Address",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "address id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "User Address Input",
-                        "name": "address",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AddressInfo"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/edit-user-profile": {
-            "patch": {
+            "put": {
                 "security": [
                     {
                         "Bearer": []
@@ -818,15 +855,15 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Forgot password Verfy and Change",
+                "summary": "Forgot password Send OTP",
                 "parameters": [
                     {
-                        "description": "forgot-verify",
+                        "description": "forgot-send",
                         "name": "model",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ForgotVerify"
+                            "$ref": "#/definitions/models.ForgotPasswordSend"
                         }
                     }
                 ],
@@ -846,7 +883,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/forgot-password-otp": {
+        "/forgot-password-verify": {
             "post": {
                 "security": [
                     {
@@ -863,15 +900,15 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Forgot password Send OTP",
+                "summary": "Forgot password Verfy and Change",
                 "parameters": [
                     {
-                        "description": "forgot-send",
+                        "description": "forgot-verify",
                         "name": "model",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.ForgotPasswordSend"
+                            "$ref": "#/definitions/models.ForgotVerify"
                         }
                     }
                 ],
@@ -1032,15 +1069,15 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "page number",
+                        "description": "Page",
                         "name": "page",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "page size",
-                        "name": "pageSize",
+                        "description": "Count",
+                        "name": "count",
                         "in": "query",
                         "required": true
                     }
@@ -1635,13 +1672,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "product_id",
                         "name": "product",
                         "in": "query",
@@ -1683,13 +1713,6 @@ const docTemplate = `{
                 ],
                 "summary": "Subtract quantity in cart by one",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "product_id",

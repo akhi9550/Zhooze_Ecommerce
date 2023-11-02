@@ -181,14 +181,23 @@ func GetPassword(id int) (string, error) {
 	return userPassword, nil
 }
 func UpdateQuantityAdd(id, prdt_id int) error {
-	err := db.DB.Exec("UPDATE Carts SET quantity = quantity + 1 WHERE id=$1 AND product_id = $2 ", id, prdt_id).Error
+	err := db.DB.Exec("UPDATE Carts SET quantity = quantity + 1 WHERE user_id=$1 AND product_id = $2 ", id, prdt_id).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
+
+func UpdateTotalPrice(id, product_id int) error {
+	err := db.DB.Exec("UPDATE carts SET total_price = carts.quantity * products.price FROM products  WHERE carts.product_id = products.id AND carts.user_id = $1 AND carts.product_id = $2", id, product_id).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func UpdateQuantityless(id, prdt_id int) error {
-	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE id=$1 AND product_id = $2 ", id, prdt_id).Error
+	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE user_id=$1 AND product_id = $2 ", id, prdt_id).Error
 	if err != nil {
 		return err
 	}
@@ -210,4 +219,19 @@ func FindIdFromPhone(phone string) (int, error) {
 		return id, err
 	}
 	return id, nil
+}
+func AddressExistInUserProfile(addressID, userID int) (bool, error) {
+	var count int
+	err := db.DB.Raw("SELECT COUNT (*) FROM addresses WHERE user_id = $1 AND id = $2", userID, addressID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+func RemoveFromUserProfile(userID, addressID int) error {
+	err := db.DB.Exec("DELETE FROM addresses WHERE user_id = ? AND  id= ?", userID, addressID).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

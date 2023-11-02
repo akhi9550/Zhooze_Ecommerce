@@ -14,6 +14,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.LoadHTMLGlob("template/*")
+
 	//***********************************ADMIN***********************************//
 
 	r.POST("/adminlogin", handlers.LoginHandler)
@@ -66,10 +67,11 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//PROFILE
 	r.GET("/address", middleware.UserAuthMiddleware(), handlers.GetAllAddress)
-	r.POST("/add-address", middleware.UserAuthMiddleware(), handlers.AddAddress)
+	r.POST("/address", middleware.UserAuthMiddleware(), handlers.AddAddress)
+	r.PUT("/address", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
+	r.DELETE("/address",middleware.UserAuthMiddleware(),handlers.DeleteAddressByID)
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
-	r.PATCH("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
-	r.PATCH("/edit-address", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
+	r.PUT("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
 	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
 	//ORDERS
@@ -86,14 +88,13 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.PUT("/updatequantityadd", middleware.UserAuthMiddleware(), handlers.UpdateQuantityAdd)
 	r.PUT("/updatequantityless", middleware.UserAuthMiddleware(), handlers.UpdateQuantityless)
 
-	//PAYMENT
-	r.GET("/razorpay", handlers.MakePaymentRazorPay)
-	r.GET("/update_status", handlers.VerifyPayment)
-
 	//WISHLIST
 	r.GET("/wishlist", middleware.UserAuthMiddleware(), handlers.GetWishList)
 	r.POST("/wishlist", middleware.UserAuthMiddleware(), handlers.AddToWishlist)
 	r.DELETE("/wishlist", middleware.UserAuthMiddleware(), handlers.RemoveFromWishlist)
 
+	//PAYMENT
+	r.GET("/razorpay", handlers.MakePaymentRazorPay)
+	r.GET("/update_status", handlers.VerifyPayment)
 	return r
 }

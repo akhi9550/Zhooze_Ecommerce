@@ -83,7 +83,7 @@ func Userlogin(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/add-address [POST]
+// @Router			/address [POST]
 func AddAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	var address models.AddressInfo
@@ -120,7 +120,6 @@ func AddAddress(c *gin.Context) {
 // @Router		/address       [GET]
 func GetAllAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
-
 	addressInfo, err := usecase.GetAllAddress(userID.(int))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "failed to retrieve details", nil, err.Error())
@@ -163,7 +162,7 @@ func UserDetails(c *gin.Context) {
 // @Param address body models.UsersProfileDetails true "User Details Input"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /edit-user-profile [PATCH]
+// @Router /edit-user-profile [PUT]
 func UpdateUserDetails(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	var user models.UsersProfileDetails
@@ -188,11 +187,11 @@ func UpdateUserDetails(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id query string true "address id"
+// @Param address_id query string true "address id"
 // @Param address body models.AddressInfo true "User Address Input"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /edit-address [PATCH]
+// @Router /address   [PUT]
 func UpdateAddress(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	addressid := c.Query("address_id")
@@ -205,11 +204,35 @@ func UpdateAddress(c *gin.Context) {
 	}
 	UpdateAddress, err := usecase.UpdateAddress(address, addressID, user_id.(int))
 	if err != nil {
-		errs := response.ClientResponse(http.StatusInternalServerError, "failed update useraddress", nil, err.Error())
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed update user address", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
 	success := response.ClientResponse(http.StatusOK, "Updated User Address", UpdateAddress, nil)
+	c.JSON(http.StatusOK, success)
+}
+
+// @Summary Delete User Address
+// @Description Delete From User Profile
+// @Tags User Profile
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param address_id query string true "address id"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /address  [DELETE]
+func DeleteAddressByID(c *gin.Context) {
+	user_id, _ := c.Get("user_id")
+	addressid := c.Query("address_id")
+	addressID, _ := strconv.Atoi(addressid)
+	err := usecase.DeleteAddress(addressID, user_id.(int))
+	if err != nil {
+		errs := response.ClientResponse(http.StatusInternalServerError, "failed delete user address", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errs)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Deleted User Address", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
 
@@ -224,19 +247,14 @@ func UpdateAddress(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /changepassword     [PUT]
 func ChangePassword(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "check path parameter", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
-		return
-	}
+	user_id, _ := c.Get("user_id")
 	var changePassword models.ChangePassword
 	if err := c.BindJSON(&changePassword); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	if err := usecase.ChangePassword(id, changePassword.Oldpassword, changePassword.Password, changePassword.Repassword); err != nil {
+	if err := usecase.ChangePassword(user_id.(int), changePassword.Oldpassword, changePassword.Password, changePassword.Repassword); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the password", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

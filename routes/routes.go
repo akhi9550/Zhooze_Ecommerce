@@ -69,7 +69,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/address", middleware.UserAuthMiddleware(), handlers.GetAllAddress)
 	r.POST("/address", middleware.UserAuthMiddleware(), handlers.AddAddress)
 	r.PUT("/address", middleware.UserAuthMiddleware(), handlers.UpdateAddress)
-	r.DELETE("/address",middleware.UserAuthMiddleware(),handlers.DeleteAddressByID)
+	r.DELETE("/address", middleware.UserAuthMiddleware(), handlers.DeleteAddressByID)
 	r.GET("/user-details", middleware.UserAuthMiddleware(), handlers.UserDetails)
 	r.PUT("/edit-user-profile", middleware.UserAuthMiddleware(), handlers.UpdateUserDetails)
 	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)

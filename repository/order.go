@@ -110,7 +110,7 @@ func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails
 	var fullOrderDetails []models.FullOrderDetails
 	for _, ok := range orderDatails {
 		var OrderProductDetails []models.OrderProductDetails
-		db.DB.Raw("SELECT order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price FROM order_items  INNER JOIN products ON order_items.product_id = products.id where oder_items.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
+		db.DB.Raw("select order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price from order_items inner join products on order_items.product_id = products.id where order_items.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
 		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: ok, OrderProductDetails: OrderProductDetails})
 	}
 	return fullOrderDetails, nil

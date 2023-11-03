@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"Zhooze/domain"
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
@@ -10,19 +9,38 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//admin
+// @Summary		Get Category
+// @Description	Retrieve All Category
+// @Tags			Admin Category Management
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Success		200		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/category   [GET]
+func GetCategory(c *gin.Context) {
+	category, err := usecase.GetCategory()
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Couldn't displayed categories", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+	}
+	success := response.ClientResponse(http.StatusBadRequest, "Display All category", category, nil)
+	c.JSON(http.StatusBadRequest, success)
+}
+
+// admin
 // @Summary		Add Category
 // @Description	Admin can add new categories for products
 // @Tags			Admin Category Management
 // @Accept			json
 // @Produce		    json
-// @Param			category	body	domain.Category	true	"category"
+// @Param			category	body	models.Category	true	"category"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/category [POST]
 func AddCategory(c *gin.Context) {
-	var category domain.Category
+	var category models.Category
 	if err := c.ShouldBindJSON(&category); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)

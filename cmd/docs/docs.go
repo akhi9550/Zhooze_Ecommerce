@@ -441,6 +441,38 @@ const docTemplate = `{
             }
         },
         "/category": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve All Category",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Category Management"
+                ],
+                "summary": "Get Category",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -508,7 +540,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Category"
+                            "$ref": "#/definitions/models.Category"
                         }
                     }
                 ],
@@ -797,7 +829,7 @@ const docTemplate = `{
         },
         "/filter": {
             "post": {
-                "description": "Retrieve all product Details with pagination to users",
+                "description": "Show all the Products belonging to a specified category",
                 "consumes": [
                     "application/json"
                 ],
@@ -807,7 +839,7 @@ const docTemplate = `{
                 "tags": [
                     "User Product"
                 ],
-                "summary": "Get Products Details to users category based",
+                "summary": "Show Products of specified category",
                 "parameters": [
                     {
                         "description": "Category IDs and quantities",
@@ -1164,8 +1196,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "id",
-                        "name": "id",
+                        "description": "order id",
+                        "name": "order_id",
                         "in": "query",
                         "required": true
                     },
@@ -1266,7 +1298,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Product"
+                            "$ref": "#/definitions/models.Product"
                         }
                     }
                 ],
@@ -1969,55 +2001,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "domain.Category": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "domain.Product": {
-            "type": "object",
-            "properties": {
-                "brand_id": {
-                    "type": "integer"
-                },
-                "category_id": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "is_deleted": {
-                    "type": "boolean"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "number"
-                },
-                "product_status": {
-                    "type": "string"
-                },
-                "size": {
-                    "type": "integer"
-                },
-                "sku": {
-                    "type": "string"
-                },
-                "stock": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.AddressInfo": {
             "type": "object",
             "required": [
@@ -2061,6 +2044,14 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 6
+                }
+            }
+        },
+        "models.Category": {
+            "type": "object",
+            "properties": {
+                "category_name": {
+                    "type": "string"
                 }
             }
         },
@@ -2123,6 +2114,38 @@ const docTemplate = `{
             "properties": {
                 "phone": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Product": {
+            "type": "object",
+            "properties": {
+                "brand_id": {
+                    "type": "integer"
+                },
+                "category_id": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product_status": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "sku": {
+                    "type": "string"
+                },
+                "stock": {
+                    "type": "integer"
                 }
             }
         },

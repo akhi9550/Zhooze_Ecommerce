@@ -3,11 +3,20 @@ package repository
 import (
 	"Zhooze/db"
 	"Zhooze/domain"
+	"Zhooze/utils/models"
 	"errors"
 	"strconv"
 )
 
-func AddCategory(category domain.Category) (domain.Category, error) {
+func GetCategory() ([]domain.Category, error) {
+	var category []domain.Category
+	err := db.DB.Raw("SELECT * FROM categories").Scan(&category).Error
+	if err != nil {
+		return nil, err
+	}
+	return category, nil
+}
+func AddCategory(category models.Category) (domain.Category, error) {
 	var categore string
 	err := db.DB.Raw("INSERT INTO categories (category) VALUES (?) RETURNING category", category.Category).Scan(&categore).Error
 	if err != nil {

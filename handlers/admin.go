@@ -120,7 +120,6 @@ func UnBlockUser(c *gin.Context) {
 	}
 	sucess := response.ClientResponse(http.StatusOK, "Successfully unblocked the user", nil, nil)
 	c.JSON(http.StatusOK, sucess)
-
 }
 
 // @Summary Filtered Sales Report
@@ -141,7 +140,6 @@ func FilteredSalesReport(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
-
 	successRes := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", salesReport, nil)
 	c.JSON(http.StatusOK, successRes)
 

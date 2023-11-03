@@ -195,7 +195,7 @@ func CheckOut(c *gin.Context) {
 // @Tags			User Order Management
 // @Accept			json
 // @Produce		    json
-// @Param			id	query	string	true	"id"
+// @Param			order_id	query	string	true	"order id"
 // @Param			payment	query	string	true	"payment"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}

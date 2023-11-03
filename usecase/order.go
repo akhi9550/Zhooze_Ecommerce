@@ -62,20 +62,15 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
-
 	// get available payment options
 	paymentDetails, err := repository.GetAllPaymentOption()
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
-
-	// get all items from users cart
 	cartItems, err := repository.DisplayCart(userID)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
-
-	// get grand total of all the product
 	grandTotal, err := repository.GetTotalPrice(userID)
 	if err != nil {
 		return models.CheckoutDetails{}, err

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"Zhooze/domain"
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
@@ -45,15 +44,15 @@ func ShowAllProducts(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// @Summary Get Products Details to users category based
-// @Description Retrieve all product Details with pagination to users
+// @Summary Show Products of specified category
+// @Description Show all the Products belonging to a specified category
 // @Tags User Product
 // @Accept json
 // @Produce json
 // @Param data body map[string]int true "Category IDs and quantities"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /filter   [POST]
+// @Router /filter [POST]
 func FilterCategory(c *gin.Context) {
 	var data map[string]int
 	if err := c.ShouldBindJSON(&data); err != nil {
@@ -132,12 +131,12 @@ func ShowAllProductsFromAdmin(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param product body domain.Product true "Product details"
+// @Param product body models.Product true "Product details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /product [POST]
 func AddProducts(c *gin.Context) {
-	var product domain.Product
+	var product models.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Fields provided are in wrong format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)

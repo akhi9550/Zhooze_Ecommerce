@@ -41,7 +41,7 @@ func UserSignUp(user models.UserSignUp) (models.UserDetailsResponse, error) {
 }
 func FindUserByEmail(user models.LoginDetail) (models.UserLoginResponse, error) {
 	var userDetails models.UserLoginResponse
-	err := db.DB.Raw("SELECT * FROM users WHERE email=? and blocked=false", user.Email).Scan(&userDetails).Error
+	err := db.DB.Raw("SELECT * FROM users WHERE email=? and blocked=false and isadmin=false", user.Email).Scan(&userDetails).Error
 	if err != nil {
 		return models.UserLoginResponse{}, errors.New("error checking user details")
 	}

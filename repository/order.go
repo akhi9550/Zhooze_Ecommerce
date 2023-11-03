@@ -34,7 +34,7 @@ func ApproveOrder(order_id string) error {
 
 func CancelOrders(order_id string) error {
 	status := "cancelled"
-	err := db.DB.Exec("UPDATE orders SET shipment_status = ? , approval='false' WHERE order_id = ? ", status, order_id).Error
+	err := db.DB.Exec("UPDATE orders SET shipment_status = ? ,payment_status = refunded, approval='false' WHERE order_id = ? ", status, order_id).Error
 	if err != nil {
 		return err
 	}

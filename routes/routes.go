@@ -27,6 +27,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.POST("/unblock", middleware.AdminAuthMiddleware(), handlers.UnBlockUser)
 
 	//CATEGORY
+	r.GET("/category", middleware.AdminAuthMiddleware(), handlers.GetCategory)
 	r.POST("/category", middleware.AdminAuthMiddleware(), handlers.AddCategory)
 	r.PUT("/category", middleware.AdminAuthMiddleware(), handlers.UpdateCategory)
 	r.DELETE("/category", middleware.AdminAuthMiddleware(), handlers.DeleteCategory)

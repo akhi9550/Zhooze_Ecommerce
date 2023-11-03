@@ -3,10 +3,19 @@ package usecase
 import (
 	"Zhooze/domain"
 	"Zhooze/repository"
+	"Zhooze/utils/models"
 	"errors"
 )
 
-func AddCategory(category domain.Category) (domain.Category, error) {
+func GetCategory() ([]domain.Category, error) {
+	category, err := repository.GetCategory()
+	if err != nil {
+		return []domain.Category{}, err
+	}
+	return category, nil
+
+}
+func AddCategory(category models.Category) (domain.Category, error) {
 	categories, err := repository.AddCategory(category)
 	if err != nil {
 		return domain.Category{}, err

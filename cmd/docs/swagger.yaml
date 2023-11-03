@@ -1,36 +1,4 @@
 definitions:
-  domain.Category:
-    properties:
-      category:
-        type: string
-      id:
-        type: integer
-    type: object
-  domain.Product:
-    properties:
-      brand_id:
-        type: integer
-      category_id:
-        type: integer
-      description:
-        type: string
-      id:
-        type: integer
-      is_deleted:
-        type: boolean
-      name:
-        type: string
-      price:
-        type: number
-      product_status:
-        type: string
-      size:
-        type: integer
-      sku:
-        type: string
-      stock:
-        type: integer
-    type: object
   models.AddressInfo:
     properties:
       city:
@@ -62,6 +30,11 @@ definitions:
     required:
     - email
     - password
+    type: object
+  models.Category:
+    properties:
+      category_name:
+        type: string
     type: object
   models.ChangePassword:
     properties:
@@ -103,6 +76,27 @@ definitions:
     properties:
       phone:
         type: string
+    type: object
+  models.Product:
+    properties:
+      brand_id:
+        type: integer
+      category_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      product_status:
+        type: string
+      size:
+        type: integer
+      sku:
+        type: string
+      stock:
+        type: integer
     type: object
   models.ProductUpdate:
     properties:
@@ -462,6 +456,26 @@ paths:
       summary: Delete Category
       tags:
       - Admin Category Management
+    get:
+      consumes:
+      - application/json
+      description: Retrieve All Category
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get Category
+      tags:
+      - Admin Category Management
     post:
       consumes:
       - application/json
@@ -472,7 +486,7 @@ paths:
         name: category
         required: true
         schema:
-          $ref: '#/definitions/domain.Category'
+          $ref: '#/definitions/models.Category'
       produces:
       - application/json
       responses:
@@ -660,7 +674,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Retrieve all product Details with pagination to users
+      description: Show all the Products belonging to a specified category
       parameters:
       - description: Category IDs and quantities
         in: body
@@ -681,7 +695,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get Products Details to users category based
+      summary: Show Products of specified category
       tags:
       - User Product
   /forgot-password:
@@ -885,9 +899,9 @@ paths:
       - application/json
       description: Add products to carts  for the purchase
       parameters:
-      - description: id
+      - description: order id
         in: query
-        name: id
+        name: order_id
         required: true
         type: string
       - description: payment
@@ -1006,7 +1020,7 @@ paths:
         name: product
         required: true
         schema:
-          $ref: '#/definitions/domain.Product'
+          $ref: '#/definitions/models.Product'
       produces:
       - application/json
       responses:

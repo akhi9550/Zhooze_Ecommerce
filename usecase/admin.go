@@ -172,7 +172,7 @@ func RefundUser(orderID string) error {
 func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
 	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
-	fmt.Println("🛍️🛍️🛍️", saleReport)
+	
 	if err != nil {
 		return models.SalesReport{}, err
 	}

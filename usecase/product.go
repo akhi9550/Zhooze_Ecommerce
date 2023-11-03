@@ -72,7 +72,7 @@ func SeeAllProducts() ([]domain.Product, error) {
 	}
 	return products, nil
 }
-func AddProducts(product domain.Product) (domain.Product, error) {
+func AddProducts(product models.Product) (domain.Product, error) {
 	productResponse, err := repository.AddProducts(product)
 	if err != nil {
 		return domain.Product{}, err

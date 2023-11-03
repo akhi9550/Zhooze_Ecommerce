@@ -23,8 +23,18 @@ type ProductReceiver struct {
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
 }
+type Product struct {
+	Name          string  `json:"name" `
+	Description   string  `json:"description"`
+	CategoryID    uint    `json:"category_id"`
+	SKU           string  `json:"sku"`
+	Size          int     `json:"size"`
+	BrandID       uint    `json:"brand_id"`
+	Stock         int     `json:"stock"`
+	Price         float64 `json:"price"`
+	ProductStatus string  `json:"product_status"`
+}
 type Category struct {
-	ID       uint   `json:"id" gorm:"unique; not null"`
 	Category string `json:"category_name"`
 }
 type SetNewName struct {

@@ -1,5 +1,10 @@
 package domain
 
+type PaymentMethod struct {
+	ID           uint   `json:"id" gorm:"primarykey"`
+	Payment_Name string `json:"payment_name"`
+}
+
 type RazerPay struct {
 	ID        uint   `json:"id" gorm:"primarykey not null"`
 	OrderID   string `json:"order_id"`

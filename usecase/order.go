@@ -1,11 +1,43 @@
 package usecase
 
 import (
+	"Zhooze/domain"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 	"errors"
 	"fmt"
 )
+
+func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order, error) {
+	addressExist := repository.CheckAddressAvailabilityWithID(addressID, userID)
+	if !addressExist {
+		return domain.Order{}, errors.New("address doesn't exist")
+	}
+	paymentMethod := repository.GetPaymentId(paymentID)
+	if !paymentMethod {
+		return domain.Order{}, errors.New("paymentmethod doesn't exist")
+	}
+	cartExist := repository.CheckCartAvailabilityWithID(CartID, userID)
+	if !cartExist {
+		return domain.Order{}, errors.New("cart doesn't exist")
+	}
+	totlaAmount, err := repository.TotalAmountInCart(CartID)
+	if err != nil {
+		return domain.Order{}, nil
+	}
+	orderItems, err := repository.OrderItemsFromCart(CartID, addressID, paymentID)
+	if err != nil {
+		return domain.Order{}, err
+	}
+	if err := repository.AddAmountToOrder(totlaAmount, orderItems.ID); err != nil {
+		return domain.Order{}, err
+	}
+	body, err := repository.GetOrder(int(orderItems.ID))
+	if err != nil {
+		return domain.Order{}, err
+	}
+	return body, nil
+}
 
 func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails, error) {
 	OrderDetails, err := repository.GetOrderDetails(userID, page, count)
@@ -80,9 +112,7 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		AddressInfoResponse: allUserAddress,
 		Payment_Method:      paymentDetails,
 		Cart:                cartItems,
-
-		Grand_Total: grandTotal.TotalPrice,
-		Total_Price: grandTotal.FinalPrice,
+		Total_Price:         grandTotal.FinalPrice,
 	}, nil
 }
 func ExecutePurchaseCOD(userID int, orderID string) (models.Invoice, error) {

@@ -32,7 +32,6 @@ func UserAuthMiddleware() gin.HandlerFunc {
 		}
 		c.Set("user_id", userID)
 		c.Set("user_email", userEmail)
-		// Call the next handler
 		c.Next()
 	}
 }

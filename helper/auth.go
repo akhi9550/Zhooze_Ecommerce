@@ -16,13 +16,10 @@ func GetTokenFromHeader(header string) string {
 }
 func ExtractUserIDFromToken(tokenString string) (int, string, error) {
 	cfg, _ := config.LoadConfig()
-
 	token, err := jwt.ParseWithClaims(tokenString, &AuthUserClaims{}, func(token *jwt.Token) (interface{}, error) {
-		// Check the signing method
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("invalid signing method")
 		}
-
 		return []byte(cfg.KEY), nil
 	})
 

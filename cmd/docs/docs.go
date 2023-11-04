@@ -1128,6 +1128,61 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerTokenAuth": []
+                    }
+                ],
+                "description": "Add cart to the order using  cart id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Order Management"
+                ],
+                "summary": "Order Items From Cart",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "cart id",
+                        "name": "cart_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "address id",
+                        "name": "address_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "payment id",
+                        "name": "payment_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
             }
         },
         "/page": {
@@ -1415,49 +1470,6 @@ const docTemplate = `{
                     "User Product"
                 ],
                 "summary": "Get Products Details to users",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/refund-order": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Refund an offer by admin",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin Order Management"
-                ],
-                "summary": "Refund Order",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Order ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2120,9 +2132,6 @@ const docTemplate = `{
         "models.Product": {
             "type": "object",
             "properties": {
-                "brand_id": {
-                    "type": "integer"
-                },
                 "category_id": {
                     "type": "integer"
                 },
@@ -2134,9 +2143,6 @@ const docTemplate = `{
                 },
                 "price": {
                     "type": "number"
-                },
-                "product_status": {
-                    "type": "string"
                 },
                 "size": {
                     "type": "integer"

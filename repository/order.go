@@ -2,6 +2,9 @@ package repository
 
 import (
 	"Zhooze/db"
+	"Zhooze/domain"
+	"fmt"
+
 	"Zhooze/utils/models"
 	"errors"
 )
@@ -85,21 +88,83 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 	return orderDatails, nil
 
 }
-func GetPaymentStatus(orderID string) (string, error) {
-	var paymentStatus string
-	err := db.DB.Raw("SELECT payment_status FROM orders WHERE order_id = ?", orderID).Scan(&paymentStatus).Error
+
+// func GetPaymentStatus(orderID string) (string, error) {
+// 	var paymentStatus string
+// 	err := db.DB.Raw("SELECT payment_status FROM orders WHERE order_id = ?", orderID).Scan(&paymentStatus).Error
+// 	if err != nil {
+// 		return "", err
+// 	}
+// 	return paymentStatus, nil
+// }
+// func RefundOrder(paymentStatus string, orderID string) error {
+// 	err := db.DB.Exec("UPDATE orders SET payment_status = ?, shipment_status = 'returned' WHERE order_id = ?", paymentStatus, orderID).Error
+// 	if err != nil {
+// 		return err
+// 	}
+// 	return nil
+// }
+
+func OrderItemsFromCart(cartID, addressID, paymentID int) (domain.Order, error) {
+	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️", addressID, cartID, paymentID)
+	var orderItems domain.Order
+	err := db.DB.Exec("INSERT INTO orders (created_at, user_id, address_id, cart_id) SELECT NOW(), c.user_id, a.id, c.id FROM carts c JOIN addresses a ON c.user_id = a.user_id WHERE a.id = ? AND c.id = ? ", addressID, cartID).Scan(&orderItems).Error
 	if err != nil {
-		return "", err
+		return domain.Order{}, err
 	}
-	return paymentStatus, nil
+	fmt.Println("😊", orderItems)
+	err = db.DB.Exec("INSERT INTO orders (payment_method_id) VALUES (?)", paymentID).Scan(&orderItems).Error
+	if err != nil {
+		return domain.Order{}, err
+	}
+	fmt.Println("😁", orderItems)
+	return orderItems, nil
 }
-func RefundOrder(paymentStatus string, orderID string) error {
-	err := db.DB.Exec("UPDATE orders SET payment_status = ?, shipment_status = 'returned' WHERE order_id = ?", paymentStatus, orderID).Error
+
+func CheckAddressAvailabilityWithID(addressID, userID int) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM addresses WHERE id = ? AND user_id = ?", addressID, userID).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func CheckCartAvailabilityWithID(cartID, UserID int) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE id = ? AND user_id = ?", cartID, UserID).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func AddAmountToOrder(Price float64, orderID uint) error {
+	err := db.DB.Exec("UPDATE orders SET final_price = ? WHERE id = ?", Price, orderID).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
+func GetOrder(orderID int) (domain.Order, error) {
+	var order domain.Order
+	err := db.DB.Raw("SELECT * FROM orders WHERE id = ?", orderID).Scan(&order).Error
+	if err != nil {
+		return domain.Order{}, err
+	}
+	return order, nil
+}
+func GetPaymentId(paymentID int) bool {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM payment_methods WHERE id = ? ", paymentID).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func TotalAmountInCart(cartID int) (float64, error) {
+	var price float64
+	if err := db.DB.Raw("SELECT total_price FROM carts WHERE id = ?", cartID).Error; err != nil {
+		return 0, err
+	}
+	return price, nil
+}
+
 func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails, error) {
 	if page == 0 {
 		page = 1

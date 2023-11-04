@@ -80,7 +80,7 @@ func SeeAllProducts() ([]domain.Product, error) {
 }
 func AddProducts(product models.Product) (domain.Product, error) {
 	var p models.ProductReceiver
-	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, brand_id, stock, price,product_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING name, description, category_id, sku, size, brand_id, stock, price,product_status", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.BrandID, product.Stock, product.Price, product.ProductStatus).Scan(&p).Error
+	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, stock, price) VALUES ( ?, ?, ?, ?, ?, ?, ?) RETURNING name, description, category_id, sku, size, stock, price", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
 	if err != nil {
 		return domain.Product{}, err
 	}

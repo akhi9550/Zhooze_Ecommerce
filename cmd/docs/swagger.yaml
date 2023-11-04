@@ -79,8 +79,6 @@ definitions:
     type: object
   models.Product:
     properties:
-      brand_id:
-        type: integer
       category_id:
         type: integer
       description:
@@ -89,8 +87,6 @@ definitions:
         type: string
       price:
         type: number
-      product_status:
-        type: string
       size:
         type: integer
       sku:
@@ -863,6 +859,42 @@ paths:
       summary: Get Order Details to user side
       tags:
       - User Order Management
+    post:
+      consumes:
+      - application/json
+      description: Add cart to the order using  cart id
+      parameters:
+      - description: cart id
+        in: query
+        name: cart_id
+        required: true
+        type: integer
+      - description: address id
+        in: query
+        name: address_id
+        required: true
+        type: integer
+      - description: payment id
+        in: query
+        name: payment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - BearerTokenAuth: []
+      summary: Order Items From Cart
+      tags:
+      - User Order Management
   /page:
     get:
       consumes:
@@ -1056,33 +1088,6 @@ paths:
       summary: Get Products Details to users
       tags:
       - User Product
-  /refund-order:
-    put:
-      consumes:
-      - application/json
-      description: Refund an offer by admin
-      parameters:
-      - description: Order ID
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Refund Order
-      tags:
-      - Admin Order Management
   /removefromcart:
     delete:
       consumes:

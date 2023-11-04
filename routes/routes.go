@@ -43,7 +43,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.GET("/order", middleware.AdminAuthMiddleware(), handlers.GetAllOrderDetailsForAdmin)
 	r.GET("/approve-order", middleware.AdminAuthMiddleware(), handlers.ApproveOrder)
 	r.GET("/cancel-order", middleware.AdminAuthMiddleware(), handlers.CancelOrderFromAdmin)
-	r.PUT("/refund-order", middleware.AdminAuthMiddleware(), handlers.RefundUser)
+	// r.PUT("/refund-order", middleware.AdminAuthMiddleware(), handlers.RefundUser)
 
 	//IMAGE CROPPING
 	r.POST("/image-crop", middleware.AdminAuthMiddleware(), handlers.CropImage)
@@ -76,6 +76,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 	r.PUT("/changepassword", middleware.UserAuthMiddleware(), handlers.ChangePassword)
 
 	//ORDERS
+	r.POST("/orders", middleware.UserAuthMiddleware(), handlers.OrderItemsFromCart)
 	r.GET("/orders", middleware.UserAuthMiddleware(), handlers.GetOrderDetails)
 	r.PUT("/cancel-orders", middleware.UserAuthMiddleware(), handlers.CancelOrder)
 	r.GET("/checkout", middleware.UserAuthMiddleware(), handlers.CheckOut)

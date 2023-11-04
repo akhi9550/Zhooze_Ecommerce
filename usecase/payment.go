@@ -57,6 +57,6 @@ func SavePaymentDetails(orderID string, paymentID string) error {
 		}
 		return nil
 	}
-	fmt.Println("already paid")
+	fmt.Println("❌already paid❌")
 	return errors.New("already paid")
 }

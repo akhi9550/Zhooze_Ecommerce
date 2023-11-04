@@ -14,8 +14,7 @@ type User struct {
 	Isadmin     bool   `json:"is_admin" gorm:"default:false"`
 }
 type Address struct {
-	gorm.Model
-	Id        uint   `json:"id" gorm:"unique;not null"`
+	Id        int    `json:"id" gorm:"unique;not null"`
 	UserID    uint   `json:"user_id"`
 	User      User   `json:"-" gorm:"foreignkey:UserID"`
 	Name      string `json:"name" validate:"required"`

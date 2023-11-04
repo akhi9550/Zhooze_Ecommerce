@@ -6,33 +6,28 @@ type ProductBrief struct {
 	Description   string  `json:"description"`
 	SKU           string  `json:"sku"`
 	Size          int     `json:"size"`
-	BrandID       uint    `json:"brand_id"`
 	Stock         int     `json:"stock"`
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
 }
 
 type ProductReceiver struct {
-	Name          string  `json:"name" `
-	Description   string  `json:"description"`
-	CategoryID    uint    `json:"category_id"`
-	SKU           string  `json:"sku"`
-	Size          int     `json:"size"`
-	BrandID       uint    `json:"brand_id"`
-	Stock         int     `json:"stock"`
-	Price         float64 `json:"price"`
-	ProductStatus string  `json:"product_status"`
+	Name        string  `json:"name" `
+	Description string  `json:"description"`
+	CategoryID  uint    `json:"category_id"`
+	SKU         string  `json:"sku"`
+	Size        int     `json:"size"`
+	Stock       int     `json:"stock"`
+	Price       float64 `json:"price"`
 }
 type Product struct {
-	Name          string  `json:"name" `
-	Description   string  `json:"description"`
-	CategoryID    uint    `json:"category_id"`
-	SKU           string  `json:"sku"`
-	Size          int     `json:"size"`
-	BrandID       uint    `json:"brand_id"`
-	Stock         int     `json:"stock"`
-	Price         float64 `json:"price"`
-	ProductStatus string  `json:"product_status"`
+	Name        string  `json:"name" `
+	Description string  `json:"description"`
+	CategoryID  uint    `json:"category_id"`
+	SKU         string  `json:"sku"`
+	Size        int     `json:"size"`
+	Stock       int     `json:"stock"`
+	Price       float64 `json:"price"`
 }
 type Category struct {
 	Category string `json:"category_name"`

@@ -37,7 +37,7 @@ func DashBoardProductDetails() (models.DashBoardProduct, error) {
 	if err != nil {
 		return models.DashBoardProduct{}, nil
 	}
-	err = db.DB.Raw("SELECT COUNT(*) FROM products WHERE stock=0").Scan(&productDetails.OutofStockProduct).Error
+	err = db.DB.Raw("SELECT COUNT(*) FROM products WHERE stock<=0").Scan(&productDetails.OutofStockProduct).Error
 	if err != nil {
 		return models.DashBoardProduct{}, nil
 	}
@@ -100,7 +100,7 @@ func DashBoardOrder() (models.DashboardOrder, error) {
 		return models.DashboardOrder{}, nil
 	}
 
-	err = db.DB.Raw("select sum(quantity) from order_items").Scan(&orderDetail.TotalOrderItem).Error
+	err = db.DB.Raw("select sum(quantity) from carts").Scan(&orderDetail.TotalOrderItem).Error
 	if err != nil {
 		return models.DashboardOrder{}, nil
 	}
@@ -158,7 +158,7 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 		return models.SalesReport{}, result.Error
 	}
 	var productID int
-	result = db.DB.Raw("SELECT product_id FROM order_items GROUP BY product_id order by SUM(quantity) DESC LIMIT 1").Scan(&productID)
+	result = db.DB.Raw("SELECT product_id FROM carts GROUP BY product_id order by SUM(quantity) DESC LIMIT 1").Scan(&productID)
 	if result.Error != nil {
 		return models.SalesReport{}, result.Error
 	}

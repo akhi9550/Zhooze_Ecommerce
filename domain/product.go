@@ -8,11 +8,9 @@ type Product struct {
 	Category      Category `json:"-" gorm:"foreignkey:CategoryID;constraint:OnDelete:CASCADE"`
 	SKU           string   `json:"sku"`
 	Size          int      `json:"size"`
-	BrandID       uint     `json:"brand_id"`
 	Stock         int      `json:"stock"`
 	Price         float64  `json:"price"`
-	ProductStatus string   `json:"product_status"`
-	IsDeleted     bool     `json:"is_deleted" gorm:"default:false"`
+	Product_image []byte   `json:"product_image"`
 }
 type Category struct {
 	ID       uint   `json:"id" gorm:"unique; not null"`

@@ -5,7 +5,7 @@ import (
 	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
-	"fmt"
+	"log"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -109,32 +109,26 @@ func StockInvalid(Name string) bool {
 }
 func AddProducts(product models.Product) (domain.Product, error) {
 	var p domain.Product
-	// 	query := `
-	//     INSERT INTO products (name, description, category_id, sku, size, stock, price)
-	//     VALUES (?, ?, ?, ?, ?, ?, ?)
-	//     RETURNING name, description, category_id, sku, size, stock, price
-	// `
 	query := `
-    INSERT INTO products (name, description, category_id, sku, size, stock, price) 
-    VALUES (?, ?, ?, ?, ?, ?, ?) 
+    INSERT INTO products (name, description, category_id, sku, size, stock, price)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING name, description, category_id, sku, size, stock, price
-`
+    `
 
-	fmt.Println("\nhyyyyyyy", product)
-	fmt.Println("Query:", query)
-
-	err := db.DB.Exec(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
+	err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
 	if err != nil {
-		fmt.Println("👺", p, "\n\niiiiiiiiiiii", err)
+		log.Println(err.Error())
 		return domain.Product{}, err
 	}
-	fmt.Println("👺👺👺", p)
+
 	var ProductResponses domain.Product
-	fmt.Println("\n", p.Name)
+
 	err = db.DB.Raw("SELECT * FROM products WHERE name = ?", p.Name).Scan(&ProductResponses).Error
 	if err != nil {
+		log.Println(err.Error())
 		return domain.Product{}, err
 	}
+
 	return ProductResponses, nil
 }
 

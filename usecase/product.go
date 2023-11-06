@@ -91,7 +91,7 @@ func AddProducts(product models.Product) (domain.Product, error) {
 		return domain.Product{}, err
 	}
 	stock := repository.StockInvalid(productResponse.Name)
-	if stock {
+	if !stock {
 		return domain.Product{}, errors.New("stock is invalid input")
 	}
 	return productResponse, nil

@@ -14,7 +14,7 @@ type Order struct {
 	PaymentMethod   PaymentMethod `json:"-" gorm:"foreignkey:PaymentMethodID"`
 	CartID          int           `json:"cart_id" gorm:"not null"`
 	Cart            Cart          `json:"-" gorm:"foreignkey:CartID"`
-	ShipmentStatus  string        `json:"order_status" gorm:"default:'pending'"`
+	ShipmentStatus  string        `json:"shipment_status" gorm:"default:'pending'"`
 	PaymentStatus   string        `json:"payment_status" gorm:"default:'not paid'"`
 	FinalPrice      float64       `json:"final_price"`
 	Approval        bool          `json:"approval" gorm:"default:false"`

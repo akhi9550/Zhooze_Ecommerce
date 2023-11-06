@@ -102,7 +102,7 @@ func AllProducts(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /product   [GET]
 func ShowAllProductsFromAdmin(c *gin.Context) {
-	pageString := c.Query("page")
+	pageString := c.DefaultQuery("page","0")
 	page, err := strconv.Atoi(pageString)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page number not in right format", nil, err.Error())
@@ -139,6 +139,11 @@ func AddProducts(c *gin.Context) {
 	var product models.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	if product.Stock < 1 {
+		errs := response.ClientResponse(http.StatusBadRequest, "Invalid Stock", nil, nil)
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}

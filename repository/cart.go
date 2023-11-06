@@ -53,13 +53,15 @@ func CartExist(userID int) (bool, error) {
 
 }
 func EmptyCart(userID int) error {
-
-	if err := db.DB.Exec("DELETE FROM carts WHERE user_id = ? ", userID).Error; err != nil {
+	if err := db.DB.Exec("DELETE FROM orders WHERE cart_id IN (SELECT id FROM carts WHERE user_id = ?)", userID).Error; err != nil {
 		return err
 	}
 
+	// Then delete the cart
+	if err := db.DB.Exec("DELETE FROM carts WHERE user_id = ?", userID).Error; err != nil {
+		return err
+	}
 	return nil
-
 }
 func CheckProduct(product_id int) (bool, string, error) {
 	var count int

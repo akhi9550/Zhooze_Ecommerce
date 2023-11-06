@@ -5,7 +5,7 @@ type Product struct {
 	Name          string   `json:"name"`
 	Description   string   `json:"description"`
 	CategoryID    uint     `json:"category_id"`
-	Category      Category `json:"-" gorm:"foreignkey:CategoryID;constraint:OnDelete:CASCADE"`
+	Category      Category `json:"-" gorm:"foreignkey:CategoryID;"`
 	SKU           string   `json:"sku"`
 	Size          int      `json:"size"`
 	Stock         int      `json:"stock"`

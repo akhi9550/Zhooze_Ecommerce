@@ -1124,7 +1124,7 @@
             "post": {
                 "security": [
                     {
-                        "BearerTokenAuth": []
+                        "Bearer": []
                     }
                 ],
                 "description": "Add cart to the order using  cart id",
@@ -1709,7 +1709,7 @@
                     {
                         "type": "string",
                         "description": "product_id",
-                        "name": "product",
+                        "name": "product_id",
                         "in": "query",
                         "required": true
                     }
@@ -1752,7 +1752,7 @@
                     {
                         "type": "string",
                         "description": "product_id",
-                        "name": "product",
+                        "name": "product_id",
                         "in": "query",
                         "required": true
                     }

@@ -30,7 +30,7 @@ type Product struct {
 	Price       float64 `json:"price"`
 }
 type Category struct {
-	Category string `json:"category_name"`
+	Category string `json:"category"`
 }
 type SetNewName struct {
 	Current string `json:"current"`

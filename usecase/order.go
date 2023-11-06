@@ -25,11 +25,10 @@ func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order,
 	if err != nil {
 		return domain.Order{}, nil
 	}
-	orderItems, err := repository.OrderItemsFromCart(CartID, addressID)
+	orderItems, err := repository.OrderItemsFromCart(CartID)
 	if err != nil {
 		return domain.Order{}, err
 	}
-	fmt.Println("jjjjjjjjjjjjjjj", orderItems)
 	if err := repository.AddpaymentMethod(paymentID, orderItems.ID); err != nil {
 		return domain.Order{}, err
 	}
@@ -37,6 +36,14 @@ func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order,
 		return domain.Order{}, err
 	}
 	body, err := repository.GetOrder(int(orderItems.ID))
+	if err != nil {
+		return domain.Order{}, err
+	}
+	// productID, err := repository.FindProductFromCart(CartID)
+	// if err != nil {
+	// 	return domain.Order{}, err
+	// }
+	err = repository.CartEmpty(CartID)
 	if err != nil {
 		return domain.Order{}, err
 	}

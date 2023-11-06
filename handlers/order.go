@@ -108,10 +108,10 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Tags  User Order Management
 // @Accept json
 // @Produce json
+// @Security Bearer
 // @Param cart_id query int true "cart id"
 // @Param address_id query int true "address id"
 // @Param payment_id query int true "payment id"
-// @Security BearerTokenAuth
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /orders    [POST]

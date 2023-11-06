@@ -891,7 +891,7 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       security:
-      - BearerTokenAuth: []
+      - Bearer: []
       summary: Order Items From Cart
       tags:
       - User Order Management
@@ -1229,7 +1229,7 @@ paths:
       parameters:
       - description: product_id
         in: query
-        name: product
+        name: product_id
         required: true
         type: string
       produces:
@@ -1256,7 +1256,7 @@ paths:
       parameters:
       - description: product_id
         in: query
-        name: product
+        name: product_id
         required: true
         type: string
       produces:

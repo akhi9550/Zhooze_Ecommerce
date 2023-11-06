@@ -6,6 +6,7 @@ import (
 	"Zhooze/utils/models"
 	"errors"
 	"fmt"
+	"log"
 	"strconv"
 
 	"gorm.io/gorm"
@@ -102,37 +103,27 @@ func ProductAlreadyExist(Name string) bool {
 }
 func StockInvalid(Name string) bool {
 	var count int
-	if err := db.DB.Raw("SELECT SUM(stock) FROM products where name = ?", Name).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT SUM(stock) FROM products WHERE name = ? AND stock >= 0", Name).Scan(&count).Error; err != nil {
 		return false
 	}
 	return count > 0
 }
 func AddProducts(product models.Product) (domain.Product, error) {
 	var p domain.Product
-	// 	query := `
-	//     INSERT INTO products (name, description, category_id, sku, size, stock, price)
-	//     VALUES (?, ?, ?, ?, ?, ?, ?)
-	//     RETURNING name, description, category_id, sku, size, stock, price
-	// `
 	query := `
-    INSERT INTO products (name, description, category_id, sku, size, stock, price) 
-    VALUES (?, ?, ?, ?, ?, ?, ?) 
-    RETURNING name, description, category_id, sku, size, stock, price
-`
-
-	fmt.Println("\nhyyyyyyy", product)
-	fmt.Println("Query:", query)
-
-	err := db.DB.Exec(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
+    INSERT INTO products (name, description, category_id, sku, size, stock, price)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    RETURNING name, description, category_id, sku, size, stock, price`
+	err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
+	fmt.Println("dkddkdkd", p)
 	if err != nil {
-		fmt.Println("👺", p, "\n\niiiiiiiiiiii", err)
+		log.Println(err.Error())
 		return domain.Product{}, err
 	}
-	fmt.Println("👺👺👺", p)
 	var ProductResponses domain.Product
-	fmt.Println("\n", p.Name)
 	err = db.DB.Raw("SELECT * FROM products WHERE name = ?", p.Name).Scan(&ProductResponses).Error
 	if err != nil {
+		log.Println(err.Error())
 		return domain.Product{}, err
 	}
 	return ProductResponses, nil

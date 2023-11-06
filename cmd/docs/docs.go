@@ -1132,7 +1132,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "BearerTokenAuth": []
+                        "Bearer": []
                     }
                 ],
                 "description": "Add cart to the order using  cart id",
@@ -1717,7 +1717,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "product_id",
-                        "name": "product",
+                        "name": "product_id",
                         "in": "query",
                         "required": true
                     }
@@ -1760,7 +1760,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "product_id",
-                        "name": "product",
+                        "name": "product_id",
                         "in": "query",
                         "required": true
                     }

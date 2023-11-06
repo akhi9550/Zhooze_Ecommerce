@@ -25,8 +25,12 @@ func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order,
 	if err != nil {
 		return domain.Order{}, nil
 	}
-	orderItems, err := repository.OrderItemsFromCart(CartID, addressID, paymentID)
+	orderItems, err := repository.OrderItemsFromCart(CartID, addressID)
 	if err != nil {
+		return domain.Order{}, err
+	}
+	fmt.Println("jjjjjjjjjjjjjjj", orderItems)
+	if err := repository.AddpaymentMethod(paymentID, orderItems.ID); err != nil {
 		return domain.Order{}, err
 	}
 	if err := repository.AddAmountToOrder(totlaAmount, orderItems.ID); err != nil {
@@ -39,13 +43,14 @@ func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order,
 	return body, nil
 }
 
-func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails, error) {
+func GetOrderDetails(userID int, page int, count int) ([]models.CombinedOrderDetails, error) {
 	OrderDetails, err := repository.GetOrderDetails(userID, page, count)
 	if err != nil {
-		return []models.FullOrderDetails{}, err
+		return []models.CombinedOrderDetails{}, err
 	}
 	return OrderDetails, nil
 }
+
 func CancelOrders(orderID string, userID int) error {
 	ok, err := repository.CheckOrderID(orderID)
 	fmt.Println(ok)

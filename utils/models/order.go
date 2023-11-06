@@ -1,7 +1,7 @@
 package models
 
 type OrderDetails struct {
-	OrderId        string
+	orderId        string
 	FinalPrice     float64
 	ShipmentStatus string
 	PaymentStatus  string

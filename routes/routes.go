@@ -34,6 +34,7 @@ func AllRoutes(r *gin.Engine, db *gorm.DB) *gin.Engine {
 
 	//PRODUCT
 	r.GET("/product", middleware.AdminAuthMiddleware(), handlers.ShowAllProductsFromAdmin)
+	///////////////////////////////////////////sommeeeeeeeeeeeeeee
 	r.POST("product", middleware.AdminAuthMiddleware(), handlers.AddProducts)
 	r.PATCH("/product", middleware.AdminAuthMiddleware(), handlers.UpdateProduct)
 	r.DELETE("/product", middleware.AdminAuthMiddleware(), handlers.DeleteProducts)

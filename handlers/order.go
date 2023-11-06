@@ -183,8 +183,6 @@ func GetOrderDetails(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
-	fmt.Println("full order details is ", OrderDetails)
-
 	successRes := response.ClientResponse(http.StatusOK, "Full Order Details", OrderDetails, nil)
 	c.JSON(http.StatusOK, successRes)
 }

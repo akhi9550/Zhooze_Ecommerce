@@ -5,7 +5,10 @@ import (
 	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
+	"fmt"
 	"strconv"
+
+	"gorm.io/gorm"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
@@ -70,23 +73,65 @@ func GetPriceOfProductFromID(prodcut_id int) (float64, error) {
 	}
 	return productPrice, nil
 }
-func SeeAllProducts() ([]domain.Product, error) {
-	var products []domain.Product
+func SeeAllProducts() ([]models.ProductBrief, error) {
+	var products []models.ProductBrief
 	err := db.DB.Raw("SELECT * FROM products").Scan(&products).Error
 	if err != nil {
 		return nil, err
 	}
 	return products, nil
 }
+
+func ShowIndividualProducts(id string) (*models.ProductBrief, error) {
+	var product models.ProductBrief
+	result := db.DB.Raw(`SELECT p.id,  p.name,  p.sku, p.size , c.category,  p.stock, p.price FROM products p JOIN  categories c ON p.category_id = c.id WHERE  p.sku=?`, id).Scan(&product)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, result.Error
+		}
+		return nil, result.Error
+	}
+	return &product, nil
+}
+func ProductAlreadyExist(Name string) bool {
+	var count int
+	if err := db.DB.Raw("SELECT count(*) FROM products WHERE name = ?", Name).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
+func StockInvalid(Name string) bool {
+	var count int
+	if err := db.DB.Raw("SELECT SUM(stock) FROM products where name = ?", Name).Scan(&count).Error; err != nil {
+		return false
+	}
+	return count > 0
+}
 func AddProducts(product models.Product) (domain.Product, error) {
-	var p models.ProductReceiver
-	err := db.DB.Raw("INSERT INTO products (name, description, category_id, sku, size, stock, price) VALUES ( ?, ?, ?, ?, ?, ?, ?) RETURNING name, description, category_id, sku, size, stock, price", product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
+	var p domain.Product
+	// 	query := `
+	//     INSERT INTO products (name, description, category_id, sku, size, stock, price)
+	//     VALUES (?, ?, ?, ?, ?, ?, ?)
+	//     RETURNING name, description, category_id, sku, size, stock, price
+	// `
+	query := `
+    INSERT INTO products (name, description, category_id, sku, size, stock, price) 
+    VALUES (?, ?, ?, ?, ?, ?, ?) 
+    RETURNING name, description, category_id, sku, size, stock, price
+`
+
+	fmt.Println("\nhyyyyyyy", product)
+	fmt.Println("Query:", query)
+
+	err := db.DB.Exec(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
 	if err != nil {
+		fmt.Println("👺", p, "\n\niiiiiiiiiiii", err)
 		return domain.Product{}, err
 	}
+	fmt.Println("👺👺👺", p)
 	var ProductResponses domain.Product
-
-	err = db.DB.Raw("SELECT * FROM products WHERE products.name = ?", p.Name).Scan(&ProductResponses).Error
+	fmt.Println("\n", p.Name)
+	err = db.DB.Raw("SELECT * FROM products WHERE name = ?", p.Name).Scan(&ProductResponses).Error
 	if err != nil {
 		return domain.Product{}, err
 	}
@@ -122,6 +167,9 @@ func CheckProductExist(pid int) (bool, error) {
 	return true, err
 }
 func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
+	if stock <= 0 {
+		return models.ProductUpdateReciever{}, errors.New("stock doesnot update invalid input")
+	}
 	if db.DB == nil {
 		return models.ProductUpdateReciever{}, errors.New("database connection is nil")
 	}

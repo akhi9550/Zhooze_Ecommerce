@@ -116,14 +116,14 @@ func EmptyCart(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			product	query	string	true	"product_id"
+// @Param			product_id	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/updatequantityadd   [PUT]
 func UpdateQuantityAdd(c *gin.Context) {
 	id, _ := c.Get("user_id")
-	product, err := strconv.Atoi(c.Query("product"))
+	product, err := strconv.Atoi(c.Query("product_id"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
@@ -150,14 +150,14 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			product	query	string	true	"product_id"
+// @Param			product_id	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/updatequantityless  [PUT]
 func UpdateQuantityless(c *gin.Context) {
 	id, _ := c.Get("user_id")
-	product, err := strconv.Atoi(c.Query("product"))
+	product, err := strconv.Atoi(c.Query("product_id"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)

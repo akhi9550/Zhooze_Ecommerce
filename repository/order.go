@@ -105,20 +105,21 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 // 	return nil
 // }
 
-func OrderItemsFromCart(cartID, addressID, paymentID int) (domain.Order, error) {
-	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️", addressID, cartID, paymentID)
+func OrderItemsFromCart(cartID, addressID int) (domain.Order, error) {
 	var orderItems domain.Order
-	err := db.DB.Exec("INSERT INTO orders (created_at, user_id, address_id, cart_id) SELECT NOW(), c.user_id, a.id, c.id FROM carts c JOIN addresses a ON c.user_id = a.user_id WHERE a.id = ? AND c.id = ? ", addressID, cartID).Scan(&orderItems).Error
+	err := db.DB.Exec(`INSERT INTO orders (created_at, user_id, address_id, cart_id,final_price) SELECT NOW(), c.user_id, a.id, c.id,c.total_price FROM carts c JOIN addresses a ON c.user_id = a.user_id WHERE a.id = ? AND c.id = ?`, addressID, cartID).Error
 	if err != nil {
 		return domain.Order{}, err
 	}
-	fmt.Println("😊", orderItems)
-	err = db.DB.Exec("INSERT INTO orders (payment_method_id) VALUES (?)", paymentID).Scan(&orderItems).Error
-	if err != nil {
-		return domain.Order{}, err
-	}
-	fmt.Println("😁", orderItems)
+	fmt.Println("👺👺👺", orderItems)
 	return orderItems, nil
+}
+func AddpaymentMethod(paymentID int, orderID uint) error {
+	err := db.DB.Exec(`UPDATE orders SET payment_method_id = ? WHERE id = ?`, paymentID, orderID).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func CheckAddressAvailabilityWithID(addressID, userID int) bool {
@@ -165,21 +166,19 @@ func TotalAmountInCart(cartID int) (float64, error) {
 	return price, nil
 }
 
-func GetOrderDetails(userID int, page int, count int) ([]models.FullOrderDetails, error) {
+func GetOrderDetails(userID int, page int, count int) ([]models.CombinedOrderDetails, error) {
 	if page == 0 {
 		page = 1
 	}
 	offset := (page - 1) * count
-	var orderDatails []models.OrderDetails
-	db.DB.Raw("SELECT order_id, final_price, shipment_status, payment_status FROM orders WHERE user_id = ? LIMIT ? OFFSET ?", userID, count, offset).Scan(&orderDatails)
-	var fullOrderDetails []models.FullOrderDetails
-	for _, ok := range orderDatails {
-		var OrderProductDetails []models.OrderProductDetails
-		db.DB.Raw("select order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price from order_items inner join products on order_items.product_id = products.id where order_items.order_id = ?", ok.OrderId).Scan(&OrderProductDetails)
-		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: ok, OrderProductDetails: OrderProductDetails})
+	var orders []models.CombinedOrderDetails
+	err := db.DB.Raw(`SELECT  o.id as order_id,o.final_price ,o.shipment_status, o.payment_status,u.firstname as firstname,u.email as email,u.phone as phone,a.house_name as house_name,a.street as street,a.city as city,a.state as state,a.pin as pin FROM orders o JOIN users u on o.user_id = u.id JOIN addresses a on o.address_id = a.id WHERE o.user_id = ? LIMIT ? OFFSET ?`, userID, count, offset).Scan(&orders).Error
+	if err != nil {
+		return []models.CombinedOrderDetails{}, err
 	}
-	return fullOrderDetails, nil
+	return orders, nil
 }
+
 func UserOrderRelationship(orderID string, userID int) (int, error) {
 	var testUserID int
 	err := db.DB.Raw("SELECT user_id FROM orders WHERE order_id = ?", orderID).Scan(&testUserID).Error

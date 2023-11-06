@@ -14,7 +14,7 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	}
 	for i := range products {
 		p := &products[i]
-		if p.Stock == 0 {
+		if p.Stock <= 0 {
 			p.ProductStatus = "out of stock"
 		} else {
 			p.ProductStatus = "in stock"
@@ -29,7 +29,7 @@ func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error
 	}
 	for i := range products {
 		p := &products[i]
-		if p.Stock == 0 {
+		if p.Stock <= 0 {
 			p.ProductStatus = "out of stock"
 		} else {
 			p.ProductStatus = "in stock"
@@ -53,7 +53,7 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 			if err != nil {
 				return []models.ProductBrief{}, err
 			}
-			if stock == 0 {
+			if stock <= 0 {
 				products.ProductStatus = "out of stock"
 			} else {
 				products.ProductStatus = "in stock"
@@ -65,17 +65,34 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	}
 	return ProductFromCategory, nil
 }
-func SeeAllProducts() ([]domain.Product, error) {
+
+func SeeAllProducts() ([]models.ProductBrief, error) {
 	products, err := repository.SeeAllProducts()
 	if err != nil {
-		return []domain.Product{}, err
+		return []models.ProductBrief{}, err
+	}
+	for i := range products {
+		p := &products[i]
+		if p.Stock <= 0 {
+			p.ProductStatus = "out of stock"
+		} else {
+			p.ProductStatus = "in stock"
+		}
 	}
 	return products, nil
 }
 func AddProducts(product models.Product) (domain.Product, error) {
+	exist := repository.ProductAlreadyExist(product.Name)
+	if exist {
+		return domain.Product{}, errors.New("product already exist")
+	}
 	productResponse, err := repository.AddProducts(product)
 	if err != nil {
 		return domain.Product{}, err
+	}
+	stock := repository.StockInvalid(productResponse.Name)
+	if stock {
+		return domain.Product{}, errors.New("stock is invalid input")
 	}
 	return productResponse, nil
 }
@@ -87,6 +104,9 @@ func DeleteProducts(id string) error {
 	return nil
 }
 func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
+	if stock <= 0 {
+		return models.ProductUpdateReciever{}, errors.New("stock doesnot update invalid input")
+	}
 	result, err := repository.CheckProductExist(pid)
 	if err != nil {
 		return models.ProductUpdateReciever{}, err

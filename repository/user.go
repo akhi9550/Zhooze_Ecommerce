@@ -188,16 +188,16 @@ func UpdateQuantityAdd(id, prdt_id int) error {
 	return nil
 }
 
-func UpdateTotalPrice(id, product_id int) error {
-	err := db.DB.Exec("UPDATE carts SET total_price = carts.quantity * products.price FROM products  WHERE carts.product_id = products.id AND carts.user_id = $1 AND carts.product_id = $2", id, product_id).Error
+func UpdateTotalPrice(userID, productID int) error {
+	err := db.DB.Exec("UPDATE carts SET total_price = carts.quantity * products.price FROM products  WHERE carts.product_id = products.id AND carts.user_id = $1 AND carts.product_id = $2", userID, productID).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateQuantityless(id, prdt_id int) error {
-	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE user_id=$1 AND product_id = $2 ", id, prdt_id).Error
+func UpdateQuantityless(userID, productID int) error {
+	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE user_id=$1 AND product_id = $2 ", userID, productID).Error
 	if err != nil {
 		return err
 	}

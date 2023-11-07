@@ -1,11 +1,11 @@
 package models
 
-type Cart struct {
-	ProductID   uint    `json:"product_id"`
-	ProductName string  `json:"product_name"`
-	Quantity    float64 `json:"quantity"`
-	TotalPrice  float64 `json:"total_price"`
-}
+// type Cart struct {
+// 	ProductID   uint    `json:"product_id"`
+// 	ProductName string  `json:"product_name"`
+// 	Quantity    float64 `json:"quantity"`
+// 	TotalPrice  float64 `json:"total_price"`
+// }
 
 type CartResponse struct {
 	UserName   string
@@ -17,4 +17,11 @@ type CartTotal struct {
 	TotalPrice     float64 `json:"total_price"`
 	FinalPrice     float64 `json:"final_price"`
 	DiscountReason string
+}
+type Cart struct {
+	CartId      int     `json:"cart_id"`
+	ProductId   int     `json:"product_id"`
+	ProductName string  `json:"product_name"`
+	Quantity    string  `json:"quantity"`
+	TotalPrice  float64 `json:"total_price"`
 }

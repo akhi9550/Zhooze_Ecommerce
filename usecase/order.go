@@ -35,15 +35,23 @@ func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order,
 	if err := repository.AddAmountToOrder(totlaAmount, orderItems.ID); err != nil {
 		return domain.Order{}, err
 	}
+	stock, err := repository.FindOrderStock(CartID)
+	if err != nil {
+		return domain.Order{}, err
+	}
 	body, err := repository.GetOrder(int(orderItems.ID))
 	if err != nil {
 		return domain.Order{}, err
 	}
-	// productID, err := repository.FindProductFromCart(CartID)
-	// if err != nil {
-	// 	return domain.Order{}, err
-	// }
+	productID, err := repository.FindProductFromCart(CartID)
+	if err != nil {
+		return domain.Order{}, err
+	}
 	err = repository.CartEmpty(CartID)
+	if err != nil {
+		return domain.Order{}, err
+	}
+	err = repository.ProductStockMinus(productID, stock)
 	if err != nil {
 		return domain.Order{}, err
 	}

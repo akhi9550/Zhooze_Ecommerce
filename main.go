@@ -10,6 +10,8 @@ import (
 	_ "Zhooze/cmd/docs"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Go + Gin Zhooze E-Commerce API
@@ -34,7 +36,13 @@ func main() {
 		log.Fatalf("Error connecting to the database:%v", err)
 	}
 	router := gin.Default()
-	routes.AllRoutes(router, db)
+	router.LoadHTMLGlob("template/*")
+	userGroup := router.Group("/user")
+	adminGroup := router.Group("/admin")
+	routes.UserRoutes(userGroup, db)
+	routes.AdminRoutes(adminGroup, db)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	router.Static("uploads", "./uploads")
 
 	listenAdder := fmt.Sprintf("%s:%s", cfig.DBPort, cfig.DBHost)
 	fmt.Printf("Starting server on %s..\n", cfig.BASE_URL)

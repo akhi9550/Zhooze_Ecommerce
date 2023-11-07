@@ -5,6 +5,7 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -21,14 +22,14 @@ import (
 // @Failure 500 {object} response.Response{}
 // @Router /page   [GET]
 func ShowAllProducts(c *gin.Context) {
-	pageString := c.Query("page")
+	pageString := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageString)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	count, err := strconv.Atoi(c.Query("count"))
+	count, err := strconv.Atoi(c.DefaultQuery("count", "10"))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page count not in right format ", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -70,25 +71,25 @@ func FilterCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// @Summary Get Products Details to users
-// @Description Retrieve all product Details with pagination to users
-// @Tags User Product
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router /products   [GET]
-func AllProducts(c *gin.Context) {
-	products, err := usecase.SeeAllProducts()
-	if err != nil {
-		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't retrieve products", nil, err.Error())
-		c.JSON(http.StatusInternalServerError, errs)
-		return
-	}
-	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all products", products, nil)
-	c.JSON(http.StatusOK, success)
+// // @Summary Get Products Details to users
+// // @Description Retrieve all product Details with pagination to users
+// // @Tags User Product
+// // @Accept json
+// // @Produce json
+// // @Success 200 {object} response.Response{}
+// // @Failure 500 {object} response.Response{}
+// // @Router /products   [GET]
+// func AllProducts(c *gin.Context) {
+// 	products, err := usecase.SeeAllProducts()
+// 	if err != nil {
+// 		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't retrieve products", nil, err.Error())
+// 		c.JSON(http.StatusInternalServerError, errs)
+// 		return
+// 	}
+// 	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all products", products, nil)
+// 	c.JSON(http.StatusOK, success)
 
-}
+// }
 
 // @Summary Get Products Details to users
 // @Description Retrieve all product Details
@@ -102,14 +103,14 @@ func AllProducts(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /product   [GET]
 func ShowAllProductsFromAdmin(c *gin.Context) {
-	pageString := c.DefaultQuery("page","0")
+	pageString := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageString)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	count, err := strconv.Atoi(c.Query("count"))
+	count, err := strconv.Atoi(c.DefaultQuery("count", "10"))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page count not in right format ", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -208,4 +209,56 @@ func UpdateProduct(c *gin.Context) {
 	successRes := response.ClientResponse(http.StatusOK, "Successfully updated the product quantity", a, nil)
 	c.JSON(http.StatusOK, successRes)
 
+}
+
+// @Summary Add Product Image
+// @Description Add product Product from admin side
+// @Tags Admin Product Management
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param product_id query int  true "Product_id"
+// @Param file formData file true "Image file to upload" collectionFormat "multi"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /admin/products//upload-image	[POST]
+func UploadImage(c *gin.Context) {
+	product_id := c.Query("product_id")
+	productID, err := strconv.Atoi(product_id)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+
+	file, err := c.FormFile("files")
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error while file upload", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	allowedExtensions := []string{".jpg", ".jpeg", ".png", ".gif"}
+	ext := filepath.Ext(file.Filename)
+	isValid := false
+	for _, allowedExt := range allowedExtensions {
+		if ext == allowedExt {
+			isValid = true
+			break
+		}
+	}
+	if !isValid {
+		if err != nil {
+			errs := response.ClientResponse(http.StatusBadRequest, "unsupported file format", nil, err.Error())
+			c.JSON(http.StatusBadRequest, errs)
+			return
+		}
+	}
+	url, err := usecase.AddImage(c,file, productID)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "error while uploading image", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	successRes := response.ClientResponse(http.StatusOK, "Successfully uploaded image", url, nil)
+	c.JSON(http.StatusOK, successRes)
 }

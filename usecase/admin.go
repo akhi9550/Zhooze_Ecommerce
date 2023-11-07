@@ -158,21 +158,22 @@ func CancelOrderFromAdmin(order_id string) error {
 	}
 	return nil
 }
-// func RefundUser(orderID string) error {
-// 	paymentStatus, err := repository.GetPaymentStatus(orderID)
-// 	if err != nil {
-// 		return err
-// 	}
-// 	if paymentStatus == "refund-init" {
-// 		paymentStatus = "refunded"
-// 		return repository.RefundOrder(paymentStatus, orderID)
-// 	}
-// 	return errors.New("cannot refund the order")
-// }
+
+//	func RefundUser(orderID string) error {
+//		paymentStatus, err := repository.GetPaymentStatus(orderID)
+//		if err != nil {
+//			return err
+//		}
+//		if paymentStatus == "refund-init" {
+//			paymentStatus = "refunded"
+//			return repository.RefundOrder(paymentStatus, orderID)
+//		}
+//		return errors.New("cannot refund the order")
+//	}
 func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
 	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
-	
+
 	if err != nil {
 		return models.SalesReport{}, err
 	}

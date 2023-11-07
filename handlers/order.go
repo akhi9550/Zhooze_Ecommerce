@@ -48,6 +48,7 @@ func CancelOrderFromAdmin(c *gin.Context) {
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't cancel the order", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
+		return
 	}
 	success := response.ClientResponse(http.StatusOK, "Order Cancel Successfully", nil, nil)
 	c.JSON(http.StatusOK, success)
@@ -161,15 +162,14 @@ func OrderItemsFromCart(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /orders   [GET]
 func GetOrderDetails(c *gin.Context) {
-
-	pageStr := c.Query("page")
+	pageStr := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "page number not in correct format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	pageSize, err := strconv.Atoi(c.Query("count"))
+	pageSize, err := strconv.Atoi(c.DefaultQuery("count", "10"))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "page count not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)

@@ -8,7 +8,7 @@ import (
 func DisplayCart(userID int) ([]models.Cart, error) {
 
 	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? ", userID).First(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? ", userID).Scan(&count).Error; err != nil {
 		return []models.Cart{}, err
 	}
 
@@ -18,10 +18,14 @@ func DisplayCart(userID int) ([]models.Cart, error) {
 
 	var cartResponse []models.Cart
 
-	if err := db.DB.Raw("SELECT carts.user_id,users.firstname as user_name,carts.product_id,products.name as product_name,carts.quantity,carts.total_price FROM carts inner join users on carts.user_id = users.id inner join products on carts.product_id = products.id where user_id = ?", userID).First(&cartResponse).Error; err != nil {
+	if err := db.DB.Raw(`SELECT carts.id as cart_id,carts.user_id,users.firstname as user_name,carts.product_id,products.name as product_name,carts.quantity,carts.total_price FROM carts
+	 inner join users 
+	 on carts.user_id = users.id 
+	 inner join products 
+	 on carts.product_id = products.id 
+	 where user_id = ?`, userID).Scan(&cartResponse).Error; err != nil {
 		return []models.Cart{}, err
 	}
-
 	return cartResponse, nil
 
 }

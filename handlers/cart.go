@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Zhooze/usecase"
+
 	"Zhooze/utils/response"
 
 	"net/http"
@@ -15,13 +16,13 @@ import (
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			id	query		string	true	"product-id"
+// @Param			product_id	query		string	true	"product-id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
 // @Router			/addtocart  [post]
 func AddToCart(c *gin.Context) {
-	id := c.Query("id")
+	id := c.Query("product_id")
 	product_id, err := strconv.Atoi(id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadGateway, "Product id is given in the wrong format", nil, err.Error())

@@ -20,7 +20,7 @@ type Cart struct {
 }
 
 type CartItems struct {
-	ID         int     `json:"cartitem_id" gorm:"primarykey;not null"`
+	ID         int     `json:"id" gorm:"primarykey;not null"`
 	CartID     int     `json:"cart_id" gorm:"not null"`
 	Cart       Cart    `json:"-" gorm:"foreignkey:CartID;constraint:OnDelete:CASCADE"`
 	ProductId  int     `json:"product_id"`

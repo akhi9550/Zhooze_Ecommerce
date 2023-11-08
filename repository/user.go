@@ -189,7 +189,7 @@ func UpdateQuantityAdd(id, prdt_id int) error {
 }
 
 func UpdateTotalPrice(userID, productID int) error {
-	err := db.DB.Exec("UPDATE cart_items "+"SET total_price = cart_items.quantity * p.price "+"FROM products AS p "+"JOIN carts AS c ON cart_items.cart_id = c.id "+"WHERE c.user_id = $1 AND cart_items.product_id = $2", userID, productID).Error
+	err := db.DB.Exec("UPDATE cart_items "+"SET cart_items.total_price = cart_items.quantity * p.price "+"FROM products AS p "+"JOIN carts AS c ON cart_items.cart_id = c.id "+"WHERE c.user_id = $1 AND cart_items.product_id = $2", userID, productID).Error
 	if err != nil {
 		return err
 	}

@@ -108,13 +108,10 @@ func CancelOrders(orderID string, userID int) error {
 	return nil
 }
 func Checkout(userID int) (models.CheckoutDetails, error) {
-
-	// list all address added by the user
 	allUserAddress, err := repository.GetAllAddresses(userID)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
-	// get available payment options
 	paymentDetails, err := repository.GetAllPaymentOption()
 	if err != nil {
 		return models.CheckoutDetails{}, err

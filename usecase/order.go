@@ -92,7 +92,7 @@ func CancelOrders(orderID string, userID int) error {
 	}
 	if shipmentStatus == "pending" || shipmentStatus == "returned" || shipmentStatus == "return" {
 		message := fmt.Sprint(shipmentStatus)
-		return errors.New("the order is in" + message + ", so no point in cancelling")
+		return errors.New("the order is in " + message + ", so no point in cancelling")
 	}
 	if shipmentStatus == "cancelled" {
 		return errors.New("the order is already cancelled, so no point in cancelling")

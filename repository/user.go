@@ -181,7 +181,7 @@ func GetPassword(id int) (string, error) {
 	return userPassword, nil
 }
 func UpdateQuantityAdd(id, prdt_id int) error {
-	err := db.DB.Exec("UPDATE Carts SET quantity = quantity + 1 WHERE user_id=$1 AND product_id = $2 ", id, prdt_id).Error
+	err := db.DB.Exec("UPDATE cart_items AS ci "+"SET quantity = quantity + 1 "+"WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1) "+"AND ci.product_id = $2", id, prdt_id).Error
 	if err != nil {
 		return err
 	}
@@ -189,7 +189,7 @@ func UpdateQuantityAdd(id, prdt_id int) error {
 }
 
 func UpdateTotalPrice(userID, productID int) error {
-	err := db.DB.Exec("UPDATE carts SET total_price = carts.quantity * products.price FROM products  WHERE carts.product_id = products.id AND carts.user_id = $1 AND carts.product_id = $2", userID, productID).Error
+	err := db.DB.Exec("UPDATE cart_items "+"SET total_price = cart_items.quantity * p.price "+"FROM products AS p "+"JOIN carts AS c ON cart_items.cart_id = c.id "+"WHERE c.user_id = $1 AND cart_items.product_id = $2", userID, productID).Error
 	if err != nil {
 		return err
 	}
@@ -197,7 +197,7 @@ func UpdateTotalPrice(userID, productID int) error {
 }
 
 func UpdateQuantityless(userID, productID int) error {
-	err := db.DB.Exec("UPDATE Carts SET quantity = quantity - 1 WHERE user_id=$1 AND product_id = $2 ", userID, productID).Error
+	err := db.DB.Exec("UPDATE cart_items AS ci "+"SET quantity = quantity - 1 "+"WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1) "+"AND ci.product_id = $2 ", userID, productID).Error
 	if err != nil {
 		return err
 	}

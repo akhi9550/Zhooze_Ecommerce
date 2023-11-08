@@ -14,6 +14,14 @@ type UserDetailsResponse struct {
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
 }
+type UserDetailsAtAdmin struct {
+    Id          int    `json:"id"`
+    Firstname   string `json:"firstname"`
+    Lastname    string `json:"lastname"`
+    Email       string `json:"email"`
+    Phone       string `json:"phone"`
+    BlockStatus bool   `json:"block_status"`
+}
 type TokenUser struct {
 	Users        UserDetailsResponse
 	AccessToken  string

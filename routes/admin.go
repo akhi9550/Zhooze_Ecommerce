@@ -31,10 +31,10 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		products := r.Group("/products")
 		{
 			products.GET("", handlers.ShowAllProductsFromAdmin)
-			products.POST("/upload-image", handlers.UploadImage)
 			products.POST("", handlers.AddProducts)
 			products.PUT("", handlers.UpdateProduct) //update the product quantity
 			products.DELETE("", handlers.DeleteProducts)
+			products.POST("/upload-image", handlers.UploadImage)
 
 		}
 
@@ -52,11 +52,11 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		order := r.Group("/order")
 		{
 			order.GET("", handlers.GetAllOrderDetailsForAdmin)
-			order.GET("/approve/:order_id", handlers.ApproveOrder)
-			order.GET("/cancel/:order_id", handlers.CancelOrderFromAdmin)
+			order.GET("/approve", handlers.ApproveOrder)
+			order.GET("/cancel", handlers.CancelOrderFromAdmin)
 		}
 
-		//image cropping
+		//image cropping issssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssuessssssssssssssss
 		r.POST("/image-crop", handlers.CropImage)
 
 	}

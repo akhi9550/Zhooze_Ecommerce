@@ -43,11 +43,21 @@ func DashBoardProductDetails() (models.DashBoardProduct, error) {
 	}
 	return productDetails, nil
 }
-func ShowAllUsersIn() ([]models.UserDetailsResponse, error) {
-	var user []models.UserDetailsResponse
-	err := db.DB.Raw("SELECT * FROM users WHERE isadmin='false'").Scan(&user).Error
+func ShowAllUsersIn(page, count int) ([]models.UserDetailsAtAdmin, error) {
+	var user []models.UserDetailsAtAdmin
+
+	if page <= 0 {
+		page = 1
+	}
+
+	if count <= 0 {
+		count = 6
+	}
+	offset := (page - 1) * count
+
+	err := db.DB.Raw("SELECT id,firstname,lastname,email,phone,blocked FROM users WHERE isadmin='false' limit ? offset ?", count, offset).Scan(&user).Error
 	if err != nil {
-		return nil, err
+		return []models.UserDetailsAtAdmin{}, err
 	}
 	return user, nil
 }

@@ -16,23 +16,33 @@ import (
 // @Tags User Product
 // @Accept json
 // @Produce json
-// @Param page query string true "Page number"
-// @Param count query string true "Page Count"
+// @Param page path string false "Page number"
+// @Param count query string false "Page Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /page   [GET]
+// @Router /user/products/{page}   [GET]
 func ShowAllProducts(c *gin.Context) {
-	pageString := c.DefaultQuery("page", "1")
-	page, err := strconv.Atoi(pageString)
+	pageStr := c.Param("page")
+
+	if pageStr == "" {
+		pageStr = "0"
+	}
+	page, err := strconv.Atoi(pageStr)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
+		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	count, err := strconv.Atoi(c.DefaultQuery("count", "10"))
+	countStr := c.Query("count")
+
+	if countStr == "" {
+		countStr = "0"
+	}
+
+	count, err := strconv.Atoi(countStr)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "Page count not in right format ", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
+		errorRes := response.ClientResponse(http.StatusBadRequest, "page count not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 	products, err := usecase.ShowAllProducts(page, count)
@@ -53,7 +63,7 @@ func ShowAllProducts(c *gin.Context) {
 // @Param data body map[string]int true "Category IDs and quantities"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /filter [POST]
+// @Router /user/products/filter [POST]
 func FilterCategory(c *gin.Context) {
 	var data map[string]int
 	if err := c.ShouldBindJSON(&data); err != nil {
@@ -97,11 +107,11 @@ func FilterCategory(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param page query string true "Page number"
-// @Param count query string true "Page Count"
+// @Param page query string false "Page number"
+// @Param count query string false "Page Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /product   [GET]
+// @Router /admin/products   [GET]
 func ShowAllProductsFromAdmin(c *gin.Context) {
 	pageString := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageString)
@@ -135,7 +145,7 @@ func ShowAllProductsFromAdmin(c *gin.Context) {
 // @Param product body models.Product true "Product details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /product [POST]
+// @Router /admin/products [POST]
 func AddProducts(c *gin.Context) {
 	var product models.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
@@ -168,7 +178,7 @@ func AddProducts(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /product    [DELETE]
+// @Router /admin/products    [DELETE]
 func DeleteProducts(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.DeleteProducts(id)
@@ -190,7 +200,7 @@ func DeleteProducts(c *gin.Context) {
 // @Param productUpdate body models.ProductUpdate true "Product details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /product [PATCH]
+// @Router /admin/products    [PUT]
 func UpdateProduct(c *gin.Context) {
 	var p models.ProductUpdate
 	if err := c.BindJSON(&p); err != nil {
@@ -221,7 +231,7 @@ func UpdateProduct(c *gin.Context) {
 // @Param file formData file true "Image file to upload" collectionFormat "multi"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/products//upload-image	[POST]
+// @Router /admin/products/upload-image 	[POST]
 func UploadImage(c *gin.Context) {
 	product_id := c.Query("product_id")
 	productID, err := strconv.Atoi(product_id)
@@ -231,7 +241,7 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("files")
+	file, err := c.FormFile("file")
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "error while file upload", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
@@ -253,7 +263,7 @@ func UploadImage(c *gin.Context) {
 			return
 		}
 	}
-	url, err := usecase.AddImage(c,file, productID)
+	url, err := usecase.AddImage(c, file, productID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "error while uploading image", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)

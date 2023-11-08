@@ -5,6 +5,7 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +18,7 @@ import (
 // @Param			admin	body		models.AdminLogin	true	"Admin login details"
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
-// @Router			/adminlogin [POST]
+// @Router			/admin/adminlogin [POST]
 func LoginHandler(c *gin.Context) {
 	var adminDetails models.AdminLogin
 	if err := c.ShouldBindJSON(&adminDetails); err != nil {
@@ -44,7 +45,7 @@ func LoginHandler(c *gin.Context) {
 // @Security		Bearer
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
-// @Router			/dashboard [GET]
+// @Router			/admin/dashboard [GET]
 func DashBoard(c *gin.Context) {
 	adminDashboard, err := usecase.DashBoard()
 	if err != nil {
@@ -62,11 +63,39 @@ func DashBoard(c *gin.Context) {
 // @Accept			json
 // @Produce		    json
 // @Security		Bearer
+// @Param page path string true "Page number"
+// @Param count query string true "Page size"
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
-// @Router			/getusers   [GET]
+// @Router			/admin/users/{page}   [GET]
 func GetUsers(c *gin.Context) {
-	users, err := usecase.ShowAllUsers()
+
+	pageStr := c.Query("page")
+
+	if pageStr == "" {
+		pageStr = "0"
+	}
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	countStr := c.Query("count")
+
+	if countStr == "" {
+		countStr = "0"
+	}
+
+	pageSize, err := strconv.Atoi(countStr)
+
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	users, err := usecase.ShowAllUsers(page, pageSize)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "couldn't retrieve users", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errs)
@@ -74,7 +103,6 @@ func GetUsers(c *gin.Context) {
 	}
 	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all Users", users, nil)
 	c.JSON(http.StatusOK, success)
-
 }
 
 // @Summary		Block User
@@ -86,7 +114,7 @@ func GetUsers(c *gin.Context) {
 // @Param			id	query		string	true	"user-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/block   [POST]
+// @Router			/admin/users/block   [POST]
 func BlockUser(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.BlockedUser(id)
@@ -109,7 +137,7 @@ func BlockUser(c *gin.Context) {
 // @Param			id	query		string	true	"user-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/unblock    [POST]
+// @Router			/admin/users/unblock    [POST]
 func UnBlockUser(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.UnBlockedUser(id)
@@ -131,7 +159,7 @@ func UnBlockUser(c *gin.Context) {
 // @Param period query string true "sales report"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /sales-report    [GET]
+// @Router /admin/sales-report    [GET]
 func FilteredSalesReport(c *gin.Context) {
 	timePeriod := c.Query("period")
 	salesReport, err := usecase.FilteredSalesReport(timePeriod)

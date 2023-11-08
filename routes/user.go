@@ -9,9 +9,9 @@ import (
 )
 
 func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
-	
+
 	r.POST("/signup", handlers.UserSignup)
-	r.POST("/loginlogin", handlers.Userlogin)
+	r.POST("/userlogin", handlers.Userlogin)
 
 	//OTP
 	r.POST("/send-otp", handlers.SendOtp)
@@ -21,10 +21,14 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/forgot-password", handlers.ForgotPasswordSend)
 	r.POST("/forgot-password-verify", handlers.ForgotPasswordVerifyAndChange)
 
+	//PAYMENT
+	r.GET("/razorpay", handlers.MakePaymentRazorPay)
+	r.GET("/update_status", handlers.VerifyPayment)
+
 	products := r.Group("/products")
 	{
 		products.GET("", handlers.ShowAllProducts)
-		products.GET("/page/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
+		products.GET("/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
 		products.POST("/filter", handlers.FilterCategory)
 
 	}
@@ -57,12 +61,12 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		//cart
 		cart := r.Group("/cart")
 		{
-			cart.POST("/:id", handlers.AddToCart)
-			cart.DELETE("/:id", handlers.RemoveFromCart)
+			cart.POST("", handlers.AddToCart)
+			cart.DELETE("", handlers.RemoveFromCart)
 			cart.GET("", handlers.DisplayCart)
-			cart.DELETE("", handlers.EmptyCart)
-			r.PUT("updatequantityadd", handlers.UpdateQuantityAdd)
-			r.PUT("updatequantityless", handlers.UpdateQuantityAdd)
+			cart.DELETE("/empty", handlers.EmptyCart)
+			cart.PUT("/updatequantityadd", handlers.UpdateQuantityAdd)
+			cart.PUT("/updatequantityless", handlers.UpdateQuantityless)
 
 		}
 
@@ -72,16 +76,13 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 			order.POST("", handlers.OrderItemsFromCart)
 			order.GET("", handlers.GetOrderDetails)
-			order.GET("/:page", handlers.GetOrderDetails)
-			order.PUT("/:id", handlers.CancelOrder)
+			order.GET("/page", handlers.GetOrderDetails)
+			order.PUT("", handlers.CancelOrder)
 		}
 		r.GET("/checkout", handlers.CheckOut)
 		r.GET("/place-order", handlers.PlaceOrder)
 	}
 
-	//payment
-	r.GET("/payment", handlers.MakePaymentRazorPay)
-	r.GET("/payment-success", handlers.VerifyPayment)
 	return r
 
 }

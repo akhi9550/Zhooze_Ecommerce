@@ -17,7 +17,7 @@ import (
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /wishlist [GET]
+// @Router /user/wishlist [GET]
 func GetWishList(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	wishList, err := usecase.GetWishList(userID.(int))
@@ -39,7 +39,7 @@ func GetWishList(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /wishlist [POST]
+// @Router /user/wishlist [POST]
 func AddToWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	product_id := c.Query("id")
@@ -68,7 +68,7 @@ func AddToWishlist(c *gin.Context) {
 // @Param id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /wishlist [DELETE]
+// @Router /user/wishlist [DELETE]
 func RemoveFromWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	product_id := c.Query("id")

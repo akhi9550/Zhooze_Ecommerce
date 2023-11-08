@@ -15,6 +15,7 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	if err != nil {
 		return []models.ProductBrief{}, err
 	}
+
 	for i := range products {
 		p := &products[i]
 		if p.Stock <= 0 {
@@ -130,7 +131,7 @@ func AddImage(c *gin.Context, file *multipart.FileHeader, productID int) (domain
 	}
 	baseUrl := "http://localhost:8000"
 	uploadedURL := baseUrl + "/uploads/" + file.Filename
-	url, err := repository.SendUrl( uploadedURL,productID)
+	url, err := repository.SendUrl(uploadedURL, productID)
 	if err != nil {
 		return domain.Image{}, err
 	}

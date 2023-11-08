@@ -19,7 +19,7 @@ import (
 // @Param    id   query   string   true    "Order ID"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /approve-order [GET]
+// @Router /admin/order/approve [GET]
 func ApproveOrder(c *gin.Context) {
 	orderId := c.Query("id")
 	err := usecase.ApproveOrder(orderId)
@@ -41,7 +41,7 @@ func ApproveOrder(c *gin.Context) {
 // @Param id query string true "Order ID"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /cancel-order    [GET]
+// @Router /admin/order/cancel   [GET]
 func CancelOrderFromAdmin(c *gin.Context) {
 	order_id := c.Query("id")
 	err := usecase.CancelOrderFromAdmin(order_id)
@@ -63,7 +63,7 @@ func CancelOrderFromAdmin(c *gin.Context) {
 // @Param page query string true "Page number"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /order   [GET]
+// @Router /admin/order   [GET]
 func GetAllOrderDetailsForAdmin(c *gin.Context) {
 	pageStr := c.Query("page")
 	page, err := strconv.Atoi(pageStr)
@@ -115,7 +115,7 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Param payment_id query int true "payment id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /orders    [POST]
+// @Router /user/order    [POST]
 func OrderItemsFromCart(c *gin.Context) {
 	id, _ := c.Get("user_id")
 	cart_id := c.Query("cart_id")
@@ -160,7 +160,7 @@ func OrderItemsFromCart(c *gin.Context) {
 // @Param count query string true "Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /orders   [GET]
+// @Router /user/order/page   [GET]
 func GetOrderDetails(c *gin.Context) {
 	pageStr := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageStr)
@@ -196,7 +196,7 @@ func GetOrderDetails(c *gin.Context) {
 // @Param id query string true "Order ID"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /cancel-orders   [PUT]
+// @Router /user/order   [PUT]
 func CancelOrder(c *gin.Context) {
 	orderID := c.Query("id")
 	id, _ := c.Get("user_id")
@@ -219,7 +219,7 @@ func CancelOrder(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/checkout [GET]
+// @Router			/user/checkout    [GET]
 func CheckOut(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	checkoutDetails, err := usecase.Checkout(userID.(int))
@@ -244,7 +244,7 @@ func CheckOut(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/place-order  [GET]
+// @Router			/user/place-order     [GET]
 func PlaceOrder(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	userId := userID.(int)

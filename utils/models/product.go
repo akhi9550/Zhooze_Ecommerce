@@ -1,14 +1,18 @@
 package models
 
+type Image struct {
+	Url string `JSON:"url" `
+}
+
 type ProductBrief struct {
-	ID            uint     `json:"id" gorm:"unique;not null"`
-	Name          string   `json:"name"`
-	Description   string   `json:"description"`
-	Size          int      `json:"size"`
-	Stock         int      `json:"stock"`
-	Price         float64  `json:"price"`
-	ProductStatus string   `json:"product_status"`
-	ProductImages []string `json:"product_images"`
+	ID            uint    `json:"id" gorm:"unique;not null"`
+	Name          string  `json:"name"`
+	Description   string  `json:"description"`
+	Size          int     `json:"size"`
+	Stock         int     `json:"stock"`
+	Price         float64 `json:"price"`
+	ProductStatus string  `json:"product_status"`
+	ProductImages []Image `json:"product_images"`
 }
 
 type ProductReceiver struct {

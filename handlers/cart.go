@@ -2,9 +2,7 @@ package handlers
 
 import (
 	"Zhooze/usecase"
-
 	"Zhooze/utils/response"
-
 	"net/http"
 	"strconv"
 
@@ -16,11 +14,12 @@ import (
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
+// @Param      cart_id     query   int false "cart_id only this cart_id is needed"
 // @Param			product_id	query		string	true	"product-id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/addtocart  [post]
+// @Router			/user/cart  [post]
 func AddToCart(c *gin.Context) {
 	id := c.Query("product_id")
 	product_id, err := strconv.Atoi(id)
@@ -29,8 +28,16 @@ func AddToCart(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, errs)
 		return
 	}
+	cartId := c.Query("cart_id")
+	cartIdInt := 0
+	if cartId != "" {
+		cartIdInt, err = strconv.Atoi(cartId)
+		if err != nil {
+			cartIdInt = 0
+		}
+	}
 	user_ID, _ := c.Get("user_id")
-	cartResponse, err := usecase.AddToCart(product_id, user_ID.(int))
+	cartResponse, err := usecase.AddToCart(product_id, cartIdInt, user_ID.(int))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadGateway, "could not add product to the cart", nil, err.Error())
 		c.JSON(http.StatusBadGateway, errs)
@@ -49,7 +56,7 @@ func AddToCart(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/removefromcart    [DELETE]
+// @Router			/user/cart    [DELETE]
 func RemoveFromCart(c *gin.Context) {
 	id := c.Query("id")
 	product_id, err := strconv.Atoi(id)
@@ -77,7 +84,7 @@ func RemoveFromCart(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/displaycart  [GET]
+// @Router			/user/cart  [GET]
 func DisplayCart(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	cart, err := usecase.DisplayCart(userID.(int))
@@ -98,7 +105,7 @@ func DisplayCart(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/emptycart   [DELETE]
+// @Router			/user/cart/empty   [DELETE]
 func EmptyCart(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	cart, err := usecase.EmptyCart(userID.(int))
@@ -121,7 +128,7 @@ func EmptyCart(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/updatequantityadd   [PUT]
+// @Router			/user/cart/updatequantityadd   [PUT]
 func UpdateQuantityAdd(c *gin.Context) {
 	id, _ := c.Get("user_id")
 	product, err := strconv.Atoi(c.Query("product_id"))
@@ -155,7 +162,7 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/updatequantityless  [PUT]
+// @Router			/user/cart/updatequantityless     [PUT]
 func UpdateQuantityless(c *gin.Context) {
 	id, _ := c.Get("user_id")
 	product, err := strconv.Atoi(c.Query("product_id"))

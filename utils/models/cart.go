@@ -19,9 +19,12 @@ type CartTotal struct {
 	DiscountReason string
 }
 type Cart struct {
-	CartId      int     `json:"cart_id"`
-	ProductId   int     `json:"product_id"`
-	ProductName string  `json:"product_name"`
-	Quantity    string  `json:"quantity"`
-	TotalPrice  float64 `json:"total_price"`
+	CartId     int     `json:"cart_id"`
+	ProductId  int     `json:"product_id"`
+	Quantity   float64 `json:"quantity"`
+	TotalPrice float64 `json:"total_price"`
+}
+type Carts struct {
+	Id     int `json:"id"`
+	UserId int `json:"user_id"`
 }

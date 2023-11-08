@@ -202,12 +202,10 @@ func GetPaymentId(paymentID int) bool {
 	return count > 0
 }
 func TotalAmountInCart(cartID int) (float64, error) {
-	fmt.Println("😊😊", cartID)
 	var price float64
 	if err := db.DB.Raw("SELECT total_price FROM carts WHERE id = $1", cartID).Scan(&price).Error; err != nil {
 		return 0, err
 	}
-	fmt.Println("👺", price)
 	return price, nil
 
 }

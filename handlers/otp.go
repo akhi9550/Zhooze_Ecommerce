@@ -17,7 +17,7 @@ import (
 // @Param phone body models.OTPData true "phone number details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /send-otp [POST]
+// @Router /user/send-otp [POST]
 func SendOtp(c *gin.Context) {
 	var phone models.OTPData
 	if err := c.ShouldBindJSON(&phone); err != nil {
@@ -43,7 +43,7 @@ func SendOtp(c *gin.Context) {
 // @Param phone body models.VerifyData true "Verify OTP Details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /verify-otp [POST]
+// @Router /user/verify-otp [POST]
 func VerifyOtp(c *gin.Context) {
 	var code models.VerifyData
 	if err := c.ShouldBindJSON(&code); err != nil {

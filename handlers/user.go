@@ -19,7 +19,7 @@ import (
 // @Param			signup  body  models.UserSignUp  true	"signup"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/signup    [POST]
+// @Router			/user/signup    [POST]
 func UserSignup(c *gin.Context) {
 	var SignupDetail models.UserSignUp
 	if err := c.ShouldBindJSON(&SignupDetail); err != nil {
@@ -51,7 +51,7 @@ func UserSignup(c *gin.Context) {
 // @Param			login  body  models.LoginDetail  true	"login"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/userlogin [POST]
+// @Router			/user/userlogin     [POST]
 func Userlogin(c *gin.Context) {
 	var UserLoginDetail models.LoginDetail
 	if err := c.ShouldBindJSON(&UserLoginDetail); err != nil {
@@ -83,7 +83,7 @@ func Userlogin(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/address [POST]
+// @Router			/user/address    [POST]
 func AddAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	var address models.AddressInfo
@@ -117,7 +117,7 @@ func AddAddress(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router		/address       [GET]
+// @Router		/user/address       [GET]
 func GetAllAddress(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	addressInfo, err := usecase.GetAllAddress(userID.(int))
@@ -140,7 +140,7 @@ func GetAllAddress(c *gin.Context) {
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user-details   [GET]
+// @Router /user/users   [GET]
 func UserDetails(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	UserDetails, err := usecase.UserDetails(userID.(int))
@@ -162,7 +162,7 @@ func UserDetails(c *gin.Context) {
 // @Param address body models.UsersProfileDetails true "User Details Input"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /edit-user-profile [PUT]
+// @Router /user/users [PUT]
 func UpdateUserDetails(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	var user models.UsersProfileDetails
@@ -191,7 +191,7 @@ func UpdateUserDetails(c *gin.Context) {
 // @Param address body models.AddressInfo true "User Address Input"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /address   [PUT]
+// @Router /user/address    [PUT]
 func UpdateAddress(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	addressid := c.Query("address_id")
@@ -221,7 +221,7 @@ func UpdateAddress(c *gin.Context) {
 // @Param address_id query string true "address id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /address  [DELETE]
+// @Router /user/address    [DELETE]
 func DeleteAddressByID(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	addressid := c.Query("address_id")
@@ -245,7 +245,7 @@ func DeleteAddressByID(c *gin.Context) {
 // @Param body body models.ChangePassword true "User Password Change"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /changepassword     [PUT]
+// @Router /user/users/changepassword     [PUT]
 func ChangePassword(c *gin.Context) {
 	user_id, _ := c.Get("user_id")
 	var changePassword models.ChangePassword
@@ -272,7 +272,7 @@ func ChangePassword(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/forgot-password   [POST]
+// @Router			/user/forgot-password   [POST]
 func ForgotPasswordSend(c *gin.Context) {
 	var model models.ForgotPasswordSend
 	if err := c.BindJSON(&model); err != nil {
@@ -301,7 +301,7 @@ func ForgotPasswordSend(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/forgot-password-verify   [POST]
+// @Router			/user/forgot-password-verify   [POST]
 func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	var model models.ForgotVerify
 	if err := c.BindJSON(&model); err != nil {

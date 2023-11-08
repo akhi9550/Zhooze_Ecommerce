@@ -11,9 +11,14 @@ import (
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
+
+	if count <= 0 {
+		count = 5
+	}
+
 	offset := (page - 1) * count
 	var productBrief []models.ProductBrief
 	err := db.DB.Raw(`SELECT * FROM products limit ? offset ?`, count, offset).Scan(&productBrief).Error
@@ -100,7 +105,7 @@ func AddProducts(product models.Product) (domain.Product, error) {
 	var p domain.Product
 	query := `
     INSERT INTO products (name, description, category_id, size, stock, price)
-    VALUES ($1, $2, $3, $4, $5, $6, $7)
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING name, description, category_id, size, stock, price`
 	err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.Size, product.Stock, product.Price).Scan(&p).Error
 	fmt.Println("dkddkdkd", p)
@@ -130,6 +135,9 @@ func DeleteProducts(id string) error {
 		return errors.New("product for given id does not exist")
 	}
 	if err := db.DB.Exec("DELETE FROM products WHERE id=?", product_id).Error; err != nil {
+		return err
+	}
+	if err := db.DB.Exec("DELETE FROM images WHERE product_id = ?", product_id).Error; err != nil {
 		return err
 	}
 	return nil

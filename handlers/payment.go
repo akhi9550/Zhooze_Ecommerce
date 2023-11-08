@@ -3,7 +3,6 @@ package handlers
 import (
 	"Zhooze/usecase"
 	"Zhooze/utils/response"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +27,6 @@ func MakePaymentRazorPay(c *gin.Context) {
 func VerifyPayment(c *gin.Context) {
 	orderID := c.Query("order_id")
 	paymentID := c.Query("payment_id")
-	fmt.Println("dddddd", orderID)
 	err := usecase.SavePaymentDetails(orderID, paymentID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "could not update payment details", nil, err.Error())

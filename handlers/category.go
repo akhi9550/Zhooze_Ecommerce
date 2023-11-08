@@ -17,7 +17,7 @@ import (
 // @Security		Bearer
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
-// @Router			/category   [GET]
+// @Router			/admin/category   [GET]
 func GetCategory(c *gin.Context) {
 	category, err := usecase.GetCategory()
 	if err != nil {
@@ -38,7 +38,7 @@ func GetCategory(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/category [POST]
+// @Router			/admin/category [POST]
 func AddCategory(c *gin.Context) {
 	var category models.Category
 	if err := c.ShouldBindJSON(&category); err != nil {
@@ -66,7 +66,7 @@ func AddCategory(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/category     [DELETE]
+// @Router			/admin/category     [DELETE]
 func DeleteCategory(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.DeleteCategory(id)
@@ -89,7 +89,7 @@ func DeleteCategory(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/category     [PUT]
+// @Router			/admin/category     [PUT]
 func UpdateCategory(c *gin.Context) {
 	var categoryUpdate models.SetNewName
 	if err := c.ShouldBindJSON(&categoryUpdate); err != nil {

@@ -4,9 +4,19 @@ import (
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 	"errors"
+	"fmt"
 )
 
-func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
+func AddToCart(product_id int, cartId int, user_id int) (models.CartResponse, error) {
+	if cartId <= 0 {
+		newCart, err := repository.MakeNewCart(user_id)
+		if err != nil {
+			return models.CartResponse{}, err
+		}
+		cartId = newCart.Id
+		fmt.Println("cart id", cartId, newCart)
+	}
+
 	ok, _, err := repository.CheckProduct(product_id)
 	if err != nil {
 		return models.CartResponse{}, err
@@ -32,8 +42,9 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 	if err != nil {
 		return models.CartResponse{}, err
 	}
+	fmt.Println("👺prodcut price", productPrice)
 	if QuantityofProductInCart == 0 {
-		err := repository.AddItemIntoCart(user_id, product_id, 1, productPrice)
+		err := repository.AddToCart(user_id, product_id, 1, cartId, productPrice)
 		if err != nil {
 			return models.CartResponse{}, err
 		}
@@ -77,23 +88,25 @@ func RemoveFromCart(product_id int, user_id int) (models.CartResponse, error) {
 	if err != nil {
 		return models.CartResponse{}, err
 	}
-	cartDetails.Quantity = cartDetails.Quantity - 1
-	if cartDetails.Quantity == 0 {
-		if err := repository.RemoveProductFromCart(user_id, product_id); err != nil {
-			return models.CartResponse{}, err
-		}
+	// cartDetails.Quantity = cartDetails.Quantity - 1
+	// if cartDetails.Quantity == 0 {
+	if err := repository.RemoveProductFromCart(user_id, product_id); err != nil {
+		return models.CartResponse{}, err
+
 	}
-	if cartDetails.Quantity != 0 {
-		product_price, err := repository.GetPriceOfProductFromID(product_id)
-		if err != nil {
-			return models.CartResponse{}, err
-		}
-		cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
-		err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
-		if err != nil {
-			return models.CartResponse{}, err
-		}
-	}
+	fmt.Println("👺👺👺", cartDetails.TotalPrice)
+	// if cartDetails.Quantity != 0 {
+	// 	product_price, err := repository.GetPriceOfProductFromID(product_id)
+	// 	if err != nil {
+	// 		return models.CartResponse{}, err
+	// 	}
+	// 	fmt.Println("😎😎😎", product_price)
+	// 	cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
+	// 	err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
+	// 	if err != nil {
+	// 		return models.CartResponse{}, err
+	// 	}
+	// }
 	updatedCart, err := repository.CartAfterRemovalOfProduct(user_id)
 	if err != nil {
 		return models.CartResponse{}, err

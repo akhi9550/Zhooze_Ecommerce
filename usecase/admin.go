@@ -70,10 +70,10 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 		DashboardAmount:  amountDetails,
 	}, nil
 }
-func ShowAllUsers() ([]models.UserDetailsResponse, error) {
-	users, err := repository.ShowAllUsersIn()
+func ShowAllUsers(page, count int) ([]models.UserDetailsAtAdmin, error) {
+	users, err := repository.ShowAllUsersIn(page, count)
 	if err != nil {
-		return []models.UserDetailsResponse{}, err
+		return []models.UserDetailsAtAdmin{}, err
 	}
 	return users, nil
 }
@@ -151,7 +151,6 @@ func CancelOrderFromAdmin(order_id string) error {
 	if err != nil {
 		return err
 	}
-	// update the quantity to products since the order is cancelled
 	err = repository.UpdateStockOfProduct(orderProduct)
 	if err != nil {
 		return err

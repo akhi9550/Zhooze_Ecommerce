@@ -3,7 +3,9 @@ package handlers
 import (
 	"Zhooze/usecase"
 	"Zhooze/utils/response"
+	"fmt"
 	"image"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -20,7 +22,7 @@ import (
 // @Param			image_id	query		string	true	"image-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/image-crop    [POST]
+// @Router			/admin/image-crop    [POST]
 func CropImage(c *gin.Context) {
 	imageId := c.Query("image_id")
 	imageID, err := strconv.Atoi(imageId)
@@ -29,21 +31,33 @@ func CropImage(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
-	imageUrl, err := usecase.CropImage(imageID)
+	imageUrl, err := usecase.GetImageURL(imageID)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "error in cropping", nil, err)
 		c.JSON(http.StatusInternalServerError, errs)
 		return
 	}
-	inputImage, err := imaging.Open(imageUrl)
+	fmt.Println("ddddddddddd", imageUrl)
+	resp, err := http.Get(imageUrl)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image"})
 		return
 	}
+	defer resp.Body.Close()
+
+	inputImage, str, err := image.Decode(resp.Body)
+	fmt.Println(str)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to decode image"})
+		return
+	}
+
 	cropRect := image.Rect(100, 100, 400, 400)
 	croppedImage := imaging.Crop(inputImage, cropRect)
-	err = imaging.Save(croppedImage, imageUrl)
+	img := image.Image(croppedImage)
+	err = imaging.Save(img, "./uploads/", imaging.JPEGQuality(80))
 	if err != nil {
+		log.Print(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save image"})
 		return
 	}

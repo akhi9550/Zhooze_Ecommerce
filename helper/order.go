@@ -1,7 +1,12 @@
 package helper
 
 import (
+	"Zhooze/domain"
+	"Zhooze/utils/models"
+	"strconv"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 func GetTimeFromPeriod(timePeriod string) (time.Time, time.Time) {
@@ -23,4 +28,20 @@ func GetTimeFromPeriod(timePeriod string) (time.Time, time.Time) {
 	}
 
 	return endDate.AddDate(0, 0, -6), endDate
+}
+
+func CopyOrderDetails(orderDetails domain.Order, orderBody models.OrderIncoming) domain.Order {
+
+	id := uuid.New().ID()
+	str := strconv.Atoi(string(id))
+	orderDetails.ID = str[:8]
+	orderDetails.AddressID = orderBody.AddressID
+	orderDetails.PaymentMethodID = orderBody.PaymentID
+	orderDetails.UserID = orderBody.UserID
+	orderDetails.Approval = false
+	orderDetails.ShipmentStatus = "processing"
+	orderDetails.PaymentStatus = "not paid"
+
+	return orderDetails
+
 }

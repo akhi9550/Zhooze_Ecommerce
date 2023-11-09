@@ -168,7 +168,7 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 		return models.SalesReport{}, result.Error
 	}
 	var productID int
-	result = db.DB.Raw("SELECT product_id FROM cart_items GROUP BY product_id order by SUM(quantity) DESC LIMIT 1").Scan(&productID)
+	result = db.DB.Raw("SELECT product_id FROM order_items GROUP BY product_id order by SUM(quantity) DESC LIMIT 1").Scan(&productID)
 	if result.Error != nil {
 		return models.SalesReport{}, result.Error
 	}

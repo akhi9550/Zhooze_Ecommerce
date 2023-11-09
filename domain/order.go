@@ -6,9 +6,9 @@ import (
 
 type Order struct {
 	gorm.Model
-	UserID          int           `json:"user_id" gorm:"not null"`
-	User            User          `json:"-" gorm:"foreignkey:UserID"`
-	AddressID       int           `json:"address_id" gorm:"not null"`
+	UserID int `json:"user_id" gorm:"not null"`
+	// User            User          `json:"-" gorm:"foreignkey:UserID"`
+	AddressID       uint          `json:"address_id" gorm:"not null"`
 	Address         Address       `json:"-" gorm:"foreignkey:AddressID"`
 	PaymentMethodID uint          `json:"paymentmethod_id"`
 	PaymentMethod   PaymentMethod `json:"-" gorm:"foreignkey:PaymentMethodID"`
@@ -20,11 +20,11 @@ type Order struct {
 
 type OrderItem struct {
 	ID         uint    `json:"id" gorm:"primaryKey;not null"`
-	OrderID    string  `json:"order_id"`
+	OrderID    uint    `json:"order_id"`
 	Order      Order   `json:"-" gorm:"foreignkey:OrderID;constraint:OnDelete:CASCADE"`
 	ProductID  uint    `json:"product_id"`
 	Products   Product `json:"-" gorm:"foreignkey:ProductID"`
-	Quantity   int     `json:"quantity"`
+	Quantity   float64 `json:"quantity"`
 	TotalPrice float64 `json:"total_price"`
 }
 

@@ -181,10 +181,9 @@ func GetPassword(id int) (string, error) {
 	return userPassword, nil
 }
 func UpdateQuantityAdd(id, prdt_id int) error {
-	err := db.DB.Exec(`UPDATE cart_items AS ci 
-		SET quantity = quantity + 1 
-		WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1)
-		AND ci.product_id = $2`, id, prdt_id).Error
+	err := db.DB.Exec(`	UPDATE order_items
+	SET quantity = quantity + 1
+	WHERE cart_id=$1 AND prodcut_id=$2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}
@@ -200,10 +199,9 @@ func UpdateTotalPrice(productID, cartID int) error {
 }
 
 func UpdateQuantityless(id, prdt_id int) error {
-	err := db.DB.Exec(`UPDATE cart_items AS ci 
-		SET quantity = quantity - 1 
-		WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1)
-		AND ci.product_id = $2`, id, prdt_id).Error
+	err := db.DB.Exec(`	UPDATE line_items
+	SET quantity = quantity - 1
+	WHERE cart_id=$1 AND product_id=$2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}

@@ -11,40 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// @Summary Order Items from cart
-// @Description Order all products which is currently present inside  the cart
-// @Tags User Order
-// @Accept json
-// @Produce json
-// @Security Bearer
-// @Param orderBody body models.OrderFromCart true "Order details"
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router /user/order [post]
-func OrderItemsFromCart(c *gin.Context) {
-
-	id, _ := c.Get("user_id")
-	userID := id.(int)
-
-	var orderFromCart models.OrderFromCart
-	if err := c.ShouldBindJSON(&orderFromCart); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "bad request", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
-		c.JSON(http.StatusInternalServerError, errorRes)
-		return
-	}
-
-	successRes := response.ClientResponse(http.StatusOK, "Successfully created the order", orderSuccessResponse, nil)
-	c.JSON(http.StatusOK, successRes)
-
-}
-
 // @Summary Approve Order
 // @Description Approve Order from admin side which is in processing state
 // @Tags Admin Order Management
@@ -117,18 +83,18 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// @Summary Order Items From Cart
-// @Description Add cart to the order using  cart id
-// @Tags  User Order Management
-// @Accept json
-// @Produce json
-// @Security Bearer
-// @Param cart_id query int true "cart id"
-// @Param address_id query int true "address id"
-// @Param payment_id query int true "payment id"
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router /user/order    [POST]
+// // @Summary Order Items From Cart
+// // @Description Add cart to the order using  cart id
+// // @Tags  User Order Management
+// // @Accept json
+// // @Produce json
+// // @Security Bearer
+// // @Param cart_id query int true "cart id"
+// // @Param address_id query int true "address id"
+// // @Param payment_id query int true "payment id"
+// // @Success 200 {object} response.Response{}
+// // @Failure 500 {object} response.Response{}
+// // @Router /user/order    [POST]
 // func OrderItemsFromCart(c *gin.Context) {
 // 	id, _ := c.Get("user_id")
 // 	cart_id := c.Query("cart_id")
@@ -162,6 +128,40 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // 	success := response.ClientResponse(http.StatusOK, "succesfully added order", Order, nil)
 // 	c.JSON(http.StatusOK, success)
 // }
+
+// @Summary Order Items from cart
+// @Description Order all products which is currently present inside  the cart
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param orderBody body models.OrderFromCart true "Order details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/order [post]
+func OrderItemsFromCart(c *gin.Context) {
+
+	id, _ := c.Get("user_id")
+	userID := id.(int)
+
+	var orderFromCart models.OrderFromCart
+	if err := c.ShouldBindJSON(&orderFromCart); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "bad request", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully created the order", orderSuccessResponse, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
 
 // @Summary Get Order Details to user side
 // @Description Get all order details done by user to user side

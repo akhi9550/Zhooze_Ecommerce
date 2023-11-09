@@ -188,12 +188,12 @@ func ChangePassword(id int, old string, password string, repassword string) erro
 	}
 	return repository.ChangePassword(id, string(newpassword))
 }
-func UpdateQuantityAdd(id, productID, cartID int) error {
+func UpdateQuantityAdd(id, productID int) error {
 	err := repository.UpdateQuantityAdd(id, productID)
 	if err != nil {
 		return err
 	}
-	err = repository.UpdateTotalPrice(productID, cartID)
+	err = repository.UpdateTotalPrice(productID)
 	if err != nil {
 		return err
 	}

@@ -30,6 +30,7 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		products.GET("", handlers.ShowAllProducts)
 		products.GET("/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
 		products.POST("/filter", handlers.FilterCategory)
+		products.GET("/image", handlers.ShowImages)
 
 	}
 	r.Use(middleware.UserAuthMiddleware())
@@ -74,7 +75,7 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		order := r.Group("/order")
 		{
 
-			order.POST("", handlers.OrderItemsFromCart)
+			// order.POST("", handlers.OrderItemsFromCart)
 			order.GET("", handlers.GetOrderDetails)
 			order.GET("/page", handlers.GetOrderDetails)
 			order.PUT("", handlers.CancelOrder)

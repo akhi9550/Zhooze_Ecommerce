@@ -14,7 +14,6 @@ import "gorm.io/gorm"
 
 type Cart struct {
 	gorm.Model
-	// ID     int  `json:"cart_id" gorm:"primarykey;not null"`
 	UserId int  `json:"user_id" gorm:"not null"`
 	Users  User `json:"-" gorm:"foreignkey:UserId"`
 }

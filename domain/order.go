@@ -12,9 +12,23 @@ type Order struct {
 	Address         Address       `json:"-" gorm:"foreignkey:AddressID"`
 	PaymentMethodID uint          `json:"paymentmethod_id"`
 	PaymentMethod   PaymentMethod `json:"-" gorm:"foreignkey:PaymentMethodID"`
-	CartID          int           `json:"cart_id" gorm:"not null"`
 	ShipmentStatus  string        `json:"shipment_status" gorm:"default:'pending'"`
 	PaymentStatus   string        `json:"payment_status" gorm:"default:'not paid'"`
 	FinalPrice      float64       `json:"final_price"`
 	Approval        bool          `json:"approval" gorm:"default:false"`
+}
+
+type OrderItem struct {
+	ID         uint    `json:"id" gorm:"primaryKey;not null"`
+	OrderID    string  `json:"order_id"`
+	Order      Order   `json:"-" gorm:"foreignkey:OrderID;constraint:OnDelete:CASCADE"`
+	ProductID  uint    `json:"product_id"`
+	Products   Product `json:"-" gorm:"foreignkey:ProductID"`
+	Quantity   int     `json:"quantity"`
+	TotalPrice float64 `json:"total_price"`
+}
+
+type OrderSuccessResponse struct {
+	OrderID        string `json:"order_id"`
+	ShipmentStatus string `json:"order_status"`
 }

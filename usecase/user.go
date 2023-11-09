@@ -188,33 +188,26 @@ func ChangePassword(id int, old string, password string, repassword string) erro
 	}
 	return repository.ChangePassword(id, string(newpassword))
 }
-func UpdateQuantityAdd(id, prodcut_id int) error {
-
-	err := repository.UpdateQuantityAdd(id, prodcut_id)
+func UpdateQuantityAdd(id, productID, cartID int) error {
+	err := repository.UpdateQuantityAdd(id, productID)
 	if err != nil {
 		return err
 	}
-
-	return nil
-
-}
-func UpdateTotalPriceAdd(id, product_id int) error {
-	err := repository.UpdateTotalPrice(id, product_id)
+	err = repository.UpdateTotalPrice(productID, cartID)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-func UpdateQuantityless(id, prodcut_id int) error {
 
-	err := repository.UpdateQuantityless(id, prodcut_id)
+}
+
+func UpdateQuantityless(id, productID, cartID int) error {
+
+	err := repository.UpdateQuantityless(id, productID)
 	if err != nil {
 		return err
 	}
-	return nil
-}
-func UpdateTotalPriceLess(id, product_id int) error {
-	err := repository.UpdateTotalPrice(id, product_id)
+	err = repository.UpdateTotalPrice(productID, cartID)
 	if err != nil {
 		return err
 	}
@@ -259,4 +252,58 @@ func ForgotPasswordVerifyAndChange(model models.ForgotVerify) error {
 	}
 
 	return nil
+}
+func GetCart(id,cart_id int) (models.GetCartResponse, error) {
+	products, err := repository.GetProductsInCart(cart_id)
+	if err != nil {
+		return models.GetCartResponse{}, errors.New("internal error")
+	}
+	var product_names []string
+	for i := range products {
+		product_name, err := repository.FindProductNames(products[i])
+		if err != nil {
+			return models.GetCartResponse{}, errors.New("internal error")
+		}
+		product_names = append(product_names, product_name)
+	}
+	var quantity []int
+	for i := range products {
+		q, err := repository.FindCartQuantity(cart_id, products[i])
+		if err != nil {
+			return models.GetCartResponse{}, errors.New("internal error")
+		}
+		quantity = append(quantity, q)
+	}
+
+	var price []float64
+	for i := range products {
+		q, err := repository.FindPrice(products[i])
+		if err != nil {
+			return models.GetCartResponse{}, errors.New("internal error")
+		}
+		price = append(price, q)
+	}
+	var stocks []int
+
+	for _, v := range products {
+		stock, err := repository.FindStock(v)
+		if err != nil {
+			return models.GetCartResponse{}, errors.New("internal error")
+		}
+		stocks = append(stocks, stock)
+	}
+	var getcart []models.GetCart
+	for i := range product_names {
+		var get models.GetCart
+		get.ID = products[i]
+		get.ProductName = product_names[i]
+		get.Quantity = float64(quantity[i])
+		get.TotalPrice = price[i]
+		get.Product.Stock = stocks[i]
+		getcart = append(getcart, get)
+	}
+	var response models.GetCartResponse
+	response.ID = cart_id
+	response.Data = getcart
+	return response, nil
 }

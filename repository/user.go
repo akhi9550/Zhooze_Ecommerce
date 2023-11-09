@@ -181,23 +181,29 @@ func GetPassword(id int) (string, error) {
 	return userPassword, nil
 }
 func UpdateQuantityAdd(id, prdt_id int) error {
-	err := db.DB.Exec("UPDATE cart_items AS ci "+"SET quantity = quantity + 1 "+"WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1) "+"AND ci.product_id = $2", id, prdt_id).Error
+	err := db.DB.Exec(`UPDATE cart_items AS ci 
+		SET quantity = quantity + 1 
+		WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1)
+		AND ci.product_id = $2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateTotalPrice(userID, productID int) error {
-	err := db.DB.Exec("UPDATE cart_items "+"SET cart_items.total_price = cart_items.quantity * p.price "+"FROM products AS p "+"JOIN carts AS c ON cart_items.cart_id = c.id "+"WHERE c.user_id = $1 AND cart_items.product_id = $2", userID, productID).Error
+func UpdateTotalPrice(productID, cartID int) error {
+	err := db.DB.Exec(` update cart_items set total_price = quantity * (select price from products where id = $1) where cart_id =$2 and product_id = $3`, productID, cartID, productID).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateQuantityless(userID, productID int) error {
-	err := db.DB.Exec("UPDATE cart_items AS ci "+"SET quantity = quantity - 1 "+"WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1) "+"AND ci.product_id = $2 ", userID, productID).Error
+func UpdateQuantityless(id, prdt_id int) error {
+	err := db.DB.Exec(`UPDATE cart_items AS ci 
+		SET quantity = quantity - 1 
+		WHERE cart_id IN (SELECT id FROM carts WHERE user_id = $1)
+		AND ci.product_id = $2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}

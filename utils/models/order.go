@@ -49,3 +49,24 @@ type OrderPaymentDetails struct {
 	OrderID    int     `json:"order_id"`
 	FinalPrice float64 `json:"final_price"`
 }
+
+type AddedOrderProductDetails struct {
+	UserID          int `json:"user_id"`
+	AddressID       int `json:"address_id"`
+	PaymentMethodID int `json:"payment_id"`
+}
+type OrderResponse struct {
+	AddedOrderProductDetails AddedOrderProductDetails
+	OrderDetails             OrderDetails
+}
+
+type OrderFromCart struct {
+	PaymentID uint `json:"payment_id" binding:"required"`
+	AddressID uint `json:"address_id" binding:"required"`
+}
+
+type OrderIncoming struct {
+	UserID    uint `json:"user_id"`
+	PaymentID uint `json:"payment_id"`
+	AddressID uint `json:"address_id"`
+}

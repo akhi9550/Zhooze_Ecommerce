@@ -14,7 +14,6 @@ import (
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param      cart_id     query   int false "cart_id only this cart_id is needed"
 // @Param			product_id	query		string	true	"product-id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
@@ -28,16 +27,8 @@ func AddToCart(c *gin.Context) {
 		c.JSON(http.StatusBadGateway, errs)
 		return
 	}
-	cartId := c.Query("cart_id")
-	cartIdInt := 0
-	if cartId != "" {
-		cartIdInt, err = strconv.Atoi(cartId)
-		if err != nil {
-			cartIdInt = 0
-		}
-	}
 	user_ID, _ := c.Get("user_id")
-	cartResponse, err := usecase.AddToCart(product_id, cartIdInt, user_ID.(int))
+	cartResponse, err := usecase.AddToCart(product_id, user_ID.(int))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadGateway, "could not add product to the cart", nil, err.Error())
 		c.JSON(http.StatusBadGateway, errs)
@@ -124,6 +115,7 @@ func EmptyCart(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
+// @Param			cart_id 	query	string	true	"cart_id"
 // @Param			product_id	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
@@ -131,20 +123,20 @@ func EmptyCart(c *gin.Context) {
 // @Router			/user/cart/updatequantityadd   [PUT]
 func UpdateQuantityAdd(c *gin.Context) {
 	id, _ := c.Get("user_id")
-	product, err := strconv.Atoi(c.Query("product_id"))
+	productID, err := strconv.Atoi(c.Query("product_id"))
 	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
+		errorRes := response.ClientResponse(http.StatusBadRequest, "check product id parameter properly", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	cartID, err := strconv.Atoi(c.Query("cart_id"))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "check cart id parameters properly", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 
-	if err := usecase.UpdateQuantityAdd(id.(int), product); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	if err := usecase.UpdateTotalPriceAdd(id.(int), product); err != nil {
+	if err := usecase.UpdateQuantityAdd(id.(int), productID, cartID); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
@@ -158,6 +150,7 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
+// @Param			cart_id 	query	string	true	"cart_id"
 // @Param			product_id	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
@@ -165,19 +158,20 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Router			/user/cart/updatequantityless     [PUT]
 func UpdateQuantityless(c *gin.Context) {
 	id, _ := c.Get("user_id")
-	product, err := strconv.Atoi(c.Query("product_id"))
+	productID, err := strconv.Atoi(c.Query("product_id"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "check parameters properly", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-
-	if err := usecase.UpdateQuantityless(id.(int), product); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
+	cartID, err := strconv.Atoi(c.Query("cart_id"))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "check cart id parameters properly", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	if err := usecase.UpdateTotalPriceLess(id.(int), product); err != nil {
+
+	if err := usecase.UpdateQuantityless(id.(int), productID, cartID); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

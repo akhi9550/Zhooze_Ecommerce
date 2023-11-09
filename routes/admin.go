@@ -56,7 +56,7 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/cancel", handlers.CancelOrderFromAdmin)
 		}
 
-		//image cropping issssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssuessssssssssssssss
+		//image cropping issuess
 		r.POST("/image-crop", handlers.CropImage)
 
 	}

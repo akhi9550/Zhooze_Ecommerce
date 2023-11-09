@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"Zhooze/usecase"
+	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"fmt"
 	"net/http"
@@ -9,6 +10,40 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+// @Summary Order Items from cart
+// @Description Order all products which is currently present inside  the cart
+// @Tags User Order
+// @Accept json
+// @Produce json
+// @Security Bearer
+// @Param orderBody body models.OrderFromCart true "Order details"
+// @Success 200 {object} response.Response{}
+// @Failure 500 {object} response.Response{}
+// @Router /user/order [post]
+func OrderItemsFromCart(c *gin.Context) {
+
+	id, _ := c.Get("user_id")
+	userID := id.(int)
+
+	var orderFromCart models.OrderFromCart
+	if err := c.ShouldBindJSON(&orderFromCart); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "bad request", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully created the order", orderSuccessResponse, nil)
+	c.JSON(http.StatusOK, successRes)
+
+}
 
 // @Summary Approve Order
 // @Description Approve Order from admin side which is in processing state
@@ -82,28 +117,6 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// // @Summary Refund Order
-// // @Description Refund an offer by admin
-// // @Tags Admin Order Management
-// // @Accept json
-// // @Produce json
-// // @Security Bearer
-// // @Param id query string true "Order ID"
-// // @Success 200 {object} response.Response{}
-// // @Failure 500 {object} response.Response{}
-// // @Router /refund-order    [PUT]
-// func RefundUser(c *gin.Context) {
-// 	OrderID := c.Query("id")
-// 	err := usecase.RefundUser(OrderID)
-// 	if err != nil {
-// 		errs := response.ClientResponse(http.StatusInternalServerError, "Refund was not possible", nil, err.Error())
-// 		c.JSON(http.StatusInternalServerError, errs)
-// 		return
-// 	}
-// 	success := response.ClientResponse(http.StatusOK, "Successfully Refunded the user", nil, nil)
-// 	c.JSON(http.StatusOK, success)
-// }
-
 // @Summary Order Items From Cart
 // @Description Add cart to the order using  cart id
 // @Tags  User Order Management
@@ -116,39 +129,39 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /user/order    [POST]
-func OrderItemsFromCart(c *gin.Context) {
-	id, _ := c.Get("user_id")
-	cart_id := c.Query("cart_id")
-	cartID, err := strconv.Atoi(cart_id)
-	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadRequest, "error in cart id", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errRes)
-		return
-	}
-	address_id := c.Query("address_id")
-	addressID, err := strconv.Atoi(address_id)
-	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errRes)
-		return
-	}
-	payment_id := c.Query("payment_id")
-	paymentID, err := strconv.Atoi(payment_id)
-	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errRes)
-		return
-	}
-	Order, err := usecase.OrderItemsFromCart(id.(int), cartID, addressID, paymentID)
-	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadRequest, "error in ordering", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errRes)
-		return
-	}
+// func OrderItemsFromCart(c *gin.Context) {
+// 	id, _ := c.Get("user_id")
+// 	cart_id := c.Query("cart_id")
+// 	cartID, err := strconv.Atoi(cart_id)
+// 	if err != nil {
+// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in cart id", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errRes)
+// 		return
+// 	}
+// 	address_id := c.Query("address_id")
+// 	addressID, err := strconv.Atoi(address_id)
+// 	if err != nil {
+// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errRes)
+// 		return
+// 	}
+// 	payment_id := c.Query("payment_id")
+// 	paymentID, err := strconv.Atoi(payment_id)
+// 	if err != nil {
+// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errRes)
+// 		return
+// 	}
+// 	Order, err := usecase.OrderItemsFromCart(id.(int), cartID, addressID, paymentID)
+// 	if err != nil {
+// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in ordering", nil, err.Error())
+// 		c.JSON(http.StatusBadRequest, errRes)
+// 		return
+// 	}
 
-	success := response.ClientResponse(http.StatusOK, "succesfully added order", Order, nil)
-	c.JSON(http.StatusOK, success)
-}
+// 	success := response.ClientResponse(http.StatusOK, "succesfully added order", Order, nil)
+// 	c.JSON(http.StatusOK, success)
+// }
 
 // @Summary Get Order Details to user side
 // @Description Get all order details done by user to user side

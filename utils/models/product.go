@@ -12,7 +12,6 @@ type ProductBrief struct {
 	Stock         int     `json:"stock"`
 	Price         float64 `json:"price"`
 	ProductStatus string  `json:"product_status"`
-	ProductImages []Image `json:"product_images"`
 }
 
 type ProductReceiver struct {

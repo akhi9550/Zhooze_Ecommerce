@@ -19,11 +19,7 @@ func DisplayCart(userID int) ([]models.Cart, error) {
 
 	var cartResponse []models.Cart
 
-	if err := db.DB.Raw(`
-	SELECT * FROM cart_items ct
-	JOIN carts c ON c.id = ct.cart_id
-	WHERE c.user_id = $1 
-	`, userID).Scan(&cartResponse).Error; err != nil {
+	if err := db.DB.Raw(`SELECT * FROM cart_items ci JOIN carts c ON ci.cart_id =  c.id WHERE c.user_id = $1 `, userID).Scan(&cartResponse).Error; err != nil {
 		return []models.Cart{}, err
 	}
 	return cartResponse, nil
@@ -50,18 +46,14 @@ func GetTotalPrice(userID int) (models.CartTotal, error) {
 }
 func CartExist(userID int) (bool, error) {
 	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? ", userID).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM cart_items JOIN carts ON cart_items.cart_id = carts.id WHERE user_id = ? ", userID).Scan(&count).Error; err != nil {
 		return false, err
 	}
 	return count > 0, nil
 
 }
 func EmptyCart(userID int) error {
-	if err := db.DB.Exec("DELETE FROM orders WHERE cart_id IN (SELECT id FROM carts WHERE user_id = ?)", userID).Error; err != nil {
-		return err
-	}
-
-	if err := db.DB.Exec("DELETE FROM carts WHERE user_id = ?", userID).Error; err != nil {
+	if err := db.DB.Exec("DELETE FROM cart_items WHERE cart_id IN (SELECT id FROM carts WHERE user_id = ?)", userID).Error; err != nil {
 		return err
 	}
 	return nil
@@ -94,6 +86,26 @@ func QuantityOfProductInCart(userId int, productId int) (int, error) {
 	}
 	return productQty, nil
 }
+func AddItemIntoCart(cartId int, productId int, Quantity int, productprice float64) error {
+	if err := db.DB.Exec("INSERT INTO cart_items(cart_id,product_id,quantity,total_price) VALUES ($1 ,$2 ,$3 ,$4) ", cartId, productId, Quantity, productprice).Error; err != nil {
+		return err
+	}
+	return nil
+
+}
+func CreateCart(userid int) (int, error) {
+	var a int
+	if err := db.DB.Exec("INSERT INTO carts (user_id) values(?)", userid).Error; err != nil {
+		return 0, err
+	}
+	if err := db.DB.Raw("SELECT id FROM carts WHERE user_id = ?", userid).Scan(&a).Error; err != nil {
+		return 0, err
+	}
+	fmt.Println("🤷‍♂️cart id:", a)
+	return a, nil
+
+}
+
 func AddToCart(user_id, product_id, quantity, cartId int, productPrice float64) error {
 	query := "INSERT INTO cart_items(cart_id,product_id,quantity,total_price) VALUES ($1 ,$2 ,$3 ,$4) "
 
@@ -113,7 +125,11 @@ func TotalPriceForProductInCart(userID int, productID int) (float64, error) {
 }
 func UpdateCart(quantity int, price float64, userID int, product_id int) error {
 	fmt.Println("lllllllllllllll", quantity, price, userID, product_id)
-	if err := db.DB.Exec("UPDATE cart_items AS ci "+"SET quantity = ?, total_price = ? "+"WHERE product_id = ? AND carts_id IN (SELECT id FROM carts WHERE user_id = ?)", quantity, price, product_id, userID).Error; err != nil {
+	if err := db.DB.Exec(`UPDATE cart_items
+	SET quantity = ?, total_price = ? 
+	WHERE product_id = ? 
+	AND cart_id 
+	IN (SELECT id FROM carts WHERE user_id = ?)`, quantity, price, product_id, userID).Error; err != nil {
 		return err
 	}
 

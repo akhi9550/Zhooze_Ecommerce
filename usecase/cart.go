@@ -7,56 +7,59 @@ import (
 	"fmt"
 )
 
-func AddToCart(product_id int, cartId int, user_id int) (models.CartResponse, error) {
-	if cartId <= 0 {
-		newCart, err := repository.MakeNewCart(user_id)
-		if err != nil {
-			return models.CartResponse{}, err
-		}
-		cartId = newCart.Id
-		fmt.Println("cart id", cartId, newCart)
-	}
-
+func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 	ok, _, err := repository.CheckProduct(product_id)
 	if err != nil {
+
 		return models.CartResponse{}, err
 	}
+
 	if !ok {
-		return models.CartResponse{}, errors.New("product doesnot exist")
+		return models.CartResponse{}, errors.New("product Does not exist")
 	}
-	QuantityofProductInCart, err := repository.QuantityOfProductInCart(user_id, product_id)
+
+	QuantityOfProductInCart, err := repository.QuantityOfProductInCart(user_id, product_id)
 	if err != nil {
+
 		return models.CartResponse{}, err
 	}
-	QuantityofProduct, err := repository.GetQuantityFromProductID(product_id)
+	quantityOfProduct, err := repository.GetQuantityFromProductID(product_id)
 	if err != nil {
+
 		return models.CartResponse{}, err
 	}
-	if QuantityofProduct == 0 {
+	if quantityOfProduct == 0 {
 		return models.CartResponse{}, errors.New("out of stock")
 	}
-	if QuantityofProduct == QuantityofProductInCart {
+	if quantityOfProduct == QuantityOfProductInCart {
 		return models.CartResponse{}, errors.New("stock limit exceeded")
+	}
+	cart_id,err:=repository.CreateCart(user_id)
+	if err!=nil{
+		return models.CartResponse{}, err
 	}
 	productPrice, err := repository.GetPriceOfProductFromID(product_id)
 	if err != nil {
+
 		return models.CartResponse{}, err
 	}
-	fmt.Println("👺prodcut price", productPrice)
-	if QuantityofProductInCart == 0 {
-		err := repository.AddToCart(user_id, product_id, 1, cartId, productPrice)
+	if QuantityOfProductInCart == 0 {
+		err := repository.AddItemIntoCart(cart_id, product_id, 1, productPrice)
 		if err != nil {
+
 			return models.CartResponse{}, err
 		}
+
 	} else {
 		currentTotal, err := repository.TotalPriceForProductInCart(user_id, product_id)
 		if err != nil {
 			return models.CartResponse{}, err
 		}
-		err = repository.UpdateCart(QuantityofProductInCart+1, currentTotal+productPrice, user_id, product_id)
+		err = repository.UpdateCart(QuantityOfProductInCart+1, currentTotal+productPrice, user_id, product_id)
 		if err != nil {
 			return models.CartResponse{}, err
 		}
+
 	}
 	cartDetails, err := repository.DisplayCart(user_id)
 	if err != nil {
@@ -64,6 +67,7 @@ func AddToCart(product_id int, cartId int, user_id int) (models.CartResponse, er
 	}
 	cartTotal, err := repository.GetTotalPrice(user_id)
 	if err != nil {
+
 		return models.CartResponse{}, err
 	}
 	return models.CartResponse{
@@ -71,7 +75,74 @@ func AddToCart(product_id int, cartId int, user_id int) (models.CartResponse, er
 		TotalPrice: cartTotal.TotalPrice,
 		Cart:       cartDetails,
 	}, nil
+
 }
+
+// 	// if cartId <= 0 {
+// 	// 	newCart, err := repository.MakeNewCart(user_id)
+// 	// 	if err != nil {
+// 	// 		return models.CartResponse{}, err
+// 	// 	}
+// 	// 	cartId = newCart.Id
+// 	// 	fmt.Println("cart id", cartId, newCart)
+// 	// }
+
+//		ok, _, err := repository.CheckProduct(product_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		if !ok {
+//			return models.CartResponse{}, errors.New("product doesnot exist")
+//		}
+//		QuantityofProductInCart, err := repository.QuantityOfProductInCart(user_id, product_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		QuantityofProduct, err := repository.GetQuantityFromProductID(product_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		if QuantityofProduct == 0 {
+//			return models.CartResponse{}, errors.New("out of stock")
+//		}
+//		if QuantityofProduct == QuantityofProductInCart {
+//			return models.CartResponse{}, errors.New("stock limit exceeded")
+//		}
+//		cartId,err:=repository
+//		productPrice, err := repository.GetPriceOfProductFromID(product_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		fmt.Println("👺prodcut price", productPrice)
+//		if QuantityofProductInCart == 0 {
+//			err := repository.AddToCart(user_id, product_id, 1, cartId, productPrice)
+//			if err != nil {
+//				return models.CartResponse{}, err
+//			}
+//		} else {
+//			currentTotal, err := repository.TotalPriceForProductInCart(user_id, product_id)
+//			if err != nil {
+//				return models.CartResponse{}, err
+//			}
+//			err = repository.UpdateCart(QuantityofProductInCart+1, currentTotal+productPrice, user_id, product_id)
+//			if err != nil {
+//				return models.CartResponse{}, err
+//			}
+//		}
+//		cartDetails, err := repository.DisplayCart(user_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		cartTotal, err := repository.GetTotalPrice(user_id)
+//		if err != nil {
+//			return models.CartResponse{}, err
+//		}
+//		return models.CartResponse{
+//			UserName:   cartTotal.UserName,
+//			TotalPrice: cartTotal.TotalPrice,
+//			Cart:       cartDetails,
+//		}, nil
+//	}
 func RemoveFromCart(product_id int, user_id int) (models.CartResponse, error) {
 	ok, err := repository.ProductExist(user_id, product_id)
 	if err != nil {

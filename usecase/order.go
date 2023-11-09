@@ -8,56 +8,94 @@ import (
 	"fmt"
 )
 
-func OrderItemsFromCart(userID, CartID, addressID, paymentID int) (domain.Order, error) {
-	addressExist := repository.CheckAddressAvailabilityWithID(addressID, userID)
-	if !addressExist {
-		return domain.Order{}, errors.New("address doesn't exist")
-	}
-	paymentMethod := repository.GetPaymentId(paymentID)
-	if !paymentMethod {
-		return domain.Order{}, errors.New("paymentmethod doesn't exist")
-	}
-	cartExist := repository.CheckCartAvailabilityWithID(CartID, userID)
-	if !cartExist {
-		return domain.Order{}, errors.New("cart doesn't exist")
-	}
-	totlaAmount, err := repository.TotalAmountInCart(CartID)
+func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.OrderSuccessResponse, error) {
+	var orderBody models.OrderIncoming
+	err := copier.Copy(&orderBody, &orderFromCart)
 	if err != nil {
-		return domain.Order{}, nil
+		return domain.OrderSuccessResponse{}, err
 	}
-	orderItems, err := repository.OrderItemsFromCart(CartID)
-	if err != nil {
-		return domain.Order{}, err
-	}
-	if err := repository.AddpaymentMethod(paymentID, orderItems.ID); err != nil {
-		return domain.Order{}, err
-	}
-	if err := repository.AddAmountToOrder(totlaAmount, orderItems.ID); err != nil {
-		return domain.Order{}, err
-	}
-	stock, err := repository.FindOrderStock(CartID)
-	if err != nil {
-		return domain.Order{}, err
-	}
-	body, err := repository.GetOrder(int(orderItems.ID))
-	if err != nil {
-		return domain.Order{}, err
-	}
-	productID, err := repository.FindProductFromCart(CartID)
-	if err != nil {
-		return domain.Order{}, err
-	}
-	err = repository.CartEmpty(CartID)
-	if err != nil {
-		return domain.Order{}, err
-	}
-	err = repository.ProductStockMinus(productID, stock)
-	if err != nil {
-		return domain.Order{}, err
-	}
-	return body, nil
-}
 
+	orderBody.UserID = uint(userID)
+	cartExist, err := repository.DoesCartExist(userID)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	if !cartExist {
+		return domain.OrderSuccessResponse{}, errors.New("cart empty can't order")
+	}
+
+	addressExist, err := repository.AddressExist(orderBody)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	if !addressExist {
+		return domain.OrderSuccessResponse{}, errors.New("address does not exist")
+	}
+
+	// get all items a slice of carts
+	cartItems, err := repository.GetAllItemsFromCart(int(orderBody.UserID))
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	var orderDetails domain.Order
+	var orderItemDetails domain.OrderItem
+	// add general order details - that is to be added to orders table
+	orderDetails = helper.CopyOrderDetails(orderDetails, orderBody)
+
+	// get grand total iterating through each products in carts
+	for _, c := range cartItems {
+		orderDetails.GrandTotal += c.TotalPrice
+	}
+	discount_price, err := repository.GetCouponDiscountPrice(int(orderBody.UserID), orderDetails.GrandTotal)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	err = repository.UpdateCouponDetails(discount_price, orderDetails.UserID)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	orderDetails.FinalPrice = orderDetails.GrandTotal - discount_price
+	if orderBody.PaymentID == 2 {
+		orderDetails.PaymentStatus = "not paid"
+		orderDetails.ShipmentStatus = "pending"
+	}
+
+	
+	err = repository.CreateOrder(orderDetails)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	for _, c := range cartItems {
+		// for each order save details of products and associated details and use order_id as foreign key ( for each order multiple product will be there)
+		orderItemDetails.OrderID = orderDetails.OrderId
+		orderItemDetails.ProductID = c.ProductID
+		orderItemDetails.Quantity = int(c.Quantity)
+		orderItemDetails.TotalPrice = c.TotalPrice
+
+		err := repository.AddOrderItems(orderItemDetails, orderDetails.UserID, c.ProductID, c.Quantity)
+		if err != nil {
+			return domain.OrderSuccessResponse{}, err
+		}
+
+	}
+
+	err = repository.UpdateUsedOfferDetails(orderBody.UserID)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	orderSuccessResponse, err := repository.GetBriefOrderDetails(orderDetails.OrderId)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	return orderSuccessResponse, nil
+
+}
 func GetOrderDetails(userID int, page int, count int) ([]models.CombinedOrderDetails, error) {
 	OrderDetails, err := repository.GetOrderDetails(userID, page, count)
 	if err != nil {
@@ -77,7 +115,7 @@ func CancelOrders(orderID string, userID int) error {
 		return err
 	}
 	if userTest != userID {
-		return errors.New("the order is not come by this user")
+		return errors.New("the order is not comes by this user")
 	}
 	orderProductDetails, err := repository.GetProductDetailsFromOrders(orderID)
 	if err != nil {

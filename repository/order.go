@@ -57,7 +57,7 @@ func CancelOrders(order_id string) error {
 
 func GetProductDetailsFromOrders(order_id string) ([]models.OrderProducts, error) {
 	var OrderProductDetails []models.OrderProducts
-	if err := db.DB.Raw("SELECT product_id,quantity FROM carts WHERE id = ?", order_id).Scan(&OrderProductDetails).Error; err != nil {
+	if err := db.DB.Raw("SELECT product_id,quantity FROM cart_items WHERE id = ?", order_id).Scan(&OrderProductDetails).Error; err != nil {
 		return []models.OrderProducts{}, err
 	}
 	return OrderProductDetails, nil
@@ -107,18 +107,18 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 
 func OrderItemsFromCart(cartID int) (domain.Order, error) {
 	var cart domain.Cart
-	if err := db.DB.Raw("SELECT * FROM cart_items WHERE id = ?", cartID).Scan(&cart).Error; err != nil {
+	if err := db.DB.Raw("SELECT * FROM cart_items WHERE cart_id = ?", cartID).Scan(&cart).Error; err != nil {
 		return domain.Order{}, err
 	}
 	fmt.Println(cart)
 	var orderItems domain.Order
 	err := db.DB.Raw(`
     INSERT INTO orders (created_at, user_id, address_id, cart_id)
-    SELECT NOW(), carts.user_id, a.id, c.id
+    SELECT NOW(), carts.user_id, a.id, carts.id
     FROM cart_items as c
 	JOIN carts ON c.cart_id = carts.id
     JOIN addresses a ON carts.user_id = a.user_id
-    WHERE c.id = ?
+    WHERE c.cart_id = ?
     RETURNING orders.id,orders.user_id, orders.address_id, orders.cart_id`, cartID).Scan(&orderItems).Error
 	if err != nil {
 		return domain.Order{}, err
@@ -143,15 +143,16 @@ func CheckAddressAvailabilityWithID(addressID, userID int) bool {
 	return count > 0
 }
 func CheckCartAvailabilityWithID(cartID, UserID int) bool {
+
 	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM cart_items JOIN carts ON cart_items.cart_id = carts.id WHERE cart_items.id = ? AND carts.user_id = ?", cartID, UserID).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM cart_items JOIN carts ON cart_items.cart_id = carts.id WHERE cart_items.cart_id = ? AND carts.user_id = ?", cartID, UserID).Scan(&count).Error; err != nil {
 		return false
 	}
 	return count > 0
 }
 func FindOrderStock(cartID int) (int, error) {
 	var count int
-	if err := db.DB.Raw("SELECT quantity FROM cart_items WHERE id = ?", cartID).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT quantity FROM cart_items WHERE cart_id = ?", cartID).Scan(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil
@@ -175,13 +176,13 @@ func GetOrder(orderID int) (domain.Order, error) {
 
 func FindProductFromCart(cartID int) (int, error) {
 	var p int
-	if err := db.DB.Raw("SELECT product_id FROM cart_items WHERE id = ?", cartID).Scan(&p).Error; err != nil {
+	if err := db.DB.Raw("SELECT product_id FROM cart_items WHERE cart_id = ?", cartID).Scan(&p).Error; err != nil {
 		return 0, err
 	}
 	return p, nil
 }
 func CartEmpty(cartID int) error {
-	if err := db.DB.Exec("DELETE FROM cart_items WHERE id = ?", cartID).Error; err != nil {
+	if err := db.DB.Exec("DELETE FROM cart_items WHERE cart_id = ?", cartID).Error; err != nil {
 		return err
 	}
 	return nil
@@ -203,7 +204,7 @@ func GetPaymentId(paymentID int) bool {
 }
 func TotalAmountInCart(cartID int) (float64, error) {
 	var price float64
-	if err := db.DB.Raw("SELECT total_price FROM cart_items WHERE id = $1", cartID).Scan(&price).Error; err != nil {
+	if err := db.DB.Raw("SELECT sum(total_price) FROM cart_items WHERE cart_id = $1", cartID).Scan(&price).Error; err != nil {
 		return 0, err
 	}
 	return price, nil
@@ -285,4 +286,61 @@ func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, erro
 	}
 	fmt.Println("fffffffff", orderDetails)
 	return orderDetails, nil
+}
+
+
+func GetProductsInCart(cart_id int) ([]int, error) {
+
+	var cart_products []int
+
+	if err := db.DB.Raw("select product_id from cart_items where cart_id=?", cart_id).Scan(&cart_products).Error; err != nil {
+		return []int{}, err
+	}
+
+	return cart_products, nil
+
+}
+func  FindProductNames(product_id int) (string, error) {
+
+	var product_name string
+
+	if err := db.DB.Raw("select name from products where id=?", product_id).Scan(&product_name).Error; err != nil {
+		return "", err
+	}
+
+	return product_name, nil
+
+}
+
+func  FindCartQuantity(cart_id, product_id int) (int, error) {
+
+	var quantity int
+
+	if err := db.DB.Raw("select quantity from cart_items where cart_id=$1 and product_id=$2", cart_id, product_id).Scan(&quantity).Error; err != nil {
+		return 0, err
+	}
+
+	return quantity, nil
+
+}
+
+func  FindPrice(product_id int) (float64, error) {
+
+	var price float64
+
+	if err := db.DB.Raw("select price from products where id=?", product_id).Scan(&price).Error; err != nil {
+		return 0, err
+	}
+
+	return price, nil
+
+}
+func  FindStock(id int) (int, error) {
+	var stock int
+	err := db.DB.Raw("SELECT stock FROM prodcuts WHERE id = ?", id).Scan(&stock).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return stock, nil
 }

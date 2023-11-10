@@ -189,11 +189,25 @@ func ChangePassword(id int, old string, password string, repassword string) erro
 	return repository.ChangePassword(id, string(newpassword))
 }
 func UpdateQuantityAdd(id, productID int) error {
-	err := repository.UpdateQuantityAdd(id, productID)
+	productExist, err := repository.ProductExistCart(id, productID)
+	if !productExist {
+		return errors.New("product doesnot exist cart")
+	}
 	if err != nil {
 		return err
 	}
-	err = repository.UpdateTotalPrice(productID)
+	stock, err := repository.ProductStock(productID)
+	if err != nil {
+		return err
+	}
+	if stock <= 1 {
+		return errors.New("not available out of stock")
+	}
+	err = repository.UpdateQuantityAdd(id, productID)
+	if err != nil {
+		return err
+	}
+	err = repository.UpdateTotalPrice(id, productID)
 	if err != nil {
 		return err
 	}
@@ -201,16 +215,30 @@ func UpdateQuantityAdd(id, productID int) error {
 
 }
 
-func UpdateQuantityless(id, productID, cartID int) error {
+func UpdateQuantityless(id, productID int) error {
+	productExist, err := repository.ProductExistCart(id, productID)
+	if !productExist {
+		return errors.New("product doesnot exist cart")
+	}
+	if err != nil {
+		return err
+	}
+	stock, err := repository.ExistStock(id, productID)
+	if err != nil {
+		return err
+	}
+	if stock <= 1 {
+		return errors.New("its a maximum")
+	}
+	err = repository.UpdateQuantityless(id, productID)
+	if err != nil {
+		return err
+	}
+	err = repository.UpdateTotalPrice(id, productID)
+	if err != nil {
+		return err
+	}
 
-	err := repository.UpdateQuantityless(id, productID)
-	if err != nil {
-		return err
-	}
-	err = repository.UpdateTotalPrice(productID, cartID)
-	if err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -253,7 +281,7 @@ func ForgotPasswordVerifyAndChange(model models.ForgotVerify) error {
 
 	return nil
 }
-func GetCart(id,cart_id int) (models.GetCartResponse, error) {
+func GetCart(id, cart_id int) (models.GetCartResponse, error) {
 	products, err := repository.GetProductsInCart(cart_id)
 	if err != nil {
 		return models.GetCartResponse{}, errors.New("internal error")

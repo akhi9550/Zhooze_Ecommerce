@@ -21,7 +21,7 @@ func DisplayCart(userID int) ([]models.Cart, error) {
 
 	var cartResponse []models.Cart
 
-	if err := db.DB.Raw("SELECT carts.user_id,users.firstname as user_name,carts.product_id,products.name as product_name,carts.quantity,carts.total_price from carts inner join users on carts.user_id = users.id inner join products on carts.product_id = products.id where user_id = ?", userID).First(&cartResponse).Error; err != nil {
+	if err := db.DB.Raw("SELECT carts.user_id,users.firstname as user_name,carts.product_id,products.name as product_name,carts.quantity,carts.total_price from carts INNER JOIN users ON carts.user_id = users.id INNER JOIN products ON carts.product_id = products.id WHERE user_id = ?", userID).First(&cartResponse).Error; err != nil {
 		return []models.Cart{}, err
 	}
 	return cartResponse, nil
@@ -62,13 +62,10 @@ func EmptyCart(userID int) error {
 }
 func CheckProduct(product_id int) (bool, string, error) {
 	var count int
-
 	err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id = ?", product_id).Scan(&count).Error
-
 	if err != nil {
 		return false, "", err
 	}
-
 	if count > 0 {
 		var category string
 		err := db.DB.Raw("SELECT categories.category FROM categories INNER JOIN products ON products.category_id = categories.id WHERE products.id = ?", product_id).Scan(&category).Error
@@ -82,7 +79,7 @@ func CheckProduct(product_id int) (bool, string, error) {
 }
 func QuantityOfProductInCart(userId int, productId int) (int, error) {
 	var productQty int
-	err := db.DB.Raw("select quantity from carts where user_id = ? and product_id = ?", userId, productId).Scan(&productQty).Error
+	err := db.DB.Raw("SELECT quantity FROM carts WHERE user_id = ? AND product_id = ?", userId, productId).Scan(&productQty).Error
 	if err != nil {
 		return 0, err
 	}

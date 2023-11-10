@@ -156,14 +156,7 @@ func UpdateQuantityless(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	cartID, err := strconv.Atoi(c.Query("cart_id"))
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "check cart id parameters properly", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	if err := usecase.UpdateQuantityless(id.(int), productID, cartID); err != nil {
+	if err := usecase.UpdateQuantityless(id.(int), productID); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return

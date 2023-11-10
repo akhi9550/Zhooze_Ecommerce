@@ -24,7 +24,7 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 
 		return models.CartResponse{}, err
 	}
-	if quantityOfProduct == 0 {
+	if quantityOfProduct <= 0 {
 		return models.CartResponse{}, errors.New("out of stock")
 	}
 	if quantityOfProduct == QuantityOfProductInCart {
@@ -51,7 +51,6 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 		if err != nil {
 			return models.CartResponse{}, err
 		}
-
 	}
 	cartDetails, err := repository.DisplayCart(user_id)
 	if err != nil {
@@ -62,6 +61,10 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 
 		return models.CartResponse{}, err
 	}
+	err = repository.ProductStockMinus(product_id, QuantityOfProductInCart)
+	if err != nil {
+		return models.CartResponse{}, err
+	}
 	return models.CartResponse{
 		UserName:   cartTotal.UserName,
 		TotalPrice: cartTotal.TotalPrice,
@@ -70,7 +73,7 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 
 }
 
-func RemoveFromCart(product_id int, user_id int) (models.CartResponse, error) {
+func RemoveFromCart(product_id, user_id int) (models.CartResponse, error) {
 	ok, err := repository.ProductExist(user_id, product_id)
 	if err != nil {
 		return models.CartResponse{}, err
@@ -87,26 +90,22 @@ func RemoveFromCart(product_id int, user_id int) (models.CartResponse, error) {
 	if err != nil {
 		return models.CartResponse{}, err
 	}
-
-	cartDetails.Quantity = cartDetails.Quantity - 1
-	if cartDetails.Quantity == 0 {
-		if err := repository.RemoveProductFromCart(user_id, product_id); err != nil {
-			return models.CartResponse{}, err
-		}
-
+	if err := repository.RemoveProductFromCart(user_id, product_id); err != nil {
+		return models.CartResponse{}, err
 	}
-	if cartDetails.Quantity != 0 {
 
-		product_price, err := repository.GetPriceOfProductFromID(product_id)
-		if err != nil {
-			return models.CartResponse{}, err
-		}
-		cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
-		err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
-		if err != nil {
-			return models.CartResponse{}, err
-		}
-	}
+	// if cartDetails.Quantity != 0 {
+
+	// 	product_price, err := repository.GetPriceOfProductFromID(product_id)
+	// 	if err != nil {
+	// 		return models.CartResponse{}, err
+	// 	}
+	// 	cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
+	// 	err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
+	// 	if err != nil {
+	// 		return models.CartResponse{}, err
+	// 	}
+	// }
 	updatedCart, err := repository.CartAfterRemovalOfProduct(user_id)
 	if err != nil {
 		return models.CartResponse{}, err

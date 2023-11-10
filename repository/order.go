@@ -29,6 +29,16 @@ func AddressExist(orderBody models.OrderIncoming) (bool, error) {
 	return count > 0, nil
 
 }
+func PaymentExist(orderBody models.OrderIncoming) (bool, error) {
+
+	var count int
+	if err := db.DB.Raw("select count(*) from payment_methods where  id = ?", orderBody.PaymentID).Scan(&count).Error; err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+
+}
 func CheckOrderID(orderId string) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM orders WHERE id = ?", orderId).Scan(&count).Error
@@ -47,18 +57,23 @@ func GetOrderDetails(userId int, page int, count int) ([]models.FullOrderDetails
 	fmt.Println("userid is", userId, "page is ", page, "count is ", count, "offset is", offset)
 	db.DB.Raw("SELECT id,final_price,shipment_status,payment_status FROM orders WHERE user_id = ? limit ? offset ? ", userId, count, offset).Scan(&orderDetails)
 	fmt.Println("order details is ", orderDetails)
-
 	var fullOrderDetails []models.FullOrderDetails
-	// for each order select all the associated products and their details
 	for _, od := range orderDetails {
 		var orderProductDetails []models.OrderProductDetails
-		db.DB.Raw("SELECT order_items.product_id,products.name as product_name,order_items.quantity,order_items.total_price from order_items inner join products on order_items.product_id = products.id where order_items.id = ?", od.OrderId).Scan(&orderProductDetails)
+		db.DB.Raw(`SELECT
+		order_items.product_id,
+		products.name AS product_name,
+		order_items.quantity,
+		order_items.total_price
+	    FROM
+		order_items
+	    INNER JOIN
+		products ON order_items.product_id = products.id
+	    WHERE
+		order_items.id = $1 `, od.OrderId).Scan(&orderProductDetails)
 		fullOrderDetails = append(fullOrderDetails, models.FullOrderDetails{OrderDetails: od, OrderProductDetails: orderProductDetails})
-
 	}
-
 	return fullOrderDetails, nil
-
 }
 
 func GetOrderDetail(orderId int) (models.OrderDetails, error) {
@@ -145,7 +160,27 @@ func UpdateQuantityOfProduct(orderProducts []models.OrderProducts) error {
 func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, error) {
 
 	var orderDetails models.CombinedOrderDetails
-	err := db.DB.Raw("SELECT orders.id,orders.final_price,orders.shipment_status,orders.payment_status,users.firstname,users.email,users.phone,addresses.house_name,addresses.state,addresses.pin,addresses.street,addresses.city from orders INNER JOIN users ON orders.user_id = users.id INNER JOIN addresses on users.id = addresses.user_id WHERE id = ?", orderID).Scan(&orderDetails).Error
+	err := db.DB.Raw(`SELECT
+    orders.id as order_id,
+    orders.final_price,
+    orders.shipment_status,
+    orders.payment_status,
+    users.firstname,
+    users.email,
+    users.phone,
+    addresses.house_name,
+    addresses.state,
+    addresses.street,
+    addresses.city,
+    addresses.pin
+FROM
+    orders
+INNER JOIN
+    users ON orders.user_id = users.id
+INNER JOIN
+    addresses ON users.id = addresses.user_id
+WHERE
+    orders.id = ?`, orderID).Scan(&orderDetails).Error
 	if err != nil {
 		return models.CombinedOrderDetails{}, nil
 	}
@@ -153,42 +188,55 @@ func GetOrderDetailsByOrderId(orderID string) (models.CombinedOrderDetails, erro
 	return orderDetails, nil
 }
 
-func CreateOrder(orderDetails domain.Order) error {
-	fmt.Println("mmmmmmmmm", orderDetails)
-	err := db.DB.Create(&orderDetails).Error
-	if err != nil {
-		return err
-	}
-	return nil
-}
+func OrderItems(ob models.OrderIncoming, price float64) (int, error) {
 
-func AddOrderItems(orderItemDetails domain.OrderItem, UserID int, ProductID uint, Quantity float64) error {
-	fmt.Println("❌❌❌❌❌❌🥱", "details", orderItemDetails, "product", ProductID, "user", UserID, "quantity", Quantity)
+	var id int
+	query := `
+    INSERT INTO orders (user_id,address_id, payment_method_id, final_price)
+    VALUES (?, ?, ?, ?)
+    RETURNING id
+    `
+	db.DB.Raw(query, ob.UserID, ob.AddressID, ob.PaymentID, price).Scan(&id)
 
-	// after creating the order delete all cart items and also update the quantity of the product
-	err := db.DB.Omit("id").Create(&orderItemDetails).Error
-	if err != nil {
-		return err
-	}
-
-	err = db.DB.Exec("DELETE FROM carts WHERE user_id = ? and product_id = ?", UserID, ProductID).Error
-	if err != nil {
-		return err
-	}
-
-	err = db.DB.Exec("UPDATE products SET stock = stock - ? WHERE id = ?", Quantity, ProductID).Error
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return id, nil
 
 }
 
+func AddOrderProducts(order_id int, cart []models.Cart) error {
+	query := `
+    INSERT INTO order_items (order_id,product_id,quantity,total_price)
+    VALUES (?, ?, ?, ?) `
+	for _, v := range cart {
+		var productID int
+		if err := db.DB.Raw("SELECT id FROM products WHERE name = $1", v.ProductName).Scan(&productID).Error; err != nil {
+			return err
+		}
+		if err := db.DB.Exec(query, order_id, productID, v.Quantity, v.TotalPrice).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func UpdateCartAfterOrder(userID, productID int, quantity float64) error {
+	err := db.DB.Exec("DELETE FROM carts WHERE user_id = ? and product_id = ?", userID, productID).Error
+	if err != nil {
+		return err
+	}
+
+	err = db.DB.Exec("UPDATE products SET stock = stock - ? WHERE id = ?", quantity, productID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func GetBriefOrderDetails(orderID int) (domain.OrderSuccessResponse, error) {
 	fmt.Println("🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️", orderID)
 	var orderSuccessResponse domain.OrderSuccessResponse
-	db.DB.Raw("SELECT id as order_id,shipment_status as order_status FROM orders WHERE id = ?", orderID).Scan(&orderSuccessResponse)
+	err := db.DB.Raw("SELECT id,shipment_status FROM orders WHERE id = ?", orderID).Scan(&orderSuccessResponse).Error
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
 	return orderSuccessResponse, nil
 
 }
@@ -219,6 +267,22 @@ func GetAllOrderDetailsBrief(page int) ([]models.CombinedOrderDetails, error) {
 
 }
 
+//	func ExistProductID(userid int) ([]int, error) {
+//		var a []int
+//		err := db.DB.Raw("SELECT product_id FROM carts WHERE user_id = ?", userid).Scan(&a).Error
+//		if err != nil {
+//			return 0, err
+//		}
+//		return a, nil
+//	}
+//
+//	func CheckStock(productID int) error {
+//		err := db.DB.Raw("SELECT stock FROM products WHERE id = ?", productID).Error
+//		if err != nil {
+//			return err
+//		}
+//		return nil
+//	}
 func AddpaymentMethod(paymentID int, orderID uint) error {
 	fmt.Println("payment id : ", orderID)
 	err := db.DB.Exec(`UPDATE orders SET payment_method_id = $1 WHERE id = $2`, paymentID, orderID).Error
@@ -251,7 +315,6 @@ func FindOrderStock(cartID int) (int, error) {
 	return count, nil
 }
 func AddAmountToOrder(Price float64, orderID uint) error {
-	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️", Price, orderID)
 	err := db.DB.Exec("UPDATE orders SET final_price = ? WHERE id = ?", Price, orderID).Error
 	if err != nil {
 		return err
@@ -295,9 +358,9 @@ func GetPaymentId(paymentID int) bool {
 	}
 	return count > 0
 }
-func TotalAmountInCart(cartID int) (float64, error) {
+func TotalAmountInCart(userID int) (float64, error) {
 	var price float64
-	if err := db.DB.Raw("SELECT sum(total_price) FROM cart_items WHERE cart_id = $1", cartID).Scan(&price).Error; err != nil {
+	if err := db.DB.Raw("SELECT sum(total_price) FROM carts WHERE  user_id= $1", userID).Scan(&price).Error; err != nil {
 		return 0, err
 	}
 	return price, nil

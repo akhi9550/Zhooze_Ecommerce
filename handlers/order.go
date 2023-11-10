@@ -83,52 +83,6 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// // @Summary Order Items From Cart
-// // @Description Add cart to the order using  cart id
-// // @Tags  User Order Management
-// // @Accept json
-// // @Produce json
-// // @Security Bearer
-// // @Param cart_id query int true "cart id"
-// // @Param address_id query int true "address id"
-// // @Param payment_id query int true "payment id"
-// // @Success 200 {object} response.Response{}
-// // @Failure 500 {object} response.Response{}
-// // @Router /user/order    [POST]
-// func OrderItemsFromCart(c *gin.Context) {
-// 	id, _ := c.Get("user_id")
-// 	cart_id := c.Query("cart_id")
-// 	cartID, err := strconv.Atoi(cart_id)
-// 	if err != nil {
-// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in cart id", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errRes)
-// 		return
-// 	}
-// 	address_id := c.Query("address_id")
-// 	addressID, err := strconv.Atoi(address_id)
-// 	if err != nil {
-// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errRes)
-// 		return
-// 	}
-// 	payment_id := c.Query("payment_id")
-// 	paymentID, err := strconv.Atoi(payment_id)
-// 	if err != nil {
-// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in address id", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errRes)
-// 		return
-// 	}
-// 	Order, err := usecase.OrderItemsFromCart(id.(int), cartID, addressID, paymentID)
-// 	if err != nil {
-// 		errRes := response.ClientResponse(http.StatusBadRequest, "error in ordering", nil, err.Error())
-// 		c.JSON(http.StatusBadRequest, errRes)
-// 		return
-// 	}
-
-// 	success := response.ClientResponse(http.StatusOK, "succesfully added order", Order, nil)
-// 	c.JSON(http.StatusOK, success)
-// }
-
 // @Summary Order Items from cart
 // @Description Order all products which is currently present inside  the cart
 // @Tags User Order
@@ -140,17 +94,14 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /user/order [post]
 func OrderItemsFromCart(c *gin.Context) {
-
 	id, _ := c.Get("user_id")
 	userID := id.(int)
-
 	var orderFromCart models.OrderFromCart
 	if err := c.ShouldBindJSON(&orderFromCart); err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "bad request", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-
 	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
@@ -169,8 +120,8 @@ func OrderItemsFromCart(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param page query string true "Page"
-// @Param count query string true "Count"
+// @Param page query string false "Page"
+// @Param count query string false "Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /user/order/page   [GET]
@@ -252,8 +203,8 @@ func CheckOut(c *gin.Context) {
 // @Tags			User Order Management
 // @Accept			json
 // @Produce		    json
-// @Param			order_id	query	string	true	"order id"
-// @Param			payment	query	string	true	"payment"
+// @Param    address_id    query    int    true    "address id"
+// @Param			payment	query	string	true	"payment_method"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
@@ -261,13 +212,22 @@ func CheckOut(c *gin.Context) {
 func PlaceOrder(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	userId := userID.(int)
-	orderId := c.Query("order_id")
+	straddress := c.Query("address_id")
 	paymentMethod := c.Query("payment")
-	fmt.Println("payment is ", paymentMethod, "order id is ", orderId)
+	addressId, err := strconv.Atoi(straddress)
+	fmt.Println("payment is ", paymentMethod, "address is ", addressId)
+	if err != nil {
+
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "string conversion failed", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
 	if paymentMethod == "cash_on_delivery" {
-		Invoice, err := usecase.ExecutePurchaseCOD(userId, orderId)
+
+		Invoice, err := usecase.ExecutePurchaseCOD(userId, addressId)
 		if err != nil {
-			errorRes := response.ClientResponse(http.StatusInternalServerError, "error in making code ", nil, err.Error())
+			errorRes := response.ClientResponse(http.StatusInternalServerError, "error in making cod ", nil, err.Error())
 			c.JSON(http.StatusInternalServerError, errorRes)
 			return
 		}

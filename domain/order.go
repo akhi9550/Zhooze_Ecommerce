@@ -6,8 +6,8 @@ import (
 
 type Order struct {
 	gorm.Model
-	UserID int `json:"user_id" gorm:"not null"`
-	// User            User          `json:"-" gorm:"foreignkey:UserID"`
+	UserID          int           `json:"user_id" gorm:"not null"`
+	User            User          `json:"-" gorm:"foreignkey:UserID"`
 	AddressID       uint          `json:"address_id" gorm:"not null"`
 	Address         Address       `json:"-" gorm:"foreignkey:AddressID"`
 	PaymentMethodID uint          `json:"paymentmethod_id"`
@@ -29,6 +29,6 @@ type OrderItem struct {
 }
 
 type OrderSuccessResponse struct {
-	OrderID        string `json:"order_id"`
-	ShipmentStatus string `json:"order_status"`
+	OrderID        int    `json:"id"`
+	ShipmentStatus string `json:"shipment_status"`
 }

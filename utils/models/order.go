@@ -1,7 +1,7 @@
 package models
 
 type OrderDetails struct {
-	OrderId        string
+	OrderId        int
 	FinalPrice     float64
 	ShipmentStatus string
 	PaymentStatus  string
@@ -23,9 +23,8 @@ type OrderProducts struct {
 }
 
 type Invoice struct {
-	OrderDetails OrderDetails
-	AddressInfo  AddressInfoResponse
-	Cart         []Cart
+	AddressInfo AddressInfoResponse
+	Cart        []Cart
 }
 type CombinedOrderDetails struct {
 	OrderId        string  `json:"order_id"`
@@ -66,7 +65,7 @@ type OrderFromCart struct {
 }
 
 type OrderIncoming struct {
-	UserID    uint `json:"user_id"`
-	PaymentID uint `json:"payment_id"`
-	AddressID uint `json:"address_id"`
+	UserID    int `json:"user_id"`
+	PaymentID int `json:"payment_id"`
+	AddressID int `json:"address_id"`
 }

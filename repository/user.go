@@ -61,6 +61,13 @@ func GetAllAddress(userId int) ([]models.AddressInfoResponse, error) {
 	}
 	return addressInfoResponse, nil
 }
+func GetAllAddres(userId int) (models.AddressInfoResponse, error) {
+	var addressInfoResponse models.AddressInfoResponse
+	if err := db.DB.Raw("SELECT * FROM addresses WHERE user_id = ?", userId).Scan(&addressInfoResponse).Error; err != nil {
+		return models.AddressInfoResponse{}, err
+	}
+	return addressInfoResponse, nil
+}
 func UserDetails(userID int) (models.UsersProfileDetails, error) {
 	var userDetails models.UsersProfileDetails
 	err := db.DB.Raw("SELECT u.firstname,u.lastname,u.email,u.phone FROM users u WHERE u.id = ?", userID).Row().Scan(&userDetails.Firstname, &userDetails.Lastname, &userDetails.Email, &userDetails.Phone)
@@ -180,18 +187,34 @@ func GetPassword(id int) (string, error) {
 	}
 	return userPassword, nil
 }
+func ProductStock(productID int) (int, error) {
+	var a int
+	err := db.DB.Raw("SELECT stock FROM products WHERE id = ?", productID).Scan(&a).Error
+	if err != nil {
+		return 0, err
+	}
+	return a, nil
+}
+func ProductExistCart(userID, productID int) (bool, error) {
+	var count int
+	err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? AND product_id = ?", userID, productID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
 func UpdateQuantityAdd(id, prdt_id int) error {
-	err := db.DB.Exec(`	UPDATE order_items
+	err := db.DB.Exec(`	UPDATE carts
 	SET quantity = quantity + 1
-	WHERE cart_id=$1 AND prodcut_id=$2`, id, prdt_id).Error
+	WHERE user_id=$1 AND product_id=$2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func UpdateTotalPrice(productID, cartID int) error {
-	err := db.DB.Exec(` update cart_items set total_price = quantity * (select price from products where id = $1) where cart_id =$2 and product_id = $3`, productID, cartID, productID).Error
+func UpdateTotalPrice(ID, productID int) error {
+	err := db.DB.Exec(` UPDATE carts SET total_price = quantity * (select price from products where id = $1) WHERE user_id =$2 AND product_id = $3`, productID, ID, productID).Error
 	if err != nil {
 		return err
 	}
@@ -199,13 +222,21 @@ func UpdateTotalPrice(productID, cartID int) error {
 }
 
 func UpdateQuantityless(id, prdt_id int) error {
-	err := db.DB.Exec(`	UPDATE line_items
+	err := db.DB.Exec(`	UPDATE carts
 	SET quantity = quantity - 1
-	WHERE cart_id=$1 AND product_id=$2`, id, prdt_id).Error
+	WHERE user_id=$1 AND product_id=$2`, id, prdt_id).Error
 	if err != nil {
 		return err
 	}
 	return nil
+}
+func ExistStock(id, productID int) (int, error) {
+	var a int
+	err := db.DB.Raw("SELECT quantity FROM carts WHERE user_id = ? AND product_id = ?", id, productID).Scan(&a).Error
+	if err != nil {
+		return 0, err
+	}
+	return a, nil
 }
 func FindUserByMobileNumber(phone string) bool {
 

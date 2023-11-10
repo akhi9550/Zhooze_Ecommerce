@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.15.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/google/uuid v1.1.2
 	github.com/jinzhu/copier v0.4.0
 	github.com/razorpay/razorpay-go v1.2.0
 	github.com/spf13/viper v1.17.0

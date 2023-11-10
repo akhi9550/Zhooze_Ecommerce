@@ -200,7 +200,7 @@ func UpdateQuantityAdd(id, productID int) error {
 	if err != nil {
 		return err
 	}
-	if stock <= 1 {
+	if stock <= 0 {
 		return errors.New("not available out of stock")
 	}
 	err = repository.UpdateQuantityAdd(id, productID)

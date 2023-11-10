@@ -20,7 +20,7 @@ import (
 // @Param count query string false "Page Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/products/{page}   [GET]
+// @Router /user/products/{page}     [GET]
 func ShowAllProducts(c *gin.Context) {
 	pageStr := c.Param("page")
 

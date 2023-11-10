@@ -94,18 +94,18 @@ func RemoveFromCart(product_id, user_id int) (models.CartResponse, error) {
 		return models.CartResponse{}, err
 	}
 
-	// if cartDetails.Quantity != 0 {
+	if cartDetails.Quantity != 0 {
 
-	// 	product_price, err := repository.GetPriceOfProductFromID(product_id)
-	// 	if err != nil {
-	// 		return models.CartResponse{}, err
-	// 	}
-	// 	cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
-	// 	err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
-	// 	if err != nil {
-	// 		return models.CartResponse{}, err
-	// 	}
-	// }
+		product_price, err := repository.GetPriceOfProductFromID(product_id)
+		if err != nil {
+			return models.CartResponse{}, err
+		}
+		cartDetails.TotalPrice = cartDetails.TotalPrice - product_price
+		err = repository.UpdateCartDetails(cartDetails, user_id, product_id)
+		if err != nil {
+			return models.CartResponse{}, err
+		}
+	}
 	updatedCart, err := repository.CartAfterRemovalOfProduct(user_id)
 	if err != nil {
 		return models.CartResponse{}, err

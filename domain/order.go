@@ -29,6 +29,6 @@ type OrderItem struct {
 }
 
 type OrderSuccessResponse struct {
-	OrderID        int    `json:"id"`
+	OrderID        uint   `json:"order_id"`
 	ShipmentStatus string `json:"shipment_status"`
 }

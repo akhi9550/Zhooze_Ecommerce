@@ -22,7 +22,7 @@ func DoesCartExist(userID int) (bool, error) {
 func AddressExist(orderBody models.OrderIncoming) (bool, error) {
 
 	var count int
-	if err := db.DB.Raw("select count(*) from addresses where user_id = ? and id = ?", orderBody.UserID, orderBody.AddressID).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM addresses WHERE user_id = ? AND id = ?", orderBody.UserID, orderBody.AddressID).Scan(&count).Error; err != nil {
 		return false, err
 	}
 
@@ -30,12 +30,11 @@ func AddressExist(orderBody models.OrderIncoming) (bool, error) {
 
 }
 func PaymentExist(orderBody models.OrderIncoming) (bool, error) {
-
 	var count int
-	if err := db.DB.Raw("select count(*) from payment_methods where  id = ?", orderBody.PaymentID).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT count(*) FROM payment_methods WHERE id = ?", orderBody.PaymentID).Scan(&count).Error; err != nil {
 		return false, err
 	}
-
+	fmt.Println("ddddddddddddddd", count)
 	return count > 0, nil
 
 }
@@ -192,8 +191,8 @@ func OrderItems(ob models.OrderIncoming, price float64) (int, error) {
 
 	var id int
 	query := `
-    INSERT INTO orders (user_id,address_id, payment_method_id, final_price)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO orders (created_at , user_id , address_id , payment_method_id , final_price)
+    VALUES (NOW(),?, ?, ?, ?)
     RETURNING id
     `
 	db.DB.Raw(query, ob.UserID, ob.AddressID, ob.PaymentID, price).Scan(&id)
@@ -231,14 +230,12 @@ func UpdateCartAfterOrder(userID, productID int, quantity float64) error {
 	return nil
 }
 func GetBriefOrderDetails(orderID int) (domain.OrderSuccessResponse, error) {
-	fmt.Println("🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️", orderID)
 	var orderSuccessResponse domain.OrderSuccessResponse
-	err := db.DB.Raw("SELECT id,shipment_status FROM orders WHERE id = ?", orderID).Scan(&orderSuccessResponse).Error
+	err := db.DB.Raw(`SELECT id as order_id,shipment_status FROM orders WHERE id = ?`, orderID).Scan(&orderSuccessResponse).Error
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
 	return orderSuccessResponse, nil
-
 }
 func UpdateStockOfProduct(orderProducts []models.OrderProducts) error {
 	for _, ok := range orderProducts {

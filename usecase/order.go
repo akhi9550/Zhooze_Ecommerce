@@ -12,17 +12,6 @@ import (
 
 func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.OrderSuccessResponse, error) {
 	var orderBody models.OrderIncoming
-	// productID,err:=repository.ExistProductID(userID)
-	// if err !=nil{
-	// 	return domain.OrderSuccessResponse{},err
-	// }
-	// stock, err := repository.CheckStock(productID).Error
-	// if err != nil {
-	// 	return domain.OrderSuccessResponse{}, err
-	// }
-	// if stock <= 1 {
-	// 	return domain.OrderSuccessResponse{}, errors.New("Doesn't purchase bcoz this much stock not available")
-	// }
 	err := copier.Copy(&orderBody, &orderFromCart)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
@@ -45,7 +34,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if !addressExist {
 		return domain.OrderSuccessResponse{}, errors.New("address does not exist")
 	}
-	PaymentExist, err := repository.AddressExist(orderBody)
+	PaymentExist, err := repository.PaymentExist(orderBody)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}

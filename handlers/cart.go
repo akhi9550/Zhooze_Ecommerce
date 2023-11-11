@@ -142,7 +142,6 @@ func UpdateQuantityAdd(c *gin.Context) {
 // @Tags			User Cart Management
 // @Accept			json
 // @Produce		    json
-// @Param			cart_id 	query	string	true	"cart_id"
 // @Param			product_id	query	string	true	"product_id"
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}

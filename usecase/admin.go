@@ -109,14 +109,14 @@ func UnBlockedUser(id string) error {
 	}
 	return nil
 }
-func GetAllOrderDetailsForAdmin(page int) ([]models.CombinedOrderDetails, error) {
-	orderDetail, err := repository.GetAllOrderDetailsBrief(page)
+func GetAllOrderDetailsForAdmin(page, pagesize int) ([]models.CombinedOrderDetails, error) {
+	orderDetail, err := repository.GetAllOrderDetailsBrief(page, pagesize)
 	if err != nil {
 		return []models.CombinedOrderDetails{}, err
 	}
 	return orderDetail, nil
 }
-func ApproveOrder(orderId string) error {
+func ApproveOrder(orderId int) error {
 	ShipmentStatus, err := repository.GetShipmentStatus(orderId)
 	if err != nil {
 		return err
@@ -137,7 +137,7 @@ func ApproveOrder(orderId string) error {
 	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
 	return nil
 }
-func CancelOrderFromAdmin(order_id string) error {
+func CancelOrderFromAdmin(order_id int) error {
 	ok, err := repository.CheckOrderID(order_id)
 	fmt.Println(err)
 	if !ok {
@@ -151,6 +151,7 @@ func CancelOrderFromAdmin(order_id string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️", orderProduct)
 	err = repository.UpdateStockOfProduct(orderProduct)
 	if err != nil {
 		return err
@@ -171,6 +172,7 @@ func CancelOrderFromAdmin(order_id string) error {
 //	}
 func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
+	//update date (end and start)
 	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
 
 	if err != nil {
@@ -178,3 +180,5 @@ func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	}
 	return saleReport, nil
 }
+//base64 image
+//decoding encoding

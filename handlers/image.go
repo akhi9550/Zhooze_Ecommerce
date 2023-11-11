@@ -40,6 +40,8 @@ func ShowImages(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
+/////****Some Issuessssssss*******//////////////
+
 // @Summary		Croping Added Images
 // @Description	Croping Image
 // @Tags			Image

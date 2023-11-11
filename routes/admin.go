@@ -22,9 +22,8 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		users := r.Group("/users")
 		{
 			users.GET("", handlers.GetUsers)
-			users.GET("/:page", handlers.GetUsers)
-			users.GET("/block", handlers.BlockUser)
-			users.GET("/unblock", handlers.UnBlockUser)
+			users.PUT("/block", handlers.BlockUser)
+			users.PUT("/unblock", handlers.UnBlockUser)
 		}
 
 		//products management

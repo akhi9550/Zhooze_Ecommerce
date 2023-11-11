@@ -63,33 +63,21 @@ func DashBoard(c *gin.Context) {
 // @Accept			json
 // @Produce		    json
 // @Security		Bearer
-// @Param page path string true "Page number"
-// @Param count query string true "Page size"
+// @Param page query string false "Page number"
+// @Param count query string false "Page size"
 // @Success		200		{object}	response.Response{}
 // @Failure		500		{object}	response.Response{}
-// @Router			/admin/users/{page}   [GET]
+// @Router			/admin/users   [GET]
 func GetUsers(c *gin.Context) {
-
-	pageStr := c.Query("page")
-
-	if pageStr == "" {
-		pageStr = "0"
-	}
+	pageStr := c.DefaultQuery("page","1")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-
-	countStr := c.Query("count")
-
-	if countStr == "" {
-		countStr = "0"
-	}
-
+	countStr := c.DefaultQuery("count","10")
 	pageSize, err := strconv.Atoi(countStr)
-
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
@@ -114,7 +102,7 @@ func GetUsers(c *gin.Context) {
 // @Param			id	query		string	true	"user-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/admin/users/block   [POST]
+// @Router			/admin/users/block   [PUT]
 func BlockUser(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.BlockedUser(id)
@@ -137,7 +125,7 @@ func BlockUser(c *gin.Context) {
 // @Param			id	query		string	true	"user-id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/admin/users/unblock    [POST]
+// @Router			/admin/users/unblock    [PUT]
 func UnBlockUser(c *gin.Context) {
 	id := c.Query("id")
 	err := usecase.UnBlockedUser(id)

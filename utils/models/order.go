@@ -18,14 +18,14 @@ type FullOrderDetails struct {
 	OrderProductDetails []OrderProductDetails
 }
 type OrderProducts struct {
-	ProductId string `json:"product_id"`
+	ProductId string `json:"id"`
 	Stock     int    `json:"stock"`
 }
 
-type Invoice struct {
-	AddressInfo AddressInfoResponse
-	Cart        []Cart
-}
+// type Invoice struct {
+// 	AddressInfo AddressInfoResponse
+// 	Cart        []Cart
+// }
 type CombinedOrderDetails struct {
 	OrderId        string  `json:"order_id"`
 	FinalPrice     float64 `json:"final_price"`

@@ -28,7 +28,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	products := r.Group("/products")
 	{
 		products.GET("", handlers.ShowAllProducts)
-		products.GET("/:page", handlers.ShowAllProducts) //TO ARRANGE PAGE WITH COUNT
 		products.POST("/filter", handlers.FilterCategory)
 		products.GET("/image", handlers.ShowImages)
 
@@ -77,7 +76,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 			order.POST("", handlers.OrderItemsFromCart)
 			order.GET("", handlers.GetOrderDetails)
-			order.GET("/page", handlers.GetOrderDetails)
 			order.PUT("", handlers.CancelOrder)
 		}
 		r.GET("/checkout", handlers.CheckOut)

@@ -5,7 +5,6 @@ import (
 	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
-	"fmt"
 	"log"
 	"strconv"
 )
@@ -14,11 +13,6 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	if page <= 0 {
 		page = 1
 	}
-
-	if count <= 0 {
-		count = 5
-	}
-
 	offset := (page - 1) * count
 	var productBrief []models.ProductBrief
 	err := db.DB.Raw(`SELECT * FROM products limit ? offset ?`, count, offset).Scan(&productBrief).Error
@@ -78,15 +72,6 @@ func GetPriceOfProductFromID(prodcut_id int) (float64, error) {
 	return productPrice, nil
 }
 
-// func SeeAllProducts() ([]models.ProductBrief, error) {
-// 	var products []models.ProductBrief
-// 	err := db.DB.Raw("SELECT * FROM products").Scan(&products).Error
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return products, nil
-// }
-
 func ProductAlreadyExist(Name string) bool {
 	var count int
 	if err := db.DB.Raw("SELECT count(*) FROM products WHERE name = ?", Name).Scan(&count).Error; err != nil {
@@ -108,7 +93,6 @@ func AddProducts(product models.Product) (domain.Product, error) {
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING name, description, category_id, size, stock, price`
 	err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.Size, product.Stock, product.Price).Scan(&p).Error
-	fmt.Println("dkddkdkd", p)
 	if err != nil {
 		log.Println(err.Error())
 		return domain.Product{}, err

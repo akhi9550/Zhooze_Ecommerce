@@ -17,7 +17,6 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		return domain.OrderSuccessResponse{}, err
 	}
 	orderBody.UserID = userID
-	fmt.Println("ffffffffffff", orderBody.UserID)
 	cartExist, err := repository.DoesCartExist(userID)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
@@ -83,19 +82,19 @@ func GetOrderDetails(userId int, page int, count int) ([]models.FullOrderDetails
 
 }
 
-func CancelOrders(orderId string, userId int) error {
-	userTest, err := repository.UserOrderRelationship(orderId, userId)
+func CancelOrders(orderID int, userId int) error {
+	userTest, err := repository.UserOrderRelationship(orderID, userId)
 	if err != nil {
 		return err
 	}
 	if userTest != userId {
 		return errors.New("the order is not done by this user")
 	}
-	orderProductDetails, err := repository.GetProductDetailsFromOrders(orderId)
+	orderProductDetails, err := repository.GetProductDetailsFromOrders(orderID)
 	if err != nil {
 		return err
 	}
-	shipmentStatus, err := repository.GetShipmentStatus(orderId)
+	shipmentStatus, err := repository.GetShipmentStatus(orderID)
 	if err != nil {
 		return err
 	}
@@ -111,7 +110,7 @@ func CancelOrders(orderId string, userId int) error {
 	if shipmentStatus == "cancelled" {
 		return errors.New("the order is already cancelled, so no point in cancelling")
 	}
-	err = repository.CancelOrders(orderId)
+	err = repository.CancelOrders(orderID)
 	if err != nil {
 		return err
 	}
@@ -147,26 +146,40 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		Total_Price:         grandTotal.FinalPrice,
 	}, nil
 }
-func ExecutePurchaseCOD(userID int, addressID int) (models.Invoice, error) {
-	ok, err := repository.CartExist(userID)
+func PaymentMethodID(order_id int) (int, error) {
+	id, err := repository.PaymentMethodID(order_id)
 	if err != nil {
-		return models.Invoice{}, err
+		return 0, err
 	}
-	if !ok {
-		return models.Invoice{}, errors.New("cart doesnt exist")
-	}
-	cartDetails, err := repository.DisplayCart(userID)
+	return id, nil
+}
+func ExecutePurchaseCOD(orderID int) error {
+	err := repository.OrderExist(orderID)
 	if err != nil {
-		return models.Invoice{}, err
+		return err
 	}
-	addresses, err := repository.GetAllAddres(userID)
+	shipmentStatus, err := repository.GetShipmentStatus(orderID)
 	if err != nil {
-		return models.Invoice{}, err
+		return err
 	}
-	Invoice := models.Invoice{
-		Cart:        cartDetails,
-		AddressInfo: addresses,
+	if shipmentStatus == "delivered" {
+		return errors.New("item  delivered, cannot pay")
 	}
-	return Invoice, nil
+	if shipmentStatus == "order placed" {
+		return errors.New("item placed, cannot pay")
+	}
+	if shipmentStatus == "cancelled" || shipmentStatus == "returned" || shipmentStatus == "return" {
+		message := fmt.Sprint(shipmentStatus)
+		return errors.New("the order is in" + message + "so can't paid")
+	}
+	if shipmentStatus == "processing" {
+		return errors.New("the order is already paid")
+	}
+	err = repository.UpdateOrder(orderID)
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }

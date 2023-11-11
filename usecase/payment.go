@@ -10,7 +10,15 @@ import (
 	"github.com/razorpay/razorpay-go"
 )
 
-func MakePaymentRazorPay(orderID string) (models.CombinedOrderDetails, string, error) {
+func PaymentAlreadyPaid(orderID int) (bool, error) {
+	AlreadyPayed, err := repository.PaymentAlreadyPaid(orderID)
+	if err != nil {
+		return false, err
+	}
+	return AlreadyPayed, nil
+}
+
+func MakePaymentRazorPay(orderID int) (models.CombinedOrderDetails, string, error) {
 	cfg, _ := config.LoadConfig()
 	combinedOrderDetails, err := repository.GetOrderDetailsByOrderId(orderID)
 	if err != nil {
@@ -41,7 +49,7 @@ func MakePaymentRazorPay(orderID string) (models.CombinedOrderDetails, string, e
 
 }
 
-func SavePaymentDetails(orderID string, paymentID string) error {
+func SavePaymentDetails(orderID int, paymentID string) error {
 	fmt.Println("cccccccccccc", orderID, paymentID)
 	status, err := repository.CheckPaymentStatus(orderID)
 	if err != nil {

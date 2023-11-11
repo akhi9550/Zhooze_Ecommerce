@@ -98,7 +98,7 @@ func UpdateUserPhone(phone string, userID int) error {
 }
 func UpdateFirstName(name string, userID int) error {
 
-	err := db.DB.Exec("update users set firstname = ? where id = ?", name, userID).Error
+	err := db.DB.Exec("UPDATE users SET firstname = ? WHERE id = ?", name, userID).Error
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func UpdateFirstName(name string, userID int) error {
 }
 func UpdateLastName(name string, userID int) error {
 
-	err := db.DB.Exec("update users set lastname = ? where id = ?", name, userID).Error
+	err := db.DB.Exec("UPDATE users SET lastname = ? WHERE id = ?", name, userID).Error
 	if err != nil {
 		return err
 	}

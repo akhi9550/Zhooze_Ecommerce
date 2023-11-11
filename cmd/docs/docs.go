@@ -318,8 +318,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Page number",
                         "name": "page",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page Count",
+                        "name": "count",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -692,8 +697,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/users": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retrieve users with pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin User Management"
+                ],
+                "summary": "Get Users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Page size",
+                        "name": "count",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users/block": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "Bearer": []
@@ -736,7 +789,7 @@ const docTemplate = `{
             }
         },
         "/admin/users/unblock": {
-            "post": {
+            "put": {
                 "security": [
                     {
                         "Bearer": []
@@ -758,56 +811,6 @@ const docTemplate = `{
                         "type": "string",
                         "description": "user-id",
                         "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/admin/users/{page}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Retrieve users with pagination",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Admin User Management"
-                ],
-                "summary": "Get Users",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Page size",
-                        "name": "count",
                         "in": "query",
                         "required": true
                     }
@@ -1047,12 +1050,6 @@ const docTemplate = `{
                 ],
                 "summary": "Add To Cart",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "cart_id only this cart_id is needed",
-                        "name": "cart_id",
-                        "in": "query"
-                    },
                     {
                         "type": "string",
                         "description": "product-id",
@@ -1363,6 +1360,52 @@ const docTemplate = `{
             }
         },
         "/user/order": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get all order details done by user to user side",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Order Management"
+                ],
+                "summary": "Get Order Details to user side",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Count",
+                        "name": "count",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -1410,7 +1453,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Add cart to the order using  cart id",
+                "description": "Order all products which is currently present inside  the cart",
                 "consumes": [
                     "application/json"
                 ],
@@ -1420,28 +1463,16 @@ const docTemplate = `{
                 "tags": [
                     "User Order Management"
                 ],
-                "summary": "Order Items From Cart",
+                "summary": "Order Items from cart",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "cart id",
-                        "name": "cart_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "address id",
-                        "name": "address_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "payment id",
-                        "name": "payment_id",
-                        "in": "query",
-                        "required": true
+                        "description": "Order details",
+                        "name": "orderBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.OrderFromCart"
+                        }
                     }
                 ],
                 "responses": {
@@ -1460,14 +1491,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/order/page": {
+        "/user/products": {
             "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Get all order details done by user to user side",
+                "description": "Retrieve all product Details with pagination to users",
                 "consumes": [
                     "application/json"
                 ],
@@ -1475,73 +1501,21 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User Order Management"
+                    "User Product"
                 ],
-                "summary": "Get Order Details to user side",
+                "summary": "Get Products Details to users",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Page",
+                        "description": "Page number",
                         "name": "page",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "Count",
+                        "description": "Page Count",
                         "name": "count",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/place-order": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Add products to carts  for the purchase",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User Order Management"
-                ],
-                "summary": "Checkout section",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "order id",
-                        "name": "order_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "payment",
-                        "name": "payment",
-                        "in": "query",
-                        "required": true
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1603,9 +1577,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/products/{page}": {
+        "/user/products/image": {
             "get": {
-                "description": "Retrieve all product Details with pagination to users",
+                "description": "Retrieve product images",
                 "consumes": [
                     "application/json"
                 ],
@@ -1619,15 +1593,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Page number",
-                        "name": "page",
-                        "in": "path"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Page Count",
-                        "name": "count",
-                        "in": "query"
+                        "description": "product_id",
+                        "name": "product_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2159,6 +2128,21 @@ const docTemplate = `{
             "properties": {
                 "phone": {
                     "type": "string"
+                }
+            }
+        },
+        "models.OrderFromCart": {
+            "type": "object",
+            "required": [
+                "address_id",
+                "payment_id"
+            ],
+            "properties": {
+                "address_id": {
+                    "type": "integer"
+                },
+                "payment_id": {
+                    "type": "integer"
                 }
             }
         },

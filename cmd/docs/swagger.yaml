@@ -77,6 +77,16 @@ definitions:
       phone:
         type: string
     type: object
+  models.OrderFromCart:
+    properties:
+      address_id:
+        type: integer
+      payment_id:
+        type: integer
+    required:
+    - address_id
+    - payment_id
+    type: object
   models.Product:
     properties:
       category_id:
@@ -340,7 +350,10 @@ paths:
       - description: Page number
         in: query
         name: page
-        required: true
+        type: string
+      - description: Page Count
+        in: query
+        name: count
         type: string
       produces:
       - application/json
@@ -581,21 +594,19 @@ paths:
       summary: Filtered Sales Report
       tags:
       - Admin
-  /admin/users/{page}:
+  /admin/users:
     get:
       consumes:
       - application/json
       description: Retrieve users with pagination
       parameters:
       - description: Page number
-        in: path
+        in: query
         name: page
-        required: true
         type: string
       - description: Page size
         in: query
         name: count
-        required: true
         type: string
       produces:
       - application/json
@@ -614,7 +625,7 @@ paths:
       tags:
       - Admin User Management
   /admin/users/block:
-    post:
+    put:
       consumes:
       - application/json
       description: using this handler admins can block an user
@@ -641,7 +652,7 @@ paths:
       tags:
       - Admin User Management
   /admin/users/unblock:
-    post:
+    put:
       consumes:
       - application/json
       description: UnBlock user
@@ -825,10 +836,6 @@ paths:
       - application/json
       description: Add products to carts  for the purchase
       parameters:
-      - description: cart_id only this cart_id is needed
-        in: query
-        name: cart_id
-        type: integer
       - description: product-id
         in: query
         name: product_id
@@ -1005,26 +1012,19 @@ paths:
       tags:
       - User
   /user/order:
-    post:
+    get:
       consumes:
       - application/json
-      description: Add cart to the order using  cart id
+      description: Get all order details done by user to user side
       parameters:
-      - description: cart id
+      - description: Page
         in: query
-        name: cart_id
-        required: true
-        type: integer
-      - description: address id
+        name: page
+        type: string
+      - description: Count
         in: query
-        name: address_id
-        required: true
-        type: integer
-      - description: payment id
-        in: query
-        name: payment_id
-        required: true
-        type: integer
+        name: count
+        type: string
       produces:
       - application/json
       responses:
@@ -1038,7 +1038,34 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - Bearer: []
-      summary: Order Items From Cart
+      summary: Get Order Details to user side
+      tags:
+      - User Order Management
+    post:
+      consumes:
+      - application/json
+      description: Order all products which is currently present inside  the cart
+      parameters:
+      - description: Order details
+        in: body
+        name: orderBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.OrderFromCart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Order Items from cart
       tags:
       - User Order Management
     put:
@@ -1067,78 +1094,14 @@ paths:
       summary: Cancel order
       tags:
       - User Order Management
-  /user/order/page:
-    get:
-      consumes:
-      - application/json
-      description: Get all order details done by user to user side
-      parameters:
-      - description: Page
-        in: query
-        name: page
-        required: true
-        type: string
-      - description: Count
-        in: query
-        name: count
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Get Order Details to user side
-      tags:
-      - User Order Management
-  /user/place-order:
-    get:
-      consumes:
-      - application/json
-      description: Add products to carts  for the purchase
-      parameters:
-      - description: order id
-        in: query
-        name: order_id
-        required: true
-        type: string
-      - description: payment
-        in: query
-        name: payment
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Checkout section
-      tags:
-      - User Order Management
-  /user/products/{page}:
+  /user/products:
     get:
       consumes:
       - application/json
       description: Retrieve all product Details with pagination to users
       parameters:
       - description: Page number
-        in: path
+        in: query
         name: page
         type: string
       - description: Page Count
@@ -1185,6 +1148,31 @@ paths:
           schema:
             $ref: '#/definitions/response.Response'
       summary: Show Products of specified category
+      tags:
+      - User Product
+  /user/products/image:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve product images
+      parameters:
+      - description: product_id
+        in: query
+        name: product_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get Products Details to users
       tags:
       - User Product
   /user/send-otp:

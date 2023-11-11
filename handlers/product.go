@@ -16,29 +16,20 @@ import (
 // @Tags User Product
 // @Accept json
 // @Produce json
-// @Param page path string false "Page number"
+// @Param page query string false "Page number"
 // @Param count query string false "Page Count"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/products/{page}     [GET]
+// @Router /user/products     [GET]
 func ShowAllProducts(c *gin.Context) {
-	pageStr := c.Param("page")
-
-	if pageStr == "" {
-		pageStr = "0"
-	}
+	pageStr := c.DefaultQuery("page","1")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	countStr := c.Query("count")
-
-	if countStr == "" {
-		countStr = "0"
-	}
-
+	countStr := c.DefaultQuery("count","10")
 	count, err := strconv.Atoi(countStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page count not in right format", nil, err.Error())
@@ -113,14 +104,15 @@ func FilterCategory(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /admin/products   [GET]
 func ShowAllProductsFromAdmin(c *gin.Context) {
-	pageString := c.DefaultQuery("page", "1")
-	page, err := strconv.Atoi(pageString)
+	pageStr := c.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
-	count, err := strconv.Atoi(c.DefaultQuery("count", "10"))
+	countStr := c.DefaultQuery("count", "10")
+	count, err := strconv.Atoi(countStr)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Page count not in right format ", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)

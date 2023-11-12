@@ -13,15 +13,12 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	r.POST("/signup", handlers.UserSignup)
 	r.POST("/userlogin", handlers.Userlogin)
 
-	//OTP
 	r.POST("/send-otp", handlers.SendOtp)
 	r.POST("/verify-otp", handlers.VerifyOtp)
 
-	//SECURITY
 	r.POST("/forgot-password", handlers.ForgotPasswordSend)
 	r.POST("/forgot-password-verify", handlers.ForgotPasswordVerifyAndChange)
 
-	//PAYMENT
 	r.GET("/razorpay", handlers.MakePaymentRazorPay)
 	r.GET("/update_status", handlers.VerifyPayment)
 
@@ -49,7 +46,7 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			users.PUT("/changepassword", handlers.ChangePassword)
 		}
 
-		//wishlist
+
 		wishlist := r.Group("/wishlist")
 		{
 
@@ -58,7 +55,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			wishlist.DELETE("", handlers.RemoveFromWishlist)
 		}
 
-		//cart
 		cart := r.Group("/cart")
 		{
 			cart.POST("", handlers.AddToCart)
@@ -70,7 +66,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 		}
 
-		//order
 		order := r.Group("/order")
 		{
 
@@ -80,6 +75,8 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		}
 		r.GET("/checkout", handlers.CheckOut)
 		r.GET("/place-order", handlers.PlaceOrder)
+
+		r.POST("/coupon/apply", handlers.ApplyCoupon)
 	}
 
 	return r

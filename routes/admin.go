@@ -18,7 +18,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		r.GET("/dashboard", handlers.DashBoard)
 		r.GET("/sales-report", handlers.FilteredSalesReport)
 
-		//user management
 		users := r.Group("/users")
 		{
 			users.GET("", handlers.GetUsers)
@@ -26,7 +25,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			users.PUT("/unblock", handlers.UnBlockUser)
 		}
 
-		//products management
 		products := r.Group("/products")
 		{
 			products.GET("", handlers.ShowAllProductsFromAdmin)
@@ -37,7 +35,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 		}
 
-		//category management
 		category := r.Group("/category")
 		{
 			category.GET("", handlers.GetCategory)
@@ -47,7 +44,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 		}
 
-		//order
 		order := r.Group("/order")
 		{
 			order.GET("", handlers.GetAllOrderDetailsForAdmin)
@@ -55,9 +51,22 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/cancel", handlers.CancelOrderFromAdmin)
 		}
 
-		//image cropping issuess
-		r.POST("/image-crop", handlers.CropImage)
+		offer := r.Group("/offer")
+		{
+			coupons := offer.Group("/coupons")
+			{
+				coupons.POST("", handlers.AddCoupon)
+				coupons.GET("", handlers.GetCoupon)
+				// 	coupons.PATCH("/expire/:id", handlers.ExpireCoupon)
+				// }
+				// offer.POST("/product-offer", handlers.AddProdcutOffer)
+				// offer.POST("/category-offer", handlers.AddCategoryOffer)
+			}
+			r.POST("/image-crop", handlers.CropImage)
 
+		}
+		return r
 	}
-	return r
+
+	////////////////////payment methodddddddddddddddd
 }

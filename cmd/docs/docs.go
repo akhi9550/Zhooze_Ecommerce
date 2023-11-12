@@ -295,6 +295,83 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/offer/coupons": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Get Available coupon details for admin side",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Get coupon details",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add A new Coupon which can be used by the users from the checkout section",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Add  a new coupon by Admin",
+                "parameters": [
+                    {
+                        "description": "Add new Coupon",
+                        "name": "coupon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.AddCoupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/order": {
             "get": {
                 "security": [
@@ -365,7 +442,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Order ID",
-                        "name": "id",
+                        "name": "order_id",
                         "in": "query",
                         "required": true
                     }
@@ -408,7 +485,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Order ID",
-                        "name": "id",
+                        "name": "order_id",
                         "in": "query",
                         "required": true
                     }
@@ -1491,6 +1568,49 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/place-order": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add products to carts  for the purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Order Management"
+                ],
+                "summary": "Checkout section",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "address id",
+                        "name": "order_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/products": {
             "get": {
                 "description": "Retrieve all product Details with pagination to users",
@@ -2015,6 +2135,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.AddCoupon": {
+            "type": "object",
+            "required": [
+                "coupon",
+                "discount_percentage",
+                "minimum_price",
+                "validity"
+            ],
+            "properties": {
+                "coupon": {
+                    "type": "string"
+                },
+                "discount_percentage": {
+                    "type": "integer"
+                },
+                "minimum_price": {
+                    "type": "number"
+                },
+                "validity": {
+                    "type": "boolean"
+                }
+            }
+        },
         "models.AddressInfo": {
             "type": "object",
             "required": [

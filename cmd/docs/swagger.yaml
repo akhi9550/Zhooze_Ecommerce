@@ -52,6 +52,22 @@ definitions:
       category:
         type: string
     type: object
+  models.CategoryOfferReceiver:
+    properties:
+      category_id:
+        type: integer
+      discount_percentage:
+        type: integer
+      offer_limit:
+        type: integer
+      offer_name:
+        type: string
+    required:
+    - category_id
+    - discount_percentage
+    - offer_limit
+    - offer_name
+    type: object
   models.ChangePassword:
     properties:
       old_password:
@@ -60,6 +76,13 @@ definitions:
         type: string
       re_password:
         type: string
+    type: object
+  models.CouponAddUser:
+    properties:
+      coupon_name:
+        type: string
+    required:
+    - coupon_name
     type: object
   models.ForgotPasswordSend:
     properties:
@@ -86,6 +109,11 @@ definitions:
       email:
         type: string
       password:
+        type: string
+    type: object
+  models.NewPaymentMethod:
+    properties:
+      payment_name:
         type: string
     type: object
   models.OTPData:
@@ -117,6 +145,22 @@ definitions:
         type: integer
       stock:
         type: integer
+    type: object
+  models.ProductOfferReceiver:
+    properties:
+      discount_percentage:
+        type: integer
+      offer_limit:
+        type: integer
+      offer_name:
+        type: string
+      product_id:
+        type: integer
+    required:
+    - discount_percentage
+    - offer_limit
+    - offer_name
+    - product_id
     type: object
   models.ProductUpdate:
     properties:
@@ -357,6 +401,34 @@ paths:
       summary: Croping Added Images
       tags:
       - Image
+  /admin/offer/category-offer:
+    post:
+      consumes:
+      - application/json
+      description: Add a new Offer for a Category by specifying a limit
+      parameters:
+      - description: Add new Category Offer
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryOfferReceiver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add  Category Offer
+      tags:
+      - Admin Offer Management
   /admin/offer/coupons:
     get:
       consumes:
@@ -404,6 +476,62 @@ paths:
       security:
       - Bearer: []
       summary: Add  a new coupon by Admin
+      tags:
+      - Admin Offer Management
+  /admin/offer/coupons/expire:
+    patch:
+      consumes:
+      - application/json
+      description: Expire Coupon by admin which are already present by passing coupon
+        id
+      parameters:
+      - description: Coupon id
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Expire Coupon
+      tags:
+      - Admin Offer Management
+  /admin/offer/product-offer:
+    post:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      parameters:
+      - description: Add new Product Offer
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductOfferReceiver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add  Product Offer
       tags:
       - Admin Offer Management
   /admin/order:
@@ -490,6 +618,80 @@ paths:
       summary: Cancel Order Admin
       tags:
       - Admin Order Management
+  /admin/payment-method:
+    delete:
+      consumes:
+      - application/json
+      description: Admin can add new payment methods
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete Payment Method
+      tags:
+      - Admin Payment Method
+    get:
+      consumes:
+      - application/json
+      description: Admin can add new payment methods
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get Payment Method
+      tags:
+      - Admin Payment Method
+    post:
+      consumes:
+      - application/json
+      description: Admin can add new payment methods
+      parameters:
+      - description: payment method
+        in: body
+        name: payment
+        required: true
+        schema:
+          $ref: '#/definitions/models.NewPaymentMethod'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add Payment Method
+      tags:
+      - Admin Payment Method
   /admin/products:
     delete:
       consumes:
@@ -1018,6 +1220,34 @@ paths:
       summary: Checkout section
       tags:
       - User Order Management
+  /user/coupon/apply:
+    post:
+      consumes:
+      - application/json
+      description: Add coupon to get discount on Checkout section
+      parameters:
+      - description: Add coupon to order
+        in: body
+        name: couponDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.CouponAddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Apply coupon on Checkout Section
+      tags:
+      - User Checkout
   /user/forgot-password:
     post:
       consumes:

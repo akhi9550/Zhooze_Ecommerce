@@ -69,14 +69,14 @@ func DashBoard(c *gin.Context) {
 // @Failure		500		{object}	response.Response{}
 // @Router			/admin/users   [GET]
 func GetUsers(c *gin.Context) {
-	pageStr := c.DefaultQuery("page","1")
+	pageStr := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	countStr := c.DefaultQuery("count","10")
+	countStr := c.DefaultQuery("count", "10")
 	pageSize, err := strconv.Atoi(countStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "user count in a page not in right format", nil, err.Error())
@@ -156,7 +156,86 @@ func FilteredSalesReport(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorRes)
 		return
 	}
-	successRes := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", salesReport, nil)
-	c.JSON(http.StatusOK, successRes)
+	success := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", salesReport, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+
+// @Summary		Add Payment Method
+// @Description	Admin can add new payment methods
+// @Tags			Admin Payment Method
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Param			payment 	body		models.NewPaymentMethod	 true	"payment method"
+// @Success		200		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admin/payment-method  [POST]
+func AddPaymentMethod(c *gin.Context) {
+	var method models.NewPaymentMethod
+	if err := c.ShouldBindJSON(&method); err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	pay, err := usecase.AddPaymentMethod(method)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not add the payment method", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully added Payment Method", pay, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+
+// @Summary		Get Payment Method
+// @Description	Admin can add new payment methods
+// @Tags			Admin Payment Method
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Success		200		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admin/payment-method  [GET]
+func ListPaymentMethods(c *gin.Context) {
+	categories, err := usecase.ListPaymentMethods()
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+
+	success := response.ClientResponse(http.StatusOK, "Successfully got all payment methods", categories, nil)
+	c.JSON(http.StatusOK, success)
+
+}
+
+// @Summary		Delete Payment Method
+// @Description	Admin can add new payment methods
+// @Tags			Admin Payment Method
+// @Accept			json
+// @Produce		    json
+// @Security		Bearer
+// @Param			id	query	string	true	"id"
+// @Success		200		{object}	response.Response{}
+// @Failure		500		{object}	response.Response{}
+// @Router			/admin/payment-method  [DELETE]
+func DeletePaymentMethod(c *gin.Context) {
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		error := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, error)
+		return
+	}
+
+	err = usecase.DeletePaymentMethod(id)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "error in deleting data", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	success := response.ClientResponse(http.StatusOK, "Successfully Deleted the PaymentMethod", nil, nil)
+	c.JSON(http.StatusOK, success)
 
 }

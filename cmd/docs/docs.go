@@ -295,6 +295,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/offer/category-offer": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new Offer for a Category by specifying a limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Add  Category Offer",
+                "parameters": [
+                    {
+                        "description": "Add new Category Offer",
+                        "name": "coupon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CategoryOfferReceiver"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/offer/coupons": {
             "get": {
                 "security": [
@@ -353,6 +398,94 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.AddCoupon"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/offer/coupons/expire": {
+            "patch": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Expire Coupon by admin which are already present by passing coupon id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Expire Coupon",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Coupon id",
+                        "name": "coupon_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/offer/product-offer": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new Offer for a product by specifying a limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Add  Product Offer",
+                "parameters": [
+                    {
+                        "description": "Add new Product Offer",
+                        "name": "coupon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductOfferReceiver"
                         }
                     }
                 ],
@@ -486,6 +619,124 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Order ID",
                         "name": "order_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/payment-method": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Admin can add new payment methods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Payment Method"
+                ],
+                "summary": "Get Payment Method",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Admin can add new payment methods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Payment Method"
+                ],
+                "summary": "Add Payment Method",
+                "parameters": [
+                    {
+                        "description": "payment method",
+                        "name": "payment",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.NewPaymentMethod"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Admin can add new payment methods",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Payment Method"
+                ],
+                "summary": "Delete Payment Method",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
                         "in": "query",
                         "required": true
                     }
@@ -1330,6 +1581,51 @@ const docTemplate = `{
                     "User Order Management"
                 ],
                 "summary": "Checkout section",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/coupon/apply": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add coupon to get discount on Checkout section",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Checkout"
+                ],
+                "summary": "Apply coupon on Checkout Section",
+                "parameters": [
+                    {
+                        "description": "Add coupon to order",
+                        "name": "couponDetails",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.CouponAddUser"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2212,6 +2508,29 @@ const docTemplate = `{
                 }
             }
         },
+        "models.CategoryOfferReceiver": {
+            "type": "object",
+            "required": [
+                "category_id",
+                "discount_percentage",
+                "offer_limit",
+                "offer_name"
+            ],
+            "properties": {
+                "category_id": {
+                    "type": "integer"
+                },
+                "discount_percentage": {
+                    "type": "integer"
+                },
+                "offer_limit": {
+                    "type": "integer"
+                },
+                "offer_name": {
+                    "type": "string"
+                }
+            }
+        },
         "models.ChangePassword": {
             "type": "object",
             "properties": {
@@ -2222,6 +2541,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "re_password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.CouponAddUser": {
+            "type": "object",
+            "required": [
+                "coupon_name"
+            ],
+            "properties": {
+                "coupon_name": {
                     "type": "string"
                 }
             }
@@ -2262,6 +2592,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.NewPaymentMethod": {
+            "type": "object",
+            "properties": {
+                "payment_name": {
                     "type": "string"
                 }
             }
@@ -2308,6 +2646,29 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.ProductOfferReceiver": {
+            "type": "object",
+            "required": [
+                "discount_percentage",
+                "offer_limit",
+                "offer_name",
+                "product_id"
+            ],
+            "properties": {
+                "discount_percentage": {
+                    "type": "integer"
+                },
+                "offer_limit": {
+                    "type": "integer"
+                },
+                "offer_name": {
+                    "type": "string"
+                },
+                "product_id": {
                     "type": "integer"
                 }
             }

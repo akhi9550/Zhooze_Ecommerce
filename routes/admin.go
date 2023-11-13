@@ -51,6 +51,15 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/cancel", handlers.CancelOrderFromAdmin)
 		}
 
+		r.POST("/image-crop", handlers.CropImage)
+
+		payment := r.Group("/payment-method")
+		{
+			payment.POST("", handlers.AddPaymentMethod)
+			payment.GET("", handlers.ListPaymentMethods)
+			payment.DELETE("", handlers.DeletePaymentMethod)
+		}
+		
 		offer := r.Group("/offer")
 		{
 			coupons := offer.Group("/coupons")
@@ -58,15 +67,13 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 				coupons.POST("", handlers.AddCoupon)
 				coupons.GET("", handlers.GetCoupon)
 				// 	coupons.PATCH("/expire/:id", handlers.ExpireCoupon)
-				// }
-				// offer.POST("/product-offer", handlers.AddProdcutOffer)
-				// offer.POST("/category-offer", handlers.AddCategoryOffer)
 			}
-			r.POST("/image-crop", handlers.CropImage)
-
+			offer.POST("/product-offer", handlers.AddProdcutOffer)
+			offer.POST("/category-offer", handlers.AddCategoryOffer)
 		}
-		return r
-	}
 
-	////////////////////payment methodddddddddddddddd
+	}
+	return r
 }
+
+////////////////////payment methodddddddddddddddd

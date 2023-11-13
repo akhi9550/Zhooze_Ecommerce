@@ -5,6 +5,7 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -68,8 +69,13 @@ func AddCategory(c *gin.Context) {
 // @Failure		500	{object}	response.Response{}
 // @Router			/admin/category     [DELETE]
 func DeleteCategory(c *gin.Context) {
-	id := c.Query("id")
-	err := usecase.DeleteCategory(id)
+	id, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
+		return
+	}
+	err = usecase.DeleteCategory(id)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "could not delete the specified category", nil, err.Error())
 		c.JSON(http.StatusInternalServerError, errorRes)

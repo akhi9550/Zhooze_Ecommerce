@@ -179,6 +179,39 @@ func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 		return models.SalesReport{}, err
 	}
 	return saleReport, nil
+
 }
-//base64 image
-//decoding encoding
+func AddPaymentMethod(payment models.NewPaymentMethod) (domain.PaymentMethod, error) {
+	exists, err := repository.CheckIfPaymentMethodAlreadyExists(payment.PaymentName)
+	if err != nil {
+		return domain.PaymentMethod{}, err
+	}
+	if exists {
+		return domain.PaymentMethod{}, errors.New("payment method already exists")
+	}
+	paymentadd, err := repository.AddPaymentMethod(payment)
+	if err != nil {
+		return domain.PaymentMethod{}, err
+	}
+	return paymentadd, nil
+}
+
+func ListPaymentMethods() ([]domain.PaymentMethod, error) {
+
+	categories, err := repository.ListPaymentMethods()
+	if err != nil {
+		return []domain.PaymentMethod{}, err
+	}
+	return categories, nil
+
+}
+
+func DeletePaymentMethod(id int) error {
+
+	err := repository.DeletePaymentMethod(id)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

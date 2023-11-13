@@ -109,7 +109,7 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Param orderBody body models.OrderFromCart true "Order details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/order [post]
+// @Router /user/order [POST]
 func OrderItemsFromCart(c *gin.Context) {
 	id, _ := c.Get("user_id")
 	userID := id.(int)

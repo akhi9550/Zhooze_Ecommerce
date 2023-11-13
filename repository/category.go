@@ -5,7 +5,6 @@ import (
 	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
-	"strconv"
 )
 
 func GetCategory() ([]domain.Category, error) {
@@ -15,6 +14,14 @@ func GetCategory() ([]domain.Category, error) {
 		return nil, err
 	}
 	return category, nil
+}
+func CheckIfCategoryAlreadyExists(category string) (bool, error) {
+	var count int64
+	err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE category = $1", category).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 func AddCategory(category models.Category) (domain.Category, error) {
 	var categore string
@@ -29,20 +36,16 @@ func AddCategory(category models.Category) (domain.Category, error) {
 	}
 	return categoriesResponse, nil
 }
-func DeleteCategory(id string) error {
-	category_id, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
+func DeleteCategory(id int) error {
 	var count int
-	if err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE id=?", category_id).Scan(&count).Error; err != nil {
+	if err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE id=?", id).Scan(&count).Error; err != nil {
 		return err
 	}
 	if count < 1 {
 		return errors.New("category for given id does not exist")
 	}
 
-	if err := db.DB.Exec("DELETE FROM categories WHERE id=?", category_id).Error; err != nil {
+	if err := db.DB.Exec("DELETE FROM categories WHERE id=?", id).Error; err != nil {
 		return err
 	}
 	return nil

@@ -172,3 +172,51 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 	}
 	return salesReport, nil
 }
+func AddPaymentMethod(pay models.NewPaymentMethod) (domain.PaymentMethod, error) {
+	var payment string
+	if err := db.DB.Raw("INSERT INTO payment_methods (payment_name) VALUES (?) RETURNING payment_name", pay.PaymentName).Scan(&payment).Error; err != nil {
+		return domain.PaymentMethod{}, err
+	}
+	var paymentResponse domain.PaymentMethod
+	err := db.DB.Raw("SELECT id, payment_name FROM payment_methods WHERE payment_name = ?", payment).Scan(&paymentResponse).Error
+	if err != nil {
+		return domain.PaymentMethod{}, err
+	}
+	return paymentResponse, nil
+
+}
+
+func ListPaymentMethods() ([]domain.PaymentMethod, error) {
+	var model []domain.PaymentMethod
+	err := db.DB.Raw("SELECT * FROM payment_methods").Scan(&model).Error
+	if err != nil {
+		return []domain.PaymentMethod{}, err
+	}
+
+	return model, nil
+}
+
+func CheckIfPaymentMethodAlreadyExists(payment string) (bool, error) {
+	var count int64
+	err := db.DB.Raw("SELECT COUNT(*) FROM payment_methods WHERE payment_name = $1", payment).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
+
+func DeletePaymentMethod(id int) error {
+	var count int
+	if err := db.DB.Raw("SELECT COUNT(*) FROM payment_methods WHERE id=?", id).Scan(&count).Error; err != nil {
+		return err
+	}
+	if count < 1 {
+		return errors.New("payment for given id does not exist")
+	}
+
+	if err := db.DB.Exec("DELETE FROM payment_methods WHERE id=?", id).Error; err != nil {
+		return err
+	}
+	return nil
+}

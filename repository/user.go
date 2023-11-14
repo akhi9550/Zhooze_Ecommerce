@@ -270,3 +270,65 @@ func RemoveFromUserProfile(userID, addressID int) error {
 	}
 	return nil
 }
+func GetReferralAndTotalAmount(userID int) (float64, float64, error) {
+	// first check whether the cart is empty -- do this for coupon too
+	var cartDetails struct {
+		ReferralAmount  float64
+		TotalCartAmount float64
+	}
+
+	err := db.DB.Raw("SELECT (SELECT referral_amount FROM referrals WHERE user_id = ?) AS referral_amount, COALESCE(SUM(total_price), 0) AS total_cart_amount FROM carts WHERE user_id = ?", userID, userID).Scan(&cartDetails).Error
+	if err != nil {
+		return 0.0, 0.0, err
+	}
+
+	return cartDetails.ReferralAmount, cartDetails.TotalCartAmount, nil
+
+}
+func UpdateSomethingBasedOnUserID(tableName string, columnName string, updateValue float64, userID int) error {
+
+	err := db.DB.Exec("UPDATE "+tableName+" SET "+columnName+" = ? WHERE user_id = ?", updateValue, userID).Error
+	if err != nil {
+		db.DB.Rollback()
+		return err
+	}
+	return nil
+
+}
+func CreateReferralEntry(userDetails models.UserDetailsResponse, userReferral string) error {
+
+	err := db.DB.Exec("INSERT INTO referrals (user_id,referral_code,referral_amount) VALUES (?,?,?)", userDetails.Id, userReferral, 0).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+func GetUserIdFromReferrals(ReferralCode string) (int, error) {
+
+	var referredUserId int
+	err := db.DB.Raw("SELECT user_id FROM referrals WHERE referral_code = ?", ReferralCode).Scan(&referredUserId).Error
+	if err != nil {
+		return 0, nil
+	}
+
+	return referredUserId, nil
+}
+
+func UpdateReferralAmount(referralAmount float64, referredUserId int, currentUserID int) error {
+
+	err := db.DB.Exec("UPDATE referrals SET referral_amount = ? , referred_user_id = ? WHERE user_id = ? ", referralAmount, referredUserId, currentUserID).Error
+	if err != nil {
+		return err
+	}
+
+	// find the current amount in referred users referral table and add 100 with that
+	err = db.DB.Exec("UPDATE referrals SET referral_amount = referral_amount + ? WHERE user_id = ? ", referralAmount, referredUserId).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}

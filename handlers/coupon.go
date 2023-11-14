@@ -84,7 +84,7 @@ func GetCoupon(c *gin.Context) {
 // @Param coupon_id path string true "Coupon id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/coupons/expire [patch]
+// @Router /admin/offer/coupons/expire   [PATCH]
 func ExpireCoupon(c *gin.Context) {
 
 	id := c.Query("coupon_id")

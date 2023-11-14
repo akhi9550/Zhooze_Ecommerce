@@ -1025,6 +1025,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/admin/sales-report-date": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Showing the sales report with respect to the given date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Sales report by date",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "start date DD-MM-YYYY",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "end   date DD-MM-YYYY",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "report",
+                        "schema": {
+                            "type": "body"
+                        }
+                    }
+                }
+            }
+        },
         "/admin/users": {
             "get": {
                 "security": [
@@ -2702,13 +2746,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "firstname": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 3
                 },
                 "lastname": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 1
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 6
                 },
                 "phone": {
                     "type": "string"

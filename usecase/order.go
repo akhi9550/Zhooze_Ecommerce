@@ -49,7 +49,17 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
-	order_id, err := repository.OrderItems(orderBody, total)
+	discount_price, err := repository.GetCouponDiscountPrice(int(orderBody.UserID), total)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+
+	err = repository.UpdateCouponDetails(discount_price, orderBody.UserID)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	FinalPrice := total - discount_price
+	order_id, err := repository.OrderItems(orderBody, FinalPrice)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}

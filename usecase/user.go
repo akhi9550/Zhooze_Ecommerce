@@ -5,10 +5,12 @@ import (
 	"Zhooze/helper"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
+	"strconv"
 
 	"errors"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -40,6 +42,31 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	userData, err := repository.UserSignUp(user)
 	if err != nil {
 		return &models.TokenUser{}, errors.New("could not add the user")
+	}
+	// create referral code for the user and send in details of referred id of user if it exist
+	id := uuid.New().ID()
+	str := strconv.Itoa(int(id))
+	userReferral := str[:8]
+	err = repository.CreateReferralEntry(userData, userReferral)
+	if err != nil {
+		return &models.TokenUser{}, err
+	}
+
+	if user.ReferralCode != "" {
+		// first check whether if a user with that referralCode exist
+		referredUserId, err := repository.GetUserIdFromReferrals(user.ReferralCode)
+		if err != nil {
+			return &models.TokenUser{}, err
+		}
+		fmt.Println("❌", referredUserId)
+		if referredUserId != 0 {
+			referralAmount := 150
+			err := repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+
+		}
 	}
 	accessToken, err := helper.GenerateAccessToken(userData)
 	if err != nil {
@@ -334,4 +361,40 @@ func GetCart(id, cart_id int) (models.GetCartResponse, error) {
 	response.ID = cart_id
 	response.Data = getcart
 	return response, nil
+}
+func ApplyReferral(userID int) (string, error) {
+
+	exist, err := repository.DoesCartExist(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if !exist {
+		return "", errors.New("cart does not exist, can't apply offer")
+	}
+
+	referralAmount, totalCartAmount, err := repository.GetReferralAndTotalAmount(userID)
+	if err != nil {
+		return "", err
+	}
+
+	if totalCartAmount > referralAmount {
+		totalCartAmount = totalCartAmount - referralAmount
+		referralAmount = 0
+	} else {
+		referralAmount = referralAmount - totalCartAmount
+		totalCartAmount = 0
+	}
+
+	err = repository.UpdateSomethingBasedOnUserID("referrals", "referral_amount", referralAmount, userID)
+	if err != nil {
+		return "", err
+	}
+
+	err = repository.UpdateSomethingBasedOnUserID("carts", "total_price", totalCartAmount, userID)
+	if err != nil {
+		return "", err
+	}
+
+	return "", nil
 }

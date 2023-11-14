@@ -181,10 +181,14 @@ definitions:
       email:
         type: string
       firstname:
+        minLength: 3
         type: string
       lastname:
+        minLength: 1
         type: string
       password:
+        maxLength: 20
+        minLength: 6
         type: string
       phone:
         type: string
@@ -859,6 +863,34 @@ paths:
       security:
       - Bearer: []
       summary: Filtered Sales Report
+      tags:
+      - Admin
+  /admin/sales-report-date:
+    get:
+      consumes:
+      - application/json
+      description: Showing the sales report with respect to the given date
+      parameters:
+      - description: start date DD-MM-YYYY
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: end   date DD-MM-YYYY
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: report
+          schema:
+            type: body
+      security:
+      - Bearer: []
+      summary: Sales report by date
       tags:
       - Admin
   /admin/users:

@@ -137,4 +137,17 @@ func AddImage(c *gin.Context, file *multipart.FileHeader, productID int) (domain
 	}
 	return url, nil
 
+	
+	// url, err := i.helper.AddImageToS3(file)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// //send the url and save it in database
+	// err = i.repository.UpdateProductImage(id, url)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// return nil
 }

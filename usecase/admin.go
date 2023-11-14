@@ -7,6 +7,7 @@ import (
 	"Zhooze/utils/models"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
@@ -172,7 +173,6 @@ func CancelOrderFromAdmin(order_id int) error {
 //	}
 func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	startTime, endTime := helper.GetTimeFromPeriod(timePeriod)
-	//update date (end and start)
 	saleReport, err := repository.FilteredSalesReport(startTime, endTime)
 
 	if err != nil {
@@ -181,6 +181,14 @@ func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 	return saleReport, nil
 
 }
+func ExecuteSalesReportByDate(startDate, endDate time.Time) (models.SalesReport, error) {
+	orders, err :=repository.FilteredSalesReport(startDate, endDate)
+	if err != nil {
+		return models.SalesReport{}, errors.New("report fetching failed")
+	}
+	return orders, nil
+}
+
 func AddPaymentMethod(payment models.NewPaymentMethod) (domain.PaymentMethod, error) {
 	exists, err := repository.CheckIfPaymentMethodAlreadyExists(payment.PaymentName)
 	if err != nil {

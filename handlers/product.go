@@ -22,14 +22,14 @@ import (
 // @Failure 500 {object} response.Response{}
 // @Router /user/products     [GET]
 func ShowAllProducts(c *gin.Context) {
-	pageStr := c.DefaultQuery("page","1")
+	pageStr := c.DefaultQuery("page", "1")
 	page, err := strconv.Atoi(pageStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page number not in right format", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	countStr := c.DefaultQuery("count","10")
+	countStr := c.DefaultQuery("count", "10")
 	count, err := strconv.Atoi(countStr)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "page count not in right format", nil, err.Error())
@@ -263,4 +263,30 @@ func UploadImage(c *gin.Context) {
 	}
 	successRes := response.ClientResponse(http.StatusOK, "Successfully uploaded image", url, nil)
 	c.JSON(http.StatusOK, successRes)
+
+	// 	id, err := strconv.Atoi(c.Query("id"))
+	// 	if err != nil {
+	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "parameter problem", nil, err.Error())
+	// 		c.JSON(http.StatusBadRequest, errorRes)
+	// 		return
+	// 	}
+
+	// 	file, err := c.FormFile("image")
+	// 	if err != nil {
+	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "retrieving image from form error", nil, err.Error())
+	// 		c.JSON(http.StatusBadRequest, errorRes)
+	// 		return
+	// 	}
+
+	// 	err = i.InventoryUseCase.UpdateProductImage(id, file)
+	// 	if err != nil {
+	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the image", nil, err.Error())
+	// 		c.JSON(http.StatusBadRequest, errorRes)
+	// 		return
+	// 	}
+
+	// 	successRes := response.ClientResponse(http.StatusOK, "Successfully changed image", nil, nil)
+	// 	c.JSON(http.StatusOK, successRes)
+
+	// }
 }

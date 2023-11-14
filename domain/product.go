@@ -1,7 +1,5 @@
 package domain
 
-import "time"
-
 type Product struct {
 	ID          uint     `json:"id" gorm:"unique;not null"`
 	Name        string   `json:"name"`
@@ -24,27 +22,4 @@ type Image struct {
 	ID        uint   `json:"id" gorm:"primaryKey"`
 	ProductId uint   `json:"product_id"`
 	Url       string `JSON:"url" `
-}
-type ProductOffer struct {
-	ID                 uint      `json:"id" gorm:"unique; not null"`
-	ProductID          uint      `json:"product_id"`
-	Products           Product  `json:"-" gorm:"foreignkey:ProductID"`
-	OfferName          string    `json:"offer_name"`
-	DiscountPercentage int       `json:"discount_percentage"`
-	StartDate          time.Time `json:"start_date"`
-	EndDate            time.Time `json:"end_date"`
-	OfferLimit         int       `json:"offer_limit"`
-	OfferUsed          int       `json:"offer_used"`
-}
-
-type CategoryOffer struct {
-	ID                 uint      `json:"id" gorm:"unique; not null"`
-	CategoryID         uint      `json:"category_id"`
-	Category           Category  `json:"-" gorm:"foreignkey:CategoryID"`
-	OfferName          string    `json:"offer_name"`
-	DiscountPercentage int       `json:"discount_percentage"`
-	StartDate          time.Time `json:"start_date"`
-	EndDate            time.Time `json:"end_date"`
-	OfferLimit         int       `json:"offer_limit"`
-	OfferUsed          int       `json:"offer_used"`
 }

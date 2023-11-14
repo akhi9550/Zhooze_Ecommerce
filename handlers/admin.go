@@ -6,6 +6,7 @@ import (
 	"Zhooze/utils/response"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -160,6 +161,57 @@ func FilteredSalesReport(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 
 }
+
+//	@Summary		Sales report by date
+//	@Description	Showing the sales report with respect to the given date
+//	@Tags			Admin
+//	@Accept			json
+//	@Produce		json
+//
+// @Security        Bearer
+//
+//	@Param			start	query	string		true	"start date DD-MM-YYYY"
+//	@Param			end		query	string		true	"end   date DD-MM-YYYY"
+//	@Success		200		body	entity.SalesReport	"report"
+//	@Router			/admin/sales-report-date   [GET]
+func SalesReportByDate(c *gin.Context) {
+	startDateStr := c.Param("start")
+	endDateStr := c.Param("end")
+	if startDateStr == "" || endDateStr == "" {
+		err := response.ClientResponse(http.StatusBadRequest, "start or end date is empty", nil, "Empty date string")
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	startDate, err := time.Parse("2-1-2006", startDateStr)
+	if err != nil {
+		err := response.ClientResponse(http.StatusBadRequest, "start date conversion failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	endDate, err := time.Parse("2-1-2006", endDateStr)
+	if err != nil {
+		err := response.ClientResponse(http.StatusBadRequest, "end date conversion failed", nil, err.Error())
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	if startDate.After(endDate) {
+		err := response.ClientResponse(http.StatusBadRequest, "start date is after end date", nil, "Invalid date range")
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	report, err := usecase.ExecuteSalesReportByDate(startDate, endDate)
+	if err != nil {
+		errorRes := response.ClientResponse(http.StatusInternalServerError, "sales report could not be retrieved", nil, err.Error())
+		c.JSON(http.StatusInternalServerError, errorRes)
+		return
+	}
+
+	success := response.ClientResponse(http.StatusOK, "sales report retrieved successfully", report, nil)
+	c.JSON(http.StatusOK, success)
+}
+
 
 // @Summary		Add Payment Method
 // @Description	Admin can add new payment methods

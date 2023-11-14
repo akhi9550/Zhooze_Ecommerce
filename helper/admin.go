@@ -27,7 +27,6 @@ func GenerateTokenAdmin(admin models.AdminDetailsResponse) (string, error) {
 			IssuedAt:  time.Now().Unix(),
 		},
 	}
-	fmt.Println("secret key===========", cfg.KEY_ADMIN)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(cfg.KEY_ADMIN))
 	if err != nil {

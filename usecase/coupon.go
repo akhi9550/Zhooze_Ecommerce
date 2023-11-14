@@ -42,23 +42,18 @@ func GetCoupon() ([]models.Coupon, error) {
 	return coupons, nil
 }
 func ExpireCoupon(couponID int) error {
-
-	// check whether coupon exist
 	couponExist, err := repository.ExistCoupon(couponID)
 	if err != nil {
 		return err
 	}
-
 	// if it exists expire it, if already expired send back relevant message
 	if couponExist {
 		err = repository.CouponAlreadyExpired(couponID)
 		if err != nil {
 			return err
 		}
-
 		return nil
 	}
-
 	return errors.New("coupon does not exist")
 
 }

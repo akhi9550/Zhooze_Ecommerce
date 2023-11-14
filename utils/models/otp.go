@@ -1,7 +1,7 @@
 package models
 
 type OTPData struct {
-	PhoneNumber string `json:"phone"`
+	PhoneNumber string `json:"phone" `
 }
 type VerifyData struct {
 	User *OTPData `json:"user" binding:"required" validate:"required"`

@@ -3,6 +3,7 @@ package repository
 import (
 	"Zhooze/db"
 	"Zhooze/domain"
+	"Zhooze/helper"
 	"fmt"
 
 	"Zhooze/utils/models"
@@ -385,9 +386,26 @@ func TotalAmountInCart(userID int) (float64, error) {
 		return 0, err
 	}
 	return price, nil
+}
+func  GetCouponDiscountPrice(UserID int, Total float64) (float64, error) {
+	discountPrice, err := helper.GetCouponDiscountPrice(UserID, Total, db.DB)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return discountPrice, nil
 
 }
+func  UpdateCouponDetails(discount_price float64, UserID int) error {
 
+	if discount_price != 0.0 {
+		err := db.DB.Exec("update used_coupons set used = true where user_id = ?", UserID).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
 	var addressResponse []models.AddressInfoResponse
 	err := db.DB.Raw(`SELECT * FROM addresses WHERE user_id = $1`, userID).Scan(&addressResponse).Error

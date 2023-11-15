@@ -40,7 +40,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		}
 		users := r.Group("/users")
 		{
-
 			users.GET("", handlers.UserDetails)
 			users.PUT("", handlers.UpdateUserDetails)
 			users.PUT("/changepassword", handlers.ChangePassword)
@@ -75,7 +74,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		coupon := r.Group("/coupon")
 		{
 			coupon.POST("/apply", handlers.ApplyCoupon)
-
 		}
 		r.GET("/referral/apply", handlers.ApplyReferral)
 		r.GET("/checkout", handlers.CheckOut)

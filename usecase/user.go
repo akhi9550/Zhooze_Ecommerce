@@ -49,9 +49,10 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	userReferral := str[:8]
 	err = repository.CreateReferralEntry(userData, userReferral)
 	if err != nil {
+		fmt.Println("👺")
 		return &models.TokenUser{}, err
 	}
-
+	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️")
 	if user.ReferralCode != "" {
 		// first check whether if a user with that referralCode exist
 		referredUserId, err := repository.GetUserIdFromReferrals(user.ReferralCode)
@@ -363,21 +364,17 @@ func GetCart(id, cart_id int) (models.GetCartResponse, error) {
 	return response, nil
 }
 func ApplyReferral(userID int) (string, error) {
-
 	exist, err := repository.DoesCartExist(userID)
 	if err != nil {
 		return "", err
 	}
-
 	if !exist {
 		return "", errors.New("cart does not exist, can't apply offer")
 	}
-
 	referralAmount, totalCartAmount, err := repository.GetReferralAndTotalAmount(userID)
 	if err != nil {
 		return "", err
 	}
-
 	if totalCartAmount > referralAmount {
 		totalCartAmount = totalCartAmount - referralAmount
 		referralAmount = 0

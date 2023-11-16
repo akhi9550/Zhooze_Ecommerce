@@ -35,8 +35,21 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 
 		return models.CartResponse{}, err
 	}
+	/////////////
+	discount_percentage, err := repository.FindDiscountPercentage(product_id)
+	if err != nil {
+		return models.CartResponse{}, errors.New("there was some error in finding the discounted prices")
+	}
+	var discount float64
+
+	if discount_percentage > 0 {
+		discount = (productPrice * float64(discount_percentage)) / 100
+	}
+
+	Price := productPrice - discount
+	//////////////////////
 	if QuantityOfProductInCart == 0 {
-		err := repository.AddItemIntoCart(user_id, product_id, 1, productPrice)
+		err := repository.AddItemIntoCart(user_id, product_id, 1, Price)
 		if err != nil {
 
 			return models.CartResponse{}, err

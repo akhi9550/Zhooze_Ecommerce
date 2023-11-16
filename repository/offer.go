@@ -2,6 +2,7 @@ package repository
 
 import (
 	"Zhooze/db"
+	"Zhooze/domain"
 	"Zhooze/utils/models"
 	"errors"
 	"time"
@@ -10,7 +11,7 @@ import (
 func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 	// check if the offer with the offer name already exist in the db
 	var count int
-	err := db.DB.Raw("select count(*) from product_offers where offer_name = ? and product_id = ?", productOffer.OfferName, productOffer.ProductID).Scan(&count).Error
+	err := db.DB.Raw("SELECT COUNT(*) FROM product_offers WHERE offer_name = ? AND product_id = ?", productOffer.OfferName, productOffer.ProductID).Scan(&count).Error
 	if err != nil {
 		return err
 	}
@@ -21,13 +22,13 @@ func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 
 	// if there is any other offer for this product delete that before adding this one
 	count = 0
-	err = db.DB.Raw("select count(*) from product_offers where product_id = ?", productOffer.ProductID).Scan(&count).Error
+	err = db.DB.Raw("SELECT COUNT(*) FROM product_offers WHERE product_id = ?", productOffer.ProductID).Scan(&count).Error
 	if err != nil {
 		return err
 	}
 
 	if count > 0 {
-		err = db.DB.Exec("delete from product_offers where product_id = ?", productOffer.ProductID).Error
+		err = db.DB.Exec("DELETE FROM product_offers WHERE product_id = ?", productOffer.ProductID).Error
 		if err != nil {
 			return err
 		}
@@ -35,13 +36,38 @@ func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 
 	startDate := time.Now()
 	endDate := time.Now().Add(time.Hour * 24 * 5)
-	err = db.DB.Exec("INSERT INTO product_offers (product_id, offer_name, discount_percentage, start_date, end_date, offer_limit,offer_used) VALUES (?, ?, ?, ?, ?, ?, ?)", productOffer.ProductID, productOffer.OfferName, productOffer.DiscountPercentage, startDate, endDate, productOffer.OfferLimit, 0).Error
+	err = db.DB.Exec("INSERT INTO product_offers (product_id, offer_name, discount_percentage, start_date, end_date) VALUES (?, ?, ?, ?, ?)", productOffer.ProductID, productOffer.OfferName, productOffer.DiscountPercentage, startDate, endDate).Error
 	if err != nil {
 		return err
 	}
 
 	return nil
 
+}
+func GetOffers() ([]domain.ProductOffer, error) {
+	var model []domain.ProductOffer
+	err := db.DB.Raw("SELECT * FROM product_offers").Scan(&model).Error
+	if err != nil {
+		return []domain.ProductOffer{}, err
+	}
+
+	return model, nil
+}
+func MakeOfferExpire(id int) error {
+	if err := db.DB.Exec("DELETE FROM offers WHERE id = $1", id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+func FindDiscountPercentageForProduct(id int) (int, error) {
+	var percentage int
+	err := db.DB.Raw("select discount_percentage from product_offers where product_id= $1 and valid = true", id).Scan(&percentage).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return percentage, nil
 }
 func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 
@@ -73,11 +99,36 @@ func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 
 	startDate := time.Now()
 	endDate := time.Now().Add(time.Hour * 24 * 5)
-	err = db.DB.Exec("INSERT INTO category_offers (category_id, offer_name, discount_percentage, start_date, end_date, offer_limit,offer_used) VALUES (?, ?, ?, ?, ?, ?, ?)", categoryOffer.CategoryID, categoryOffer.OfferName, categoryOffer.DiscountPercentage, startDate, endDate, categoryOffer.OfferLimit, 0).Error
+	err = db.DB.Exec("INSERT INTO category_offers (category_id, offer_name, discount_percentage, start_date, end_date) VALUES (?, ?, ?, ?, ?)", categoryOffer.CategoryID, categoryOffer.OfferName, categoryOffer.DiscountPercentage, startDate, endDate).Error
 	if err != nil {
 		return err
 	}
 
 	return nil
 
+}
+func GetCategoryOffer() ([]domain.CategoryOffer, error) {
+	var model []domain.CategoryOffer
+	err := db.DB.Raw("SELECT * FROM category_offers").Scan(&model).Error
+	if err != nil {
+		return []domain.CategoryOffer{}, err
+	}
+
+	return model, nil
+}
+func ExpireCategoryOffer(id int) error {
+	if err := db.DB.Exec("DELETE FROM category_offers WHERE id = $1", id).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+func FindDiscountPercentageForCategory(id int) (int, error) {
+	var percentage int
+	err := db.DB.Raw("select discount_percentage from category_offers where category_id= $1 ", id).Scan(&percentage).Error
+	if err != nil {
+		return 0, err
+	}
+
+	return percentage, nil
 }

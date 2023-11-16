@@ -5,10 +5,10 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
-	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 // @Summary Get Products Details to users
@@ -92,7 +92,7 @@ func FilterCategory(c *gin.Context) {
 
 // }
 
-// @Summary Get Products Details to users
+// @Summary Get Products Details
 // @Description Retrieve all product Details
 // @Tags Admin Product Management
 // @Accept json
@@ -142,6 +142,12 @@ func AddProducts(c *gin.Context) {
 	var product models.Product
 	if err := c.ShouldBindJSON(&product); err != nil {
 		errs := response.ClientResponse(http.StatusBadRequest, "Fields provided are in wrong format", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errs)
+		return
+	}
+	err := validator.New().Struct(product)
+	if err != nil {
+		errs := response.ClientResponse(http.StatusBadRequest, "Constraints not statisfied", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errs)
 		return
 	}
@@ -225,68 +231,28 @@ func UpdateProduct(c *gin.Context) {
 // @Failure 500 {object} response.Response{}
 // @Router /admin/products/upload-image 	[POST]
 func UploadImage(c *gin.Context) {
-	product_id := c.Query("product_id")
-	productID, err := strconv.Atoi(product_id)
+	id, err := strconv.Atoi(c.Query("product_id"))
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Parameter problem", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 
 	file, err := c.FormFile("file")
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "error while file upload", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Retrieving image from form error", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	allowedExtensions := []string{".jpg", ".jpeg", ".png", ".gif"}
-	ext := filepath.Ext(file.Filename)
-	isValid := false
-	for _, allowedExt := range allowedExtensions {
-		if ext == allowedExt {
-			isValid = true
-			break
-		}
-	}
-	if !isValid {
-		if err != nil {
-			errs := response.ClientResponse(http.StatusBadRequest, "unsupported file format", nil, err.Error())
-			c.JSON(http.StatusBadRequest, errs)
-			return
-		}
-	}
-	url, err := usecase.AddImage(c, file, productID)
+
+	err = usecase.UpdateProductImage(id, file)
 	if err != nil {
-		errs := response.ClientResponse(http.StatusBadRequest, "error while uploading image", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errs)
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the image", nil, err.Error())
+		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-	successRes := response.ClientResponse(http.StatusOK, "Successfully uploaded image", url, nil)
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully changed image", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 
-	// 	id, err := strconv.Atoi(c.Query("id"))
-	// 	if err != nil {
-	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "parameter problem", nil, err.Error())
-	// 		c.JSON(http.StatusBadRequest, errorRes)
-	// 		return
-	// 	}
-
-	// 	file, err := c.FormFile("image")
-	// 	if err != nil {
-	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "retrieving image from form error", nil, err.Error())
-	// 		c.JSON(http.StatusBadRequest, errorRes)
-	// 		return
-	// 	}
-
-	// 	err = i.InventoryUseCase.UpdateProductImage(id, file)
-	// 	if err != nil {
-	// 		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the image", nil, err.Error())
-	// 		c.JSON(http.StatusBadRequest, errorRes)
-	// 		return
-	// 	}
-
-	// 	successRes := response.ClientResponse(http.StatusOK, "Successfully changed image", nil, nil)
-	// 	c.JSON(http.StatusOK, successRes)
-
-	// }
 }

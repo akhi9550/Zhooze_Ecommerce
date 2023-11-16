@@ -119,6 +119,7 @@ func OrderItemsFromCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
+
 	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())
@@ -205,7 +206,7 @@ func CancelOrder(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/user/checkout    [GET]
+// @Router			/user/order/checkout    [GET]
 func CheckOut(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	checkoutDetails, err := usecase.Checkout(userID.(int))
@@ -229,8 +230,8 @@ func CheckOut(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/user/place-order     [GET]
-func PlaceOrder(c *gin.Context) {
+// @Router			/user/order/place-order     [GET]
+func PlaceOrderCOD(c *gin.Context) {
 	order_id, err := strconv.Atoi(c.Query("order_id"))
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "error from orderID", nil, err.Error())

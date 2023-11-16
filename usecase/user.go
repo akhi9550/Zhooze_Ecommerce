@@ -49,17 +49,14 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 	userReferral := str[:8]
 	err = repository.CreateReferralEntry(userData, userReferral)
 	if err != nil {
-		fmt.Println("👺")
 		return &models.TokenUser{}, err
 	}
-	fmt.Println("🤷‍♂️🤷‍♂️🤷‍♂️")
 	if user.ReferralCode != "" {
 		// first check whether if a user with that referralCode exist
 		referredUserId, err := repository.GetUserIdFromReferrals(user.ReferralCode)
 		if err != nil {
 			return &models.TokenUser{}, err
 		}
-		fmt.Println("❌", referredUserId)
 		if referredUserId != 0 {
 			referralAmount := 150
 			err := repository.UpdateReferralAmount(float64(referralAmount), referredUserId, userData.Id)

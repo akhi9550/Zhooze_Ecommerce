@@ -14,7 +14,7 @@ import (
 
 // @Summary Add  a new coupon by Admin
 // @Description Add A new Coupon which can be used by the users from the checkout section
-// @Tags Admin Offer Management
+// @Tags Admin Coupon Management
 // @Accept json
 // @Produce json
 // @Security Bearer
@@ -53,7 +53,7 @@ func AddCoupon(c *gin.Context) {
 
 // @Summary Get coupon details
 // @Description Get Available coupon details for admin side
-// @Tags Admin Offer Management
+// @Tags Admin Coupon Management
 // @Accept json
 // @Produce json
 // @Security Bearer
@@ -77,11 +77,11 @@ func GetCoupon(c *gin.Context) {
 
 // @Summary Expire Coupon
 // @Description Expire Coupon by admin which are already present by passing coupon id
-// @Tags Admin Offer Management
+// @Tags Admin Coupon Management
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param coupon_id path string true "Coupon id"
+// @Param coupon_id query string true "Coupon id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/offer/coupons/expire   [PATCH]
@@ -122,7 +122,7 @@ func ExpireCoupon(c *gin.Context) {
 // @Param couponDetails body models.CouponAddUser true "Add coupon to order"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/coupon/apply [post]
+// @Router /user/coupon/apply [POST]
 func ApplyCoupon(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")

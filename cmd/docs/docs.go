@@ -252,49 +252,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/admin/image-crop": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Croping Image",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Image"
-                ],
-                "summary": "Croping Added Images",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "image-id",
-                        "name": "image_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/admin/offer/category-offer": {
             "post": {
                 "security": [
@@ -355,7 +312,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin Offer Management"
+                    "Admin Coupon Management"
                 ],
                 "summary": "Get coupon details",
                 "responses": {
@@ -387,7 +344,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin Offer Management"
+                    "Admin Coupon Management"
                 ],
                 "summary": "Add  a new coupon by Admin",
                 "parameters": [
@@ -432,7 +389,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Admin Offer Management"
+                    "Admin Coupon Management"
                 ],
                 "summary": "Expire Coupon",
                 "parameters": [
@@ -440,7 +397,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Coupon id",
                         "name": "coupon_id",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -461,6 +418,38 @@ const docTemplate = `{
             }
         },
         "/admin/offer/product-offer": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new Offer for a product by specifying a limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Add  Product Offer",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -487,6 +476,47 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.ProductOfferReceiver"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a new Offer for a product by specifying a limit",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin Offer Management"
+                ],
+                "summary": "Add  Product Offer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -774,7 +804,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin Product Management"
                 ],
-                "summary": "Get Products Details to users",
+                "summary": "Get Products Details",
                 "parameters": [
                     {
                         "type": "string",
@@ -1203,6 +1233,40 @@ const docTemplate = `{
                 }
             }
         },
+        "/referral/apply": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Apply referrals amount to order",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Checkout"
+                ],
+                "summary": "Apply referrals",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/address": {
             "get": {
                 "security": [
@@ -1607,40 +1671,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/checkout": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Add products to carts  for the purchase",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User Order Management"
-                ],
-                "summary": "Checkout section",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
         "/user/coupon/apply": {
             "post": {
                 "security": [
@@ -1908,7 +1938,41 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/place-order": {
+        "/user/order/checkout": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add products to carts  for the purchase",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User Order Management"
+                ],
+                "summary": "Checkout section",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/order/place-order": {
             "get": {
                 "security": [
                     {
@@ -2673,6 +2737,14 @@ const docTemplate = `{
         },
         "models.Product": {
             "type": "object",
+            "required": [
+                "category_id",
+                "description",
+                "name",
+                "price",
+                "size",
+                "stock"
+            ],
             "properties": {
                 "category_id": {
                     "type": "integer"
@@ -2698,15 +2770,11 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "discount_percentage",
-                "offer_limit",
                 "offer_name",
                 "product_id"
             ],
             "properties": {
                 "discount_percentage": {
-                    "type": "integer"
-                },
-                "offer_limit": {
                     "type": "integer"
                 },
                 "offer_name": {
@@ -2759,6 +2827,9 @@ const docTemplate = `{
                     "minLength": 6
                 },
                 "phone": {
+                    "type": "string"
+                },
+                "referral_code": {
                     "type": "string"
                 }
             }

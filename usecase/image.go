@@ -12,10 +12,3 @@ func ShowImages(productID int) ([]models.Image, error) {
 	}
 	return image, nil
 }
-func GetImageURL(productImageId int) (string, error) {
-	imageUrl, err := repository.GetImageUrl(productImageId)
-	if err != nil {
-		return "", err
-	}
-	return imageUrl, nil
-}

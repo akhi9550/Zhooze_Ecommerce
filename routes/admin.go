@@ -17,7 +17,7 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 
 		r.GET("/dashboard", handlers.DashBoard)
 		r.GET("/sales-report", handlers.FilteredSalesReport)
-		r.GET("/sales-report-date",handlers.SalesReportByDate)
+		r.GET("/sales-report-date", handlers.SalesReportByDate)
 
 		users := r.Group("/users")
 		{
@@ -33,7 +33,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			products.PUT("", handlers.UpdateProduct) //update the product quantity
 			products.DELETE("", handlers.DeleteProducts)
 			products.POST("/upload-image", handlers.UploadImage)
-
 		}
 
 		category := r.Group("/category")
@@ -52,8 +51,6 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/cancel", handlers.CancelOrderFromAdmin)
 		}
 
-		r.POST("/image-crop", handlers.CropImage)
-
 		payment := r.Group("/payment-method")
 		{
 			payment.POST("", handlers.AddPaymentMethod)
@@ -70,10 +67,14 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 				coupons.PATCH("/expire", handlers.ExpireCoupon)
 			}
 			offer.POST("/product-offer", handlers.AddProdcutOffer)
+			offer.GET("/product-offer",handlers.GetProductOffer)
+			offer.DELETE("/product-offer",handlers.ExpireProductOffer)
+
 			offer.POST("/category-offer", handlers.AddCategoryOffer)
+			offer.GET("/category-offer",handlers.GetCategoryOffer)
+			offer.DELETE("/category-offer",handlers.ExpireCategoryOffer)
 		}
 
 	}
 	return r
 }
-

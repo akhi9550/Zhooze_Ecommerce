@@ -35,7 +35,6 @@ func PaymentExist(orderBody models.OrderIncoming) (bool, error) {
 	if err := db.DB.Raw("SELECT count(*) FROM payment_methods WHERE id = ?", orderBody.PaymentID).Scan(&count).Error; err != nil {
 		return false, err
 	}
-	fmt.Println("ddddddddddddddd", count)
 	return count > 0, nil
 
 }
@@ -387,7 +386,7 @@ func TotalAmountInCart(userID int) (float64, error) {
 	}
 	return price, nil
 }
-func  GetCouponDiscountPrice(UserID int, Total float64) (float64, error) {
+func GetCouponDiscountPrice(UserID int, Total float64) (float64, error) {
 	discountPrice, err := helper.GetCouponDiscountPrice(UserID, Total, db.DB)
 	if err != nil {
 		return 0.0, err
@@ -396,7 +395,7 @@ func  GetCouponDiscountPrice(UserID int, Total float64) (float64, error) {
 	return discountPrice, nil
 
 }
-func  UpdateCouponDetails(discount_price float64, UserID int) error {
+func UpdateCouponDetails(discount_price float64, UserID int) error {
 
 	if discount_price != 0.0 {
 		err := db.DB.Exec("update used_coupons set used = true where user_id = ?", UserID).Error

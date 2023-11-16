@@ -165,13 +165,13 @@ func DoesProductExist(productID int) (bool, error) {
 
 	return count > 0, nil
 }
-func SendUrl(url string, productID int) (domain.Image, error) {
-	var body domain.Image
-	err := db.DB.Raw("INSERT INTO images (product_id,url) VALUES ($1,$2) RETURNING * ", productID, url).Scan(&body).Error
+
+func UpdateProductImage(productID int, url string) error {
+	err := db.DB.Exec("INSERT INTO images (product_id,url) VALUES ($1,$2) RETURNING * ", productID, url).Error
 	if err != nil {
-		return domain.Image{}, errors.New("error while insert image to database")
+		return errors.New("error while insert image to database")
 	}
-	return body, nil
+	return nil
 }
 func DisplayImages(productID int) (domain.Product, []domain.Image, error) {
 	var product domain.Product

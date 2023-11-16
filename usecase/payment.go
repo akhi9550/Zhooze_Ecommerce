@@ -50,7 +50,6 @@ func MakePaymentRazorPay(orderID int) (models.CombinedOrderDetails, string, erro
 }
 
 func SavePaymentDetails(orderID int, paymentID string) error {
-	fmt.Println("cccccccccccc", orderID, paymentID)
 	status, err := repository.CheckPaymentStatus(orderID)
 	if err != nil {
 		return err

@@ -152,7 +152,6 @@ func CancelOrderFromAdmin(order_id int) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️", orderProduct)
 	err = repository.UpdateStockOfProduct(orderProduct)
 	if err != nil {
 		return err

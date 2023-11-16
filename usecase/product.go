@@ -2,44 +2,96 @@ package usecase
 
 import (
 	"Zhooze/domain"
+	"Zhooze/helper"
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 	"errors"
 	"mime/multipart"
-
-	"github.com/gin-gonic/gin"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
-	products, err := repository.ShowAllProducts(page, count)
+	productDetails, err := repository.ShowAllProducts(page, count)
 	if err != nil {
 		return []models.ProductBrief{}, err
 	}
 
-	for i := range products {
-		p := &products[i]
+	for i := range productDetails {
+		p := &productDetails[i]
 		if p.Stock <= 0 {
 			p.ProductStatus = "out of stock"
 		} else {
 			p.ProductStatus = "in stock"
 		}
 	}
-	return products, nil
+	//loop inside products and then calculate discounted price of each then return
+	for j := range productDetails {
+		discount_percentage, err := repository.FindDiscountPercentageForProduct(int(productDetails[j].ID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		}
+
+		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+	}
+	for j := range productDetails {
+		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		}
+
+		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+	}
+	return productDetails, nil
 }
 func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
-	products, err := repository.ShowAllProductsFromAdmin(page, count)
+	productDetails, err := repository.ShowAllProductsFromAdmin(page, count)
 	if err != nil {
 		return []models.ProductBrief{}, err
 	}
-	for i := range products {
-		p := &products[i]
+	for i := range productDetails {
+		p := &productDetails[i]
 		if p.Stock <= 0 {
 			p.ProductStatus = "out of stock"
 		} else {
 			p.ProductStatus = "in stock"
 		}
 	}
-	return products, nil
+	for j := range productDetails {
+		discount_percentage, err := repository.FindDiscountPercentageForProduct(int(productDetails[j].ID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		}
+
+		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+	}
+	for j := range productDetails {
+		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		}
+
+		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+	}
+	return productDetails, nil
 }
 func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	err := repository.CheckValidateCategory(data)
@@ -67,24 +119,35 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 			}
 		}
 	}
+	for j := range ProductFromCategory {
+		discount_percentage, err := repository.FindDiscountPercentageForProduct(int(ProductFromCategory[j].ID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (ProductFromCategory[j].Price * float64(discount_percentage)) / 100
+		}
+
+		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].Price - discount
+	}
+	for j := range ProductFromCategory {
+		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(ProductFromCategory[j].CategoryID))
+		if err != nil {
+			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
+		}
+		var discount float64
+
+		if discount_percentage > 0 {
+			discount = (ProductFromCategory[j].Price * float64(discount_percentage)) / 100
+		}
+
+		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].Price - discount
+	}
 	return ProductFromCategory, nil
 }
 
-//	func SeeAllProducts() ([]models.ProductBrief, error) {
-//		products, err := repository.SeeAllProducts()
-//		if err != nil {
-//			return []models.ProductBrief{}, err
-//		}
-//		for i := range products {
-//			p := &products[i]
-//			if p.Stock <= 0 {
-//				p.ProductStatus = "out of stock"
-//			} else {
-//				p.ProductStatus = "in stock"
-//			}
-//		}
-//		return products, nil
-//	}
 func AddProducts(product models.Product) (domain.Product, error) {
 	exist := repository.ProductAlreadyExist(product.Name)
 	if exist {
@@ -125,29 +188,15 @@ func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	return newcat, err
 
 }
-func AddImage(c *gin.Context, file *multipart.FileHeader, productID int) (domain.Image, error) {
-	if err := c.SaveUploadedFile(file, "uploads/"+file.Filename); err != nil {
-		return domain.Image{}, errors.New("failed to saving file")
-	}
-	baseUrl := "http://localhost:8000"
-	uploadedURL := baseUrl + "/uploads/" + file.Filename
-	url, err := repository.SendUrl(uploadedURL, productID)
+func UpdateProductImage(id int, file *multipart.FileHeader) error {
+
+	url, err := helper.AddImageToS3(file)
 	if err != nil {
-		return domain.Image{}, err
+		return err
 	}
-	return url, nil
-
-	
-	// url, err := i.helper.AddImageToS3(file)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// //send the url and save it in database
-	// err = i.repository.UpdateProductImage(id, url)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// return nil
+	err = repository.UpdateProductImage(id, url)
+	if err != nil {
+		return err
+	}
+	return nil
 }

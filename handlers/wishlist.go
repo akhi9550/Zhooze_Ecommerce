@@ -36,13 +36,13 @@ func GetWishList(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security Bearer
-// @Param id query string true "product id"
+// @Param product_id query string true "product id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /user/wishlist [POST]
 func AddToWishlist(c *gin.Context) {
 	userID, _ := c.Get("user_id")
-	product_id := c.Query("id")
+	product_id := c.Query("product_id")
 	productID, err := strconv.Atoi(product_id)
 	if err != nil {
 		errs := response.ClientResponse(http.StatusInternalServerError, "product id is in wrong format", nil, err.Error())

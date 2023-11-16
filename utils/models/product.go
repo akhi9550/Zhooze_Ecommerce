@@ -5,13 +5,15 @@ type Image struct {
 }
 
 type ProductBrief struct {
-	ID            uint    `json:"id" gorm:"unique;not null"`
-	Name          string  `json:"name"`
-	Description   string  `json:"description"`
-	Size          int     `json:"size"`
-	Stock         int     `json:"stock"`
-	Price         float64 `json:"price"`
-	ProductStatus string  `json:"product_status"`
+	ID              uint    `json:"id" gorm:"unique;not null"`
+	Name            string  `json:"name"`
+	Description     string  `json:"description"`
+	CategoryID      int     `json:"category_id"`
+	Size            int     `json:"size"`
+	Stock           int     `json:"stock"`
+	Price           float64 `json:"price"`
+	DiscountedPrice float64 `json:"discounted_price"`
+	ProductStatus   string  `json:"product_status"`
 }
 
 type ProductReceiver struct {
@@ -23,12 +25,12 @@ type ProductReceiver struct {
 	Price       float64 `json:"price"`
 }
 type Product struct {
-	Name        string  `json:"name" `
-	Description string  `json:"description"`
-	CategoryID  uint    `json:"category_id"`
-	Size        int     `json:"size"`
-	Stock       int     `json:"stock"`
-	Price       float64 `json:"price"`
+	Name        string  `json:"name" validate:"required"`
+	Description string  `json:"description" validate:"required"`
+	CategoryID  uint    `json:"category_id" validate:"required"`
+	Size        int     `json:"size" validate:"required"`
+	Stock       int     `json:"stock" validate:"required"`
+	Price       float64 `json:"price" validate:"required"`
 }
 type Category struct {
 	Category string `json:"category"`

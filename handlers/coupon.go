@@ -21,7 +21,7 @@ import (
 // @Param coupon body models.AddCoupon true "Add new Coupon"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/coupons [POST]
+// @Router /admin/coupons [POST]
 func AddCoupon(c *gin.Context) {
 
 	var coupon models.AddCoupon
@@ -59,7 +59,7 @@ func AddCoupon(c *gin.Context) {
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/coupons [get]
+// @Router /admin/coupons [get]
 func GetCoupon(c *gin.Context) {
 
 	coupons, err := usecase.GetCoupon()
@@ -84,7 +84,7 @@ func GetCoupon(c *gin.Context) {
 // @Param coupon_id query string true "Coupon id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/coupons/expire   [PATCH]
+// @Router /admin/coupons   [PATCH]
 func ExpireCoupon(c *gin.Context) {
 
 	id := c.Query("coupon_id")

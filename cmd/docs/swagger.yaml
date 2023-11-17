@@ -58,14 +58,11 @@ definitions:
         type: integer
       discount_percentage:
         type: integer
-      offer_limit:
-        type: integer
       offer_name:
         type: string
     required:
     - category_id
     - discount_percentage
-    - offer_limit
     - offer_name
     type: object
   models.ChangePassword:
@@ -363,56 +360,7 @@ paths:
       summary: Update Category
       tags:
       - Admin Category Management
-  /admin/dashboard:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve admin dashboard
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Admin Dashboard
-      tags:
-      - Admin
-  /admin/offer/category-offer:
-    post:
-      consumes:
-      - application/json
-      description: Add a new Offer for a Category by specifying a limit
-      parameters:
-      - description: Add new Category Offer
-        in: body
-        name: coupon
-        required: true
-        schema:
-          $ref: '#/definitions/models.CategoryOfferReceiver'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add  Category Offer
-      tags:
-      - Admin Offer Management
-  /admin/offer/coupons:
+  /admin/coupons:
     get:
       consumes:
       - application/json
@@ -431,6 +379,33 @@ paths:
       security:
       - Bearer: []
       summary: Get coupon details
+      tags:
+      - Admin Coupon Management
+    patch:
+      consumes:
+      - application/json
+      description: Expire Coupon by admin which are already present by passing coupon
+        id
+      parameters:
+      - description: Coupon id
+        in: query
+        name: coupon_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Expire Coupon
       tags:
       - Admin Coupon Management
     post:
@@ -461,16 +436,36 @@ paths:
       summary: Add  a new coupon by Admin
       tags:
       - Admin Coupon Management
-  /admin/offer/coupons/expire:
-    patch:
+  /admin/dashboard:
+    get:
       consumes:
       - application/json
-      description: Expire Coupon by admin which are already present by passing coupon
-        id
+      description: Retrieve admin dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Admin Dashboard
+      tags:
+      - Admin
+  /admin/offer/category-offer:
+    delete:
+      consumes:
+      - application/json
+      description: Add a new Offer for a category by specifying a limit
       parameters:
-      - description: Coupon id
+      - description: id
         in: query
-        name: coupon_id
+        name: id
         required: true
         type: string
       produces:
@@ -486,9 +481,56 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - Bearer: []
-      summary: Expire Coupon
+      summary: Add  Category Offer
       tags:
-      - Admin Coupon Management
+      - Admin Offer Management
+    get:
+      consumes:
+      - application/json
+      description: Add a new Offer for a category by specifying a limit
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add  Category Offer
+      tags:
+      - Admin Offer Management
+    post:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      parameters:
+      - description: Add new category Offer
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryOfferReceiver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add Category Offer
+      tags:
+      - Admin Offer Management
   /admin/offer/product-offer:
     delete:
       consumes:
@@ -1809,7 +1851,7 @@ paths:
       parameters:
       - description: product id
         in: query
-        name: id
+        name: product_id
         required: true
         type: string
       produces:

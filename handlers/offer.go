@@ -96,7 +96,7 @@ func ExpireProductOffer(c *gin.Context) {
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "Successfully made Coupon as invaid", nil, nil)
+	successRes := response.ClientResponse(http.StatusOK, "Successfully made Coupon as invalid", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }

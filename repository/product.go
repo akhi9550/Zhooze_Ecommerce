@@ -79,6 +79,13 @@ func ProductAlreadyExist(Name string) bool {
 	}
 	return count > 0
 }
+func FindCategoryID(id int) (int, error) {
+	var a int
+	if err := db.DB.Raw("SELECT category_id FROM products WHERE id = ?", id).Scan(&a).Error; err != nil {
+		return 0.0, err
+	}
+	return a, nil
+}
 func StockInvalid(Name string) bool {
 	var count int
 	if err := db.DB.Raw("SELECT SUM(stock) FROM products WHERE name = ? AND stock >= 0", Name).Scan(&count).Error; err != nil {
@@ -186,3 +193,31 @@ func DisplayImages(productID int) (domain.Product, []domain.Image, error) {
 	}
 	return product, image, nil
 }
+
+// "gorm.io/gorm"
+// @@ -109,32 +109,26 @@ func StockInvalid(Name string) bool {
+// }
+// func AddProducts(product models.Product) (domain.Product, error) {
+// var p domain.Product
+// query := `
+// INSERT INTO products (name, description, category_id, sku, size, stock, price)
+// VALUES ($1, $2, $3, $4, $5, $6, $7)
+// RETURNING name, description, category_id, sku, size, stock, price
+// `
+
+// err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
+// if err != nil {
+// 	log.Println(err.Error())
+// 	return domain.Product{}, err
+// }
+
+// var ProductResponses domain.Product
+
+// err = db.DB.Raw("SELECT * FROM products WHERE name = ?", p.Name).Scan(&ProductResponses).Error
+// if err != nil {
+// 	log.Println(err.Error())
+// 	return domain.Product{}, err
+// }
+
+// return ProductResponses, nil
+// }

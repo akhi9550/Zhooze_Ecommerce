@@ -45,6 +45,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
+	
 	total, err := repository.TotalAmountInCart(orderBody.UserID)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err

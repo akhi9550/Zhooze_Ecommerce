@@ -154,7 +154,7 @@ func UpdateCartDetails(cartDetails struct {
 }
 func CartAfterRemovalOfProduct(user_id int) ([]models.Cart, error) {
 	var cart []models.Cart
-	if err := db.DB.Raw("SELECT carts.product_id,products.name as product_name,carts.quantity,carts.total_price from carts INNER JOIN products on carts.product_id = products.id WHERE carts.user_id = ?", user_id).Scan(&cart).Error; err != nil {
+	if err := db.DB.Raw("SELECT carts.product_id,products.name as product_name,carts.quantity,carts.total_price FROM carts INNER JOIN products on carts.product_id = products.id WHERE carts.user_id = ?", user_id).Scan(&cart).Error; err != nil {
 		return []models.Cart{}, err
 	}
 	return cart, nil
@@ -162,7 +162,7 @@ func CartAfterRemovalOfProduct(user_id int) ([]models.Cart, error) {
 func GetAllItemsFromCart(userID int) ([]models.Cart, error) {
 	var count int
 	var cartResponse []models.Cart
-	err := db.DB.Raw("SELECT count(*) FROM carts WHERE user_id = ?", userID).Scan(&count).Error
+	err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ?", userID).Scan(&count).Error
 	if err != nil {
 		return []models.Cart{}, err
 	}

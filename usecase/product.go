@@ -30,28 +30,25 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
 		var discount float64
-
 		if discount_percentage > 0 {
 			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
 		}
-
 		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
-	}
-	for j := range productDetails {
-		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
+
+		discount_percentageCategory, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
 		if err != nil {
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
-		var discount float64
-
-		if discount_percentage > 0 {
-			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		var categorydiscount float64
+		if discount_percentageCategory > 0 {
+			categorydiscount = (productDetails[j].Price * float64(discount_percentageCategory)) / 100
 		}
 
-		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+		productDetails[j].DiscountedPrice = productDetails[j].DiscountedPrice - categorydiscount
 	}
 	return productDetails, nil
 }
+
 func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
 	productDetails, err := repository.ShowAllProductsFromAdmin(page, count)
 	if err != nil {
@@ -71,25 +68,21 @@ func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
 		var discount float64
-
 		if discount_percentage > 0 {
 			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
 		}
-
 		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
-	}
-	for j := range productDetails {
-		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
+
+		discount_percentageCategory, err := repository.FindDiscountPercentageForCategory(int(productDetails[j].CategoryID))
 		if err != nil {
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
-		var discount float64
-
-		if discount_percentage > 0 {
-			discount = (productDetails[j].Price * float64(discount_percentage)) / 100
+		var categorydiscount float64
+		if discount_percentageCategory > 0 {
+			categorydiscount = (productDetails[j].Price * float64(discount_percentageCategory)) / 100
 		}
 
-		productDetails[j].DiscountedPrice = productDetails[j].Price - discount
+		productDetails[j].DiscountedPrice = productDetails[j].DiscountedPrice - categorydiscount
 	}
 	return productDetails, nil
 }
@@ -125,25 +118,21 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
 		var discount float64
-
 		if discount_percentage > 0 {
 			discount = (ProductFromCategory[j].Price * float64(discount_percentage)) / 100
 		}
-
 		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].Price - discount
-	}
-	for j := range ProductFromCategory {
-		discount_percentage, err := repository.FindDiscountPercentageForCategory(int(ProductFromCategory[j].CategoryID))
+
+		discount_percentageCategory, err := repository.FindDiscountPercentageForCategory(int(ProductFromCategory[j].CategoryID))
 		if err != nil {
 			return []models.ProductBrief{}, errors.New("there was some error in finding the discounted prices")
 		}
-		var discount float64
-
-		if discount_percentage > 0 {
-			discount = (ProductFromCategory[j].Price * float64(discount_percentage)) / 100
+		var categorydiscount float64
+		if discount_percentageCategory > 0 {
+			categorydiscount = (ProductFromCategory[j].Price * float64(discount_percentageCategory)) / 100
 		}
 
-		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].Price - discount
+		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].DiscountedPrice - categorydiscount
 	}
 	return ProductFromCategory, nil
 }

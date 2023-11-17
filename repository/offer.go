@@ -54,7 +54,7 @@ func GetOffers() ([]domain.ProductOffer, error) {
 	return model, nil
 }
 func MakeOfferExpire(id int) error {
-	if err := db.DB.Exec("DELETE FROM offers WHERE id = $1", id).Error; err != nil {
+	if err := db.DB.Exec("DELETE FROM product_offers WHERE id = $1", id).Error; err != nil {
 		return err
 	}
 
@@ -62,7 +62,7 @@ func MakeOfferExpire(id int) error {
 }
 func FindDiscountPercentageForProduct(id int) (int, error) {
 	var percentage int
-	err := db.DB.Raw("select discount_percentage from product_offers where product_id= $1 and valid = true", id).Scan(&percentage).Error
+	err := db.DB.Raw("SELECT discount_percentage FROM product_offers WHERE product_id= $1 ", id).Scan(&percentage).Error
 	if err != nil {
 		return 0, err
 	}
@@ -73,39 +73,32 @@ func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 
 	// check if the offer with the offer name already exist in the db
 	var count int
-	err := db.DB.Raw("select count(*) from category_offers where offer_name = ?", categoryOffer.OfferName).Scan(&count).Error
+	err := db.DB.Raw("SELECT COUNT(*) FROM category_offers WHERE offer_name = ?", categoryOffer.OfferName).Scan(&count).Error
 	if err != nil {
 		return err
 	}
-
 	if count > 0 {
 		return errors.New("the offer already exists")
 	}
-
 	// if there is any other offer for this category delete that before adding this one
 	count = 0
-	err = db.DB.Raw("select count(*) from category_offers where category_id = ?", categoryOffer.CategoryID).Scan(&count).Error
+	err = db.DB.Raw("SELECT COUNT(*) FROM category_offers WHERE category_id = ?", categoryOffer.CategoryID).Scan(&count).Error
 	if err != nil {
 		return err
 	}
-
 	if count > 0 {
-
-		err = db.DB.Exec("delete from category_offers where category_id = ?", categoryOffer.CategoryID).Error
+		err = db.DB.Exec("DELETE FROM category_offers WHERE category_id = ?", categoryOffer.CategoryID).Error
 		if err != nil {
 			return err
 		}
 	}
-
 	startDate := time.Now()
 	endDate := time.Now().Add(time.Hour * 24 * 5)
 	err = db.DB.Exec("INSERT INTO category_offers (category_id, offer_name, discount_percentage, start_date, end_date) VALUES (?, ?, ?, ?, ?)", categoryOffer.CategoryID, categoryOffer.OfferName, categoryOffer.DiscountPercentage, startDate, endDate).Error
 	if err != nil {
 		return err
 	}
-
 	return nil
-
 }
 func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 	var model []domain.CategoryOffer
@@ -113,7 +106,6 @@ func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 	if err != nil {
 		return []domain.CategoryOffer{}, err
 	}
-
 	return model, nil
 }
 func ExpireCategoryOffer(id int) error {
@@ -125,7 +117,7 @@ func ExpireCategoryOffer(id int) error {
 }
 func FindDiscountPercentageForCategory(id int) (int, error) {
 	var percentage int
-	err := db.DB.Raw("select discount_percentage from category_offers where category_id= $1 ", id).Scan(&percentage).Error
+	err := db.DB.Raw("SELECT discount_percentage FROM category_offers WHERE category_id= $1 ", id).Scan(&percentage).Error
 	if err != nil {
 		return 0, err
 	}

@@ -57,15 +57,14 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			payment.GET("", handlers.ListPaymentMethods)
 			payment.DELETE("", handlers.DeletePaymentMethod)
 		}
-
+		coupons := r.Group("/coupons")
+		{
+			coupons.POST("", handlers.AddCoupon)
+			coupons.GET("", handlers.GetCoupon)
+			coupons.PATCH("", handlers.ExpireCoupon)
+		}
 		offer := r.Group("/offer")
 		{
-			coupons := offer.Group("/coupons")
-			{
-				coupons.POST("", handlers.AddCoupon)
-				coupons.GET("", handlers.GetCoupon)
-				coupons.PATCH("/expire", handlers.ExpireCoupon)
-			}
 			offer.POST("/product-offer", handlers.AddProdcutOffer)
 			offer.GET("/product-offer",handlers.GetProductOffer)
 			offer.DELETE("/product-offer",handlers.ExpireProductOffer)

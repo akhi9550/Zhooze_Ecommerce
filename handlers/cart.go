@@ -156,7 +156,7 @@ func UpdateQuantityless(c *gin.Context) {
 		return
 	}
 	if err := usecase.UpdateQuantityless(id.(int), productID); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "could not Add the quantity", nil, err.Error())
+		errorRes := response.ClientResponse(http.StatusBadRequest, "could not less the quantity", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}

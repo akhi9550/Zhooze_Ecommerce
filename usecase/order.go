@@ -45,7 +45,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
-	
+
 	total, err := repository.TotalAmountInCart(orderBody.UserID)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
@@ -60,7 +60,20 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		return domain.OrderSuccessResponse{}, err
 	}
 	FinalPrice := total - discount_price
-	order_id, err := repository.OrderItems(orderBody, FinalPrice)
+	fmt.Println("final", FinalPrice)
+
+	///////////////
+	TotalPrice, err := repository.GetReferralDiscountPrice(FinalPrice, int(orderBody.UserID))
+	fmt.Println("total", TotalPrice)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	err = repository.UpdateRefferal(TotalPrice, userID)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	//////////
+	order_id, err := repository.OrderItems(orderBody, TotalPrice)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
@@ -68,7 +81,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if err := repository.AddOrderProducts(order_id, cartItems); err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
-	
+
 	orderSuccessResponse, err := repository.GetBriefOrderDetails(order_id)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err

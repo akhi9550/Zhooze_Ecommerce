@@ -387,7 +387,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin Offer Management"
                 ],
-                "summary": "Add  Category Offer",
+                "summary": "Show  Category Offer",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -462,7 +462,7 @@ const docTemplate = `{
                 "tags": [
                     "Admin Offer Management"
                 ],
-                "summary": "Add  Category Offer",
+                "summary": "Delete  Category Offer",
                 "parameters": [
                     {
                         "type": "string",

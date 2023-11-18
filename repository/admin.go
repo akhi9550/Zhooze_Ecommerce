@@ -49,7 +49,7 @@ func ShowAllUsersIn(page, count int) ([]models.UserDetailsAtAdmin, error) {
 		page = 1
 	}
 	offset := (page - 1) * count
-	err := db.DB.Raw("SELECT id,firstname,lastname,email,phone,blocked FROM users WHERE isadmin='false' limit ? offset ?", count, offset).Scan(&user).Error
+	err := db.DB.Raw("SELECT id,firstname,lastname,email,phone FROM users WHERE isadmin='false' limit ? offset ?", count, offset).Scan(&user).Error
 	if err != nil {
 		return []models.UserDetailsAtAdmin{}, err
 	}

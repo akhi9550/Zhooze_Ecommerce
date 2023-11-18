@@ -19,13 +19,13 @@ type UsedCoupon struct {
 	Used     bool    `json:"used"`
 }
 
-type OrderCoupon struct {
-	ID       uint    `json:"id" gorm:"uniquekey not null"`
-	CouponID uint    `json:"coupon_id"`
-	Coupons  Coupons `json:"-" gorm:"foreignkey:CouponID"`
-	OrderID  string  `json:"order_id"`
-	Order    Order   `json:"-" gorm:"foreignkey:OrderID"`
-}
+// type OrderCoupon struct {
+// 	ID       uint    `json:"id" gorm:"uniquekey not null"`
+// 	CouponID uint    `json:"coupon_id"`
+// 	Coupons  Coupons `json:"-" gorm:"foreignkey:CouponID"`
+// 	OrderID  string  `json:"order_id"`
+// 	Order    Order   `json:"-" gorm:"foreignkey:OrderID"`
+// }
 
 type Referral struct {
 	gorm.Model

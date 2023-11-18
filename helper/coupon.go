@@ -1,8 +1,10 @@
 package helper
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
-func GetCouponDiscountPrice(userID int, TotalPrice float64, DB *gorm.DB) (float64, error) {
+func  GetCouponDiscountPrice(userID int, TotalPrice float64, DB *gorm.DB) (float64, error) {
 
 	// If there is no coupons added for this user, return 0 as discount price
 	var count int
@@ -39,5 +41,35 @@ func GetCouponDiscountPrice(userID int, TotalPrice float64, DB *gorm.DB) (float6
 	}
 
 	return ((float64(coup.DiscountPercentage) * totalPrice) / 100), nil
+
+}
+func GetReferralDiscountPrice(FinalPrice float64, userID int, DB *gorm.DB) (float64, error) {
+	// var count int
+	// err := DB.Raw("SELECT COUNT(*) FROM referrals WHERE user_id = ?", userID).Scan(&count).Error
+	// if err != nil {
+	// 	return 0.0, err
+	// }
+
+	// if count < 0 {
+	// 	return 0.0, nil
+	// }
+
+	var Price float64
+	err := DB.Raw("SELECT referral_amount FROM referrals WHERE user_id = ? ", userID).Scan(&Price).Error
+	if err != nil {
+		return 0.0, err
+	}
+
+	var totalPrice float64
+
+	err = DB.Raw("SELECT COALESCE(SUM(total_price), 0) FROM carts WHERE user_id = ?", userID).Scan(&totalPrice).Error
+	if err != nil {
+		return 0.0, err
+	}
+
+	if totalPrice < Price {
+		return 0.0, nil
+	}
+	return (totalPrice - Price), nil
 
 }

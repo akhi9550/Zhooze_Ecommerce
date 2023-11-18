@@ -82,7 +82,7 @@ func GetProductOffer(c *gin.Context) {
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/offer/product-offer   [DELETE]
-func ExpireProductOffer(c *gin.Context) {
+func DeleteProductOffer(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
@@ -139,7 +139,7 @@ func AddCategoryOffer(c *gin.Context) {
 
 }
 
-// @Summary Add  Category Offer
+// @Summary Show  Category Offer
 // @Description Add a new Offer for a category by specifying a limit
 // @Tags Admin Offer Management
 // @Accept json
@@ -162,7 +162,7 @@ func GetCategoryOffer(c *gin.Context) {
 
 }
 
-// @Summary Add  Category Offer
+// @Summary Delete  Category Offer
 // @Description Add a new Offer for a category by specifying a limit
 // @Tags Admin Offer Management
 // @Accept json
@@ -172,7 +172,7 @@ func GetCategoryOffer(c *gin.Context) {
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/offer/category-offer   [DELETE]
-func ExpireCategoryOffer(c *gin.Context) {
+func DeleteCategoryOffer(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())

@@ -270,19 +270,28 @@ func RemoveFromUserProfile(userID, addressID int) error {
 	}
 	return nil
 }
-func GetReferralAndTotalAmount(userID int) (float64, float64, error) {
+func GetReferralAndTotalAmount(userID int) ( float64, error) {
 	// first check whether the cart is empty -- do this for coupon too
 	var cartDetails struct {
 		ReferralAmount  float64
-		TotalCartAmount float64
+	
 	}
 
-	err := db.DB.Raw("SELECT (SELECT referral_amount FROM referrals WHERE user_id = ?) AS referral_amount, COALESCE(SUM(total_price), 0) AS total_cart_amount FROM carts WHERE user_id = ?", userID, userID).Scan(&cartDetails).Error
+	err := db.DB.Raw("SELECT referral_amount  AS referral_amount FROM referrals WHERE user_id = ?", userID).Scan(&cartDetails).Error
 	if err != nil {
-		return 0.0, 0.0, err
+		return 0.0,  err
 	}
 
-	return cartDetails.ReferralAmount, cartDetails.TotalCartAmount, nil
+	return cartDetails.ReferralAmount,  nil
+
+}
+func TotalPriceFromCart(userID int) (float64, error) {
+	var totalPrice float64
+	err := db.DB.Raw("SELECT COALESCE(SUM(total_price), 0) FROM carts WHERE user_id = ?", userID).Scan(&totalPrice).Error
+	if err != nil {
+		return 0.0, err
+	}
+	return totalPrice, nil
 
 }
 func UpdateSomethingBasedOnUserID(tableName string, columnName string, updateValue float64, userID int) error {

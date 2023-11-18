@@ -16,12 +16,11 @@ type UserDetailsResponse struct {
 	Phone     string `json:"phone"`
 }
 type UserDetailsAtAdmin struct {
-	Id          int    `json:"id"`
-	Firstname   string `json:"firstname"`
-	Lastname    string `json:"lastname"`
-	Email       string `json:"email"`
-	Phone       string `json:"phone"`
-	BlockStatus bool   `json:"block_status"`
+	Id        int    `json:"id"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
 }
 type TokenUser struct {
 	Users        UserDetailsResponse

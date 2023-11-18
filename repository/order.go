@@ -395,6 +395,24 @@ func GetCouponDiscountPrice(UserID int, Total float64) (float64, error) {
 	return discountPrice, nil
 
 }
+func GetReferralDiscountPrice(FinalPrice float64, UserID int) (float64, error) {
+	discountPrice, err := helper.GetReferralDiscountPrice(FinalPrice, UserID, db.DB)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return discountPrice, nil
+
+}
+func UpdateRefferal(TotalPrice float64, userID int) error {
+	if TotalPrice != 0.0 {
+		err := db.DB.Exec("UPDATE referrals SET referral_amount = 0 WHERE user_id = ?", userID).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 func UpdateCouponDetails(discount_price float64, UserID int) error {
 
 	if discount_price != 0.0 {

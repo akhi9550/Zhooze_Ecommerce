@@ -481,7 +481,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - Bearer: []
-      summary: Add  Category Offer
+      summary: Delete  Category Offer
       tags:
       - Admin Offer Management
     get:
@@ -501,7 +501,7 @@ paths:
             $ref: '#/definitions/response.Response'
       security:
       - Bearer: []
-      summary: Add  Category Offer
+      summary: Show  Category Offer
       tags:
       - Admin Offer Management
     post:

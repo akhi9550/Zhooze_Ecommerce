@@ -66,12 +66,12 @@ func AdminRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		offer := r.Group("/offer")
 		{
 			offer.POST("/product-offer", handlers.AddProdcutOffer)
-			offer.GET("/product-offer",handlers.GetProductOffer)
-			offer.DELETE("/product-offer",handlers.ExpireProductOffer)
+			offer.GET("/product-offer", handlers.GetProductOffer)
+			offer.DELETE("/product-offer", handlers.DeleteProductOffer)
 
 			offer.POST("/category-offer", handlers.AddCategoryOffer)
-			offer.GET("/category-offer",handlers.GetCategoryOffer)
-			offer.DELETE("/category-offer",handlers.ExpireCategoryOffer)
+			offer.GET("/category-offer", handlers.GetCategoryOffer)
+			offer.DELETE("/category-offer", handlers.DeleteCategoryOffer)
 		}
 
 	}

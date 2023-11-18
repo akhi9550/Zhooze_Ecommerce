@@ -8,7 +8,7 @@ import (
 
 func GetWishList(userID int) ([]models.WishListResponse, error) {
 	var wishList []models.WishListResponse
-	err := db.DB.Raw("SELECT products.id as product_id,products.name as product_name,products.price as product_price FROM products INNER JOIN wish_lists ON products.id = wish_lists.product_id WHERE wish_lists.user_id = ?", userID).Scan(&wishList).Error
+	err := db.DB.Raw("SELECT products.id as product_id,products.name as product_name,products.description FROM products INNER JOIN wish_lists ON products.id = wish_lists.product_id WHERE wish_lists.user_id = ?", userID).Scan(&wishList).Error
 	if err != nil {
 		return []models.WishListResponse{}, err
 	}

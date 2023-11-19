@@ -342,11 +342,11 @@ func AddAmountToOrder(Price float64, orderID uint) error {
 	}
 	return nil
 }
-func GetOrder(orderID int) (domain.Order, error) {
-	var order domain.Order
+func GetOrder(orderID int) (domain.Orders, error) {
+	var order domain.Orders
 	err := db.DB.Raw("SELECT * FROM orders WHERE id = ?", orderID).Scan(&order).Error
 	if err != nil {
-		return domain.Order{}, err
+		return domain.Orders{}, err
 	}
 	return order, nil
 }

@@ -60,7 +60,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		return domain.OrderSuccessResponse{}, err
 	}
 	FinalPrice := total - discount_price
-	fmt.Println("final", FinalPrice)
+	fmt.Println("final,😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️", FinalPrice)
 
 	///////////////
 	TotalPrice, err := repository.GetReferralDiscountPrice(FinalPrice, int(orderBody.UserID))

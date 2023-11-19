@@ -328,7 +328,7 @@ func ForgotPasswordVerifyAndChange(c *gin.Context) {
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /referral/apply [get]
+// @Router  /user/referral/apply   [GET]
 func ApplyReferral(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")

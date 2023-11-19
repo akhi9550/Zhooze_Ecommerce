@@ -195,6 +195,14 @@ func ProductStock(productID int) (int, error) {
 	}
 	return a, nil
 }
+func StockFormCart(productID int) (int, error) {
+	var a int
+	err := db.DB.Raw("SELECT quantity  FROM carts WHERE product_id = ?", productID).Scan(&a).Error
+	if err != nil {
+		return 0, err
+	}
+	return a, nil
+}
 func ProductExistCart(userID, productID int) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? AND product_id = ?", userID, productID).Scan(&count).Error
@@ -213,8 +221,8 @@ func UpdateQuantityAdd(id, prdt_id int) error {
 	return nil
 }
 
-func UpdateTotalPrice(ID, productID int) error {
-	err := db.DB.Exec(` UPDATE carts SET total_price = quantity * (select price from products where id = $1) WHERE user_id =$2 AND product_id = $3`, productID, ID, productID).Error
+func UpdateTotalPrice(ID, productID int, FinalPrice float64) error {
+	err := db.DB.Exec(`UPDATE carts SET total_price = $1 WHERE user_id =$2 AND product_id = $3`, FinalPrice, ID, productID).Error
 	if err != nil {
 		return err
 	}
@@ -270,19 +278,18 @@ func RemoveFromUserProfile(userID, addressID int) error {
 	}
 	return nil
 }
-func GetReferralAndTotalAmount(userID int) ( float64, error) {
+func GetReferralAndTotalAmount(userID int) (float64, error) {
 	// first check whether the cart is empty -- do this for coupon too
 	var cartDetails struct {
-		ReferralAmount  float64
-	
+		ReferralAmount float64
 	}
 
 	err := db.DB.Raw("SELECT referral_amount  AS referral_amount FROM referrals WHERE user_id = ?", userID).Scan(&cartDetails).Error
 	if err != nil {
-		return 0.0,  err
+		return 0.0, err
 	}
 
-	return cartDetails.ReferralAmount,  nil
+	return cartDetails.ReferralAmount, nil
 
 }
 func TotalPriceFromCart(userID int) (float64, error) {

@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Order struct {
+type Orders struct {
 	gorm.Model
 	UserID          int           `json:"user_id" gorm:"not null"`
 	User            User          `json:"-" gorm:"foreignkey:UserID"`
@@ -21,7 +21,7 @@ type Order struct {
 type OrderItem struct {
 	ID         uint    `json:"id" gorm:"primaryKey;not null"`
 	OrderID    uint    `json:"order_id"`
-	Order      Order   `json:"-" gorm:"foreignkey:OrderID;constraint:OnDelete:CASCADE"`
+	Order      Orders   `json:"-" gorm:"foreignkey:OrderID;constraint:OnDelete:CASCADE"`
 	ProductID  uint    `json:"product_id"`
 	Products   Product `json:"-" gorm:"foreignkey:ProductID"`
 	Quantity   float64 `json:"quantity"`

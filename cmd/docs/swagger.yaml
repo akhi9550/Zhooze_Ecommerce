@@ -360,6 +360,80 @@ paths:
       summary: Update Category
       tags:
       - Admin Category Management
+  /admin/categoryoffer:
+    delete:
+      consumes:
+      - application/json
+      description: Add a new Offer for a category by specifying a limit
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete  Category Offer
+      tags:
+      - Admin Offer Management
+    get:
+      consumes:
+      - application/json
+      description: Add a new Offer for a category by specifying a limit
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Show  Category Offer
+      tags:
+      - Admin Offer Management
+    post:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      parameters:
+      - description: Add new category Offer
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryOfferReceiver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add Category Offer
+      tags:
+      - Admin Offer Management
   /admin/coupons:
     get:
       consumes:
@@ -457,154 +531,6 @@ paths:
       summary: Admin Dashboard
       tags:
       - Admin
-  /admin/offer/category-offer:
-    delete:
-      consumes:
-      - application/json
-      description: Add a new Offer for a category by specifying a limit
-      parameters:
-      - description: id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Delete  Category Offer
-      tags:
-      - Admin Offer Management
-    get:
-      consumes:
-      - application/json
-      description: Add a new Offer for a category by specifying a limit
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Show  Category Offer
-      tags:
-      - Admin Offer Management
-    post:
-      consumes:
-      - application/json
-      description: Add a new Offer for a product by specifying a limit
-      parameters:
-      - description: Add new category Offer
-        in: body
-        name: coupon
-        required: true
-        schema:
-          $ref: '#/definitions/models.CategoryOfferReceiver'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add Category Offer
-      tags:
-      - Admin Offer Management
-  /admin/offer/product-offer:
-    delete:
-      consumes:
-      - application/json
-      description: Add a new Offer for a product by specifying a limit
-      parameters:
-      - description: id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add  Product Offer
-      tags:
-      - Admin Offer Management
-    get:
-      consumes:
-      - application/json
-      description: Add a new Offer for a product by specifying a limit
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add  Product Offer
-      tags:
-      - Admin Offer Management
-    post:
-      consumes:
-      - application/json
-      description: Add a new Offer for a product by specifying a limit
-      parameters:
-      - description: Add new Product Offer
-        in: body
-        name: coupon
-        required: true
-        schema:
-          $ref: '#/definitions/models.ProductOfferReceiver'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Add  Product Offer
-      tags:
-      - Admin Offer Management
   /admin/order:
     get:
       consumes:
@@ -763,6 +689,80 @@ paths:
       summary: Add Payment Method
       tags:
       - Admin Payment Method
+  /admin/productoffer:
+    delete:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      parameters:
+      - description: id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Delete  Product Offer
+      tags:
+      - Admin Offer Management
+    get:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Show  Product Offer
+      tags:
+      - Admin Offer Management
+    post:
+      consumes:
+      - application/json
+      description: Add a new Offer for a product by specifying a limit
+      parameters:
+      - description: Add new Product Offer
+        in: body
+        name: coupon
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductOfferReceiver'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Add  Product Offer
+      tags:
+      - Admin Offer Management
   /admin/products:
     delete:
       consumes:
@@ -1044,27 +1044,6 @@ paths:
       summary: UnBlock an existing user
       tags:
       - Admin User Management
-  /referral/apply:
-    get:
-      consumes:
-      - application/json
-      description: Apply referrals amount to order
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Apply referrals
-      tags:
-      - User Checkout
   /user/address:
     delete:
       consumes:
@@ -1617,6 +1596,27 @@ paths:
       summary: Get Products Details to users
       tags:
       - User Product
+  /user/referral/apply:
+    get:
+      consumes:
+      - application/json
+      description: Apply referrals amount to order
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Apply referrals
+      tags:
+      - User Checkout
   /user/send-otp:
     post:
       consumes:

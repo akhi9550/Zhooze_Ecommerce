@@ -29,8 +29,10 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		products.GET("/image", handlers.ShowImages)
 
 	}
+
 	r.Use(middleware.UserAuthMiddleware())
 	{
+
 		address := r.Group("/address")
 		{
 			address.GET("", handlers.GetAllAddress)
@@ -60,7 +62,6 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			cart.DELETE("/empty", handlers.EmptyCart)
 			cart.PUT("/updatequantityadd", handlers.UpdateQuantityAdd)
 			cart.PUT("/updatequantityless", handlers.UpdateQuantityless)
-
 		}
 
 		order := r.Group("/order")
@@ -71,8 +72,10 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/place-order", handlers.PlaceOrderCOD)
 			order.PUT("", handlers.CancelOrder)
 		}
+
 		r.POST("/coupon/apply", handlers.ApplyCoupon)
 		r.GET("/referral/apply", handlers.ApplyReferral)
+
 	}
 
 	return r

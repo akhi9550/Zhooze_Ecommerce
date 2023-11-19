@@ -20,7 +20,7 @@ import (
 // @Param coupon body models.ProductOfferReceiver true "Add new Product Offer"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/product-offer [POST]
+// @Router /admin/productoffer [POST]
 func AddProdcutOffer(c *gin.Context) {
 
 	var productOffer models.ProductOfferReceiver
@@ -49,7 +49,7 @@ func AddProdcutOffer(c *gin.Context) {
 
 }
 
-// @Summary Add  Product Offer
+// @Summary Show  Product Offer
 // @Description Add a new Offer for a product by specifying a limit
 // @Tags Admin Offer Management
 // @Accept json
@@ -57,7 +57,7 @@ func AddProdcutOffer(c *gin.Context) {
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/product-offer [GET]
+// @Router /admin/productoffer [GET]
 func GetProductOffer(c *gin.Context) {
 
 	categories, err := usecase.GetOffers()
@@ -72,7 +72,7 @@ func GetProductOffer(c *gin.Context) {
 
 }
 
-// @Summary Add  Product Offer
+// @Summary Delete  Product Offer
 // @Description Add a new Offer for a product by specifying a limit
 // @Tags Admin Offer Management
 // @Accept json
@@ -81,7 +81,7 @@ func GetProductOffer(c *gin.Context) {
 // @Param	id	query	string	true	"id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/product-offer   [DELETE]
+// @Router /admin/productoffer   [DELETE]
 func DeleteProductOffer(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {
@@ -110,7 +110,7 @@ func DeleteProductOffer(c *gin.Context) {
 // @Param coupon body models.CategoryOfferReceiver  true "Add new category Offer"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/category-offer [POST]
+// @Router /admin/categoryoffer [POST]
 func AddCategoryOffer(c *gin.Context) {
 
 	var categoryOffer models.CategoryOfferReceiver
@@ -147,7 +147,7 @@ func AddCategoryOffer(c *gin.Context) {
 // @Security Bearer
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/category-offer [GET]
+// @Router /admin/categoryoffer    [GET]
 func GetCategoryOffer(c *gin.Context) {
 
 	categories, err := usecase.GetCategoryOffer()
@@ -171,7 +171,7 @@ func GetCategoryOffer(c *gin.Context) {
 // @Param	id	query	string	true	"id"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /admin/offer/category-offer   [DELETE]
+// @Router /admin/categoryoffer   [DELETE]
 func DeleteCategoryOffer(c *gin.Context) {
 	id, err := strconv.Atoi(c.Query("id"))
 	if err != nil {

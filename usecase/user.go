@@ -232,7 +232,48 @@ func UpdateQuantityAdd(id, productID int) error {
 	if err != nil {
 		return err
 	}
-	err = repository.UpdateTotalPrice(id, productID)
+	stockfromcart, err := repository.StockFormCart(productID)
+	if err != nil {
+		return err
+	}
+	fmt.Println("✌️✌️✌️✌️", stockfromcart)
+	if stock == stockfromcart {
+		return errors.New("its maximum no more updation")
+	}
+	////////////////////////////
+	productPrice, err := repository.GetPriceOfProductFromID(productID)
+	if err != nil {
+
+		return err
+	}
+	discount_percentage, err := repository.FindDiscountPercentageForProduct(productID)
+	if err != nil {
+		return errors.New("there was some error in finding the discounted prices")
+	}
+	var discount float64
+
+	if discount_percentage > 0 {
+		discount = (productPrice * float64(discount_percentage)) / 100
+	}
+
+	Price := productPrice - discount
+	categoryID, err := repository.FindCategoryID(productID)
+	if err != nil {
+		return err
+	}
+	discount_percentageCategory, err := repository.FindDiscountPercentageForCategory(categoryID)
+	if err != nil {
+		return errors.New("there was some error in finding the discounted prices")
+	}
+	var discountcategory float64
+
+	if discount_percentageCategory > 0 {
+		discountcategory = (productPrice * float64(discount_percentageCategory)) / 100
+	}
+
+	FinalPrice := Price - discountcategory
+	FinalPrice = FinalPrice * float64(stockfromcart)
+	err = repository.UpdateTotalPrice(id, productID, FinalPrice)
 	if err != nil {
 		return err
 	}
@@ -253,18 +294,54 @@ func UpdateQuantityless(id, productID int) error {
 		return err
 	}
 	if stock <= 1 {
-		return errors.New("its  maximum")
+		return errors.New("its  minimum")
 	}
 	err = repository.UpdateQuantityless(id, productID)
 	if err != nil {
 		return err
 	}
-	err = repository.UpdateTotalPrice(id, productID)
+	stockfromcart, err := repository.StockFormCart(productID)
 	if err != nil {
 		return err
 	}
+	productPrice, err := repository.GetPriceOfProductFromID(productID)
+	if err != nil {
 
+		return err
+	}
+	discount_percentage, err := repository.FindDiscountPercentageForProduct(productID)
+	if err != nil {
+		return errors.New("there was some error in finding the discounted prices")
+	}
+	var discount float64
+
+	if discount_percentage > 0 {
+		discount = (productPrice * float64(discount_percentage)) / 100
+	}
+
+	Price := productPrice - discount
+	categoryID, err := repository.FindCategoryID(productID)
+	if err != nil {
+		return err
+	}
+	discount_percentageCategory, err := repository.FindDiscountPercentageForCategory(categoryID)
+	if err != nil {
+		return errors.New("there was some error in finding the discounted prices")
+	}
+	var discountcategory float64
+
+	if discount_percentageCategory > 0 {
+		discountcategory = (productPrice * float64(discount_percentageCategory)) / 100
+	}
+
+	FinalPrice := Price - discountcategory
+	FinalPrice = FinalPrice * float64(stockfromcart)
+	err = repository.UpdateTotalPrice(id, productID, FinalPrice)
+	if err != nil {
+		return err
+	}
 	return nil
+
 }
 
 func ForgotPasswordSend(phone string) error {

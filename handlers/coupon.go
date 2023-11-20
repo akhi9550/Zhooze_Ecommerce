@@ -115,7 +115,7 @@ func ExpireCoupon(c *gin.Context) {
 
 // @Summary Apply coupon on Checkout Section
 // @Description Add coupon to get discount on Checkout section
-// @Tags User Checkout
+// @Tags User Coupon Adding
 // @Accept json
 // @Produce json
 // @Security Bearer

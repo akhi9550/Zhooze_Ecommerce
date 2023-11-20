@@ -104,7 +104,7 @@ func DashBoardOrder() (models.DashboardOrder, error) {
 		return models.DashboardOrder{}, nil
 	}
 
-	err = db.DB.Raw("select sum(quantity) from carts").Scan(&orderDetail.TotalOrderItem).Error
+	err = db.DB.Raw("select COALESCE(SUM(quantity),0) from carts").Scan(&orderDetail.TotalOrderItem).Error
 	if err != nil {
 		return models.DashboardOrder{}, nil
 	}

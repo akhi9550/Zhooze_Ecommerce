@@ -90,6 +90,14 @@ func GetShipmentStatus(orderID int) (string, error) {
 	}
 	return status, nil
 }
+func PaymentStatus(orderID int) (string, error) {
+	var status string
+	err := db.DB.Raw("SELECT payment_status FROM orders WHERE id= ?", orderID).Scan(&status).Error
+	if err != nil {
+		return "", err
+	}
+	return status, nil
+}
 func UserOrderRelationship(orderID int, userID int) (int, error) {
 
 	var testUserID int
@@ -127,6 +135,7 @@ func CancelOrders(orderID int) error {
 	}
 	return nil
 }
+
 func PaymentMethodID(orderID int) (int, error) {
 	var a int
 	err := db.DB.Raw("SELECT payment_method_id FROM orders WHERE id = ?", orderID).Scan(&a).Error
@@ -159,6 +168,29 @@ func UpdateQuantityOfProduct(orderProducts []models.OrderProducts) error {
 	}
 	return nil
 
+}
+func TotalAmountFromOrder(orderID int) (float64, error) {
+	var total float64
+	err := db.DB.Raw("SELECT final_price FROM orders WHERE id = ?", orderID).Scan(&total).Error
+	if err != nil {
+		return 0.0, err
+	}
+	return total, nil
+}
+func UserIDFromOrder(orderID int) (int, error) {
+	var a int
+	err := db.DB.Raw("SELECT user_id FROM order WHERE id = ?", orderID).Scan(&a).Error
+	if err != nil {
+		return 0, err
+	}
+	return a, nil
+}
+func UpdateAmountToWallet(userID int, amount float64) error {
+	err := db.DB.Exec("UPDATE wallets SET amount = amount + ? WHERE user_id = ?", amount, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
 func PaymentAlreadyPaid(orderID int) (bool, error) {
 	var a bool

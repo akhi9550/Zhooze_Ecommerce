@@ -60,8 +60,6 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		return domain.OrderSuccessResponse{}, err
 	}
 	FinalPrice := total - discount_price
-	fmt.Println("final,😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️", FinalPrice)
-	////
 	if orderBody.PaymentID == 3 {
 		wallectAmount, err := repository.WallectAmount(userID)
 		if err != nil {
@@ -76,7 +74,6 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
-	////
 	if orderBody.PaymentID == 3 {
 		if err := repository.UpdateWallectAfterOrder(userID, FinalPrice); err != nil {
 			return domain.OrderSuccessResponse{}, err
@@ -132,7 +129,7 @@ func CancelOrders(orderID int, userId int) error {
 
 	if shipmentStatus == "pending" || shipmentStatus == "returned" || shipmentStatus == "return" {
 		message := fmt.Sprint(shipmentStatus)
-		return errors.New("the order is in" + message + ", so no point in cancelling")
+		return errors.New("the order is in " + message + ", so no point in cancelling")
 	}
 
 	if shipmentStatus == "cancelled" {
@@ -142,13 +139,28 @@ func CancelOrders(orderID int, userId int) error {
 	if err != nil {
 		return err
 	}
+	payment_status, err := repository.PaymentStatus(orderID)
+	if err != nil {
+		return err
+	}
 	err = repository.UpdateQuantityOfProduct(orderProductDetails)
 	if err != nil {
 		return err
 	}
+	amount, err := repository.TotalAmountFromOrder(orderID)
+	if err != nil {
+		return err
+	}
+	if payment_status == "refunded" {
+		err = repository.UpdateAmountToWallet(userId, amount)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 
 }
+
 func Checkout(userID int) (models.CheckoutDetails, error) {
 	allUserAddress, err := repository.GetAllAddresses(userID)
 	if err != nil {

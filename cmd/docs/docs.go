@@ -1708,7 +1708,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/user/coupon/apply": {
+        "/user/coupon": {
             "post": {
                 "security": [
                     {
@@ -2160,40 +2160,6 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/referral/apply": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "description": "Apply referrals amount to order",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "User Checkout"
-                ],
-                "summary": "Apply referrals",
                 "responses": {
                     "200": {
                         "description": "OK",

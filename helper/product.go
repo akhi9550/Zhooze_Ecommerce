@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"mime/multipart"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -11,6 +12,25 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/joho/godotenv"
 )
+
+func GetImageMimeType(filename string) string {
+	extension := strings.ToLower(strings.Split(filename, ".")[len(strings.Split(filename, "."))-1])
+
+	imageMimeTypes := map[string]string{
+		"jpg":  "image/jpeg",
+		"jpeg": "image/jpeg",
+		"png":  "image/png",
+		"gif":  "image/gif",
+		"bmp":  "image/bmp",
+		"webp": "image/webp",
+	}
+
+	if mimeType, ok := imageMimeTypes[extension]; ok {
+		return mimeType
+	}
+
+	return "application/octet-stream"
+}
 
 func AddImageToS3(file *multipart.FileHeader) (string, error) {
 	f, openErr := file.Open()
@@ -22,8 +42,7 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 	if err := godotenv.Load(); err != nil {
 		return "", err
 	}
-
-	// Create a new AWS session with the loaded access keys
+	mimeType := GetImageMimeType(file.Filename)
 	sess, err := session.NewSession(&aws.Config{
 		Region: aws.String(os.Getenv("REGION")),
 		Credentials: credentials.NewStaticCredentials(
@@ -31,7 +50,6 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 			os.Getenv("AWS_SECRET_ACCESS_KEY"),
 			"",
 		),
-		// Add more configurations if needed.
 	})
 	if err != nil {
 		return "", err
@@ -39,15 +57,16 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 	// Create an S3 uploader with the session and default options
 	uploader := s3manager.NewUploader(sess)
 	BucketName := "zhooze"
-	// Upload the video data to S3
+	//upload data(video or image)
 	_, err = uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(BucketName),
-		Key:    aws.String(file.Filename),
-		Body:   f,
+		Bucket:      aws.String(BucketName),
+		Key:         aws.String(file.Filename),
+		Body:        f,
+		ContentType: aws.String(mimeType),
 	})
 	if err != nil {
 		return "", err
 	}
-	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", BucketName, file.Filename)
+	url := fmt.Sprintf("https://d2jkb5eqmpty2t.cloudfront.net/%s", file.Filename)
 	return url, nil
 }

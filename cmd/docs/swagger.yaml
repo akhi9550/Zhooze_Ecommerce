@@ -1298,7 +1298,7 @@ paths:
       summary: Subtract quantity in cart by one
       tags:
       - User Cart Management
-  /user/coupon/apply:
+  /user/coupon:
     post:
       consumes:
       - application/json
@@ -1596,27 +1596,6 @@ paths:
       summary: Get Products Details to users
       tags:
       - User Product
-  /user/referral/apply:
-    get:
-      consumes:
-      - application/json
-      description: Apply referrals amount to order
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Apply referrals
-      tags:
-      - User Checkout
   /user/send-otp:
     post:
       consumes:

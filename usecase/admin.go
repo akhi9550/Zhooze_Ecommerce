@@ -138,17 +138,17 @@ func ApproveOrder(orderId int) error {
 	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
 	return nil
 }
-func CancelOrderFromAdmin(order_id int) error {
-	ok, err := repository.CheckOrderID(order_id)
+func CancelOrderFromAdmin(orderID int) error {
+	ok, err := repository.CheckOrderID(orderID)
 	fmt.Println(err)
 	if !ok {
 		return err
 	}
-	orderProduct, err := repository.GetProductDetailsFromOrders(order_id)
+	orderProduct, err := repository.GetProductDetailsFromOrders(orderID)
 	if err != nil {
 		return err
 	}
-	err = repository.CancelOrders(order_id)
+	err = repository.CancelOrders(orderID)
 	if err != nil {
 		return err
 	}
@@ -156,7 +156,27 @@ func CancelOrderFromAdmin(order_id int) error {
 	if err != nil {
 		return err
 	}
+	//////
+	payment_status, err := repository.PaymentStatus(orderID)
+	if err != nil {
+		return err
+	}
+	amount, err := repository.TotalAmountFromOrder(orderID)
+	if err != nil {
+		return err
+	}
+	userID, err := repository.UserIDFromOrder(orderID)
+	if err != nil {
+		return err
+	}
+	if payment_status == "paid" {
+		err = repository.UpdateAmountToWallet(userID, amount)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
+
 }
 
 //	func RefundUser(orderID string) error {
@@ -181,7 +201,7 @@ func FilteredSalesReport(timePeriod string) (models.SalesReport, error) {
 
 }
 func ExecuteSalesReportByDate(startDate, endDate time.Time) (models.SalesReport, error) {
-	orders, err :=repository.FilteredSalesReport(startDate, endDate)
+	orders, err := repository.FilteredSalesReport(startDate, endDate)
 	if err != nil {
 		return models.SalesReport{}, errors.New("report fetching failed")
 	}

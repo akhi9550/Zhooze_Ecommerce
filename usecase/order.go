@@ -61,28 +61,31 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	}
 	FinalPrice := total - discount_price
 	fmt.Println("final,😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️😶‍🌫️", FinalPrice)
-
-	///////////////
-	TotalPrice, err := repository.GetReferralDiscountPrice(FinalPrice, int(orderBody.UserID))
-	fmt.Println("total", TotalPrice)
-	if err != nil {
-		return domain.OrderSuccessResponse{}, err
-	}
-	err = repository.UpdateRefferal(TotalPrice, userID)
-	if err != nil {
-		return domain.OrderSuccessResponse{}, err
-	}
-	//////////
-	order_id, err := repository.OrderItems(orderBody, TotalPrice)
-	if err != nil {
-		return domain.OrderSuccessResponse{}, err
+	////
+	if orderBody.PaymentID == 3 {
+		wallectAmount, err := repository.WallectAmount(userID)
+		if err != nil {
+			return domain.OrderSuccessResponse{}, err
+		}
+		if FinalPrice >= wallectAmount {
+			return domain.OrderSuccessResponse{}, errors.New("this much of amount not available in wallet")
+		}
 	}
 
+	order_id, err := repository.OrderItems(orderBody, FinalPrice)
+	if err != nil {
+		return domain.OrderSuccessResponse{}, err
+	}
+	////
+	if orderBody.PaymentID == 3 {
+		if err := repository.UpdateWallectAfterOrder(userID, FinalPrice); err != nil {
+			return domain.OrderSuccessResponse{}, err
+		}
+	}
 	if err := repository.AddOrderProducts(order_id, cartItems); err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
-
-	orderSuccessResponse, err := repository.GetBriefOrderDetails(order_id)
+	orderSuccessResponse, err := repository.GetBriefOrderDetails(order_id, orderBody.PaymentID)
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
@@ -151,7 +154,7 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}
-	paymentDetails, err := repository.GetAllPaymentOption()
+	paymentDetails, err := repository.GetAllPaymentOption(userID)
 	if err != nil {
 		return models.CheckoutDetails{}, err
 	}

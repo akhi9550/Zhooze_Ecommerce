@@ -122,7 +122,7 @@ func ExpireCoupon(c *gin.Context) {
 // @Param couponDetails body models.CouponAddUser true "Add coupon to order"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/coupon/apply [POST]
+// @Router /user/coupon   [POST]
 func ApplyCoupon(c *gin.Context) {
 
 	userID, _ := c.Get("user_id")

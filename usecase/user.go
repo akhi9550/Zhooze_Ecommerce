@@ -63,7 +63,26 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 			if err != nil {
 				return &models.TokenUser{}, err
 			}
-
+			///////////////
+			amount, err := repository.AmountInrefferals(userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			wallectExist, err := repository.ExistWallect(userData.Id)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			if !wallectExist {
+				err = repository.NewWallect(userData.Id,amount)
+				if err != nil {
+					return &models.TokenUser{}, err
+				}
+			}
+			err = repository.UpdateReferUserWallect(amount, referredUserId)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
+			/////////////////
 		}
 	}
 	accessToken, err := helper.GenerateAccessToken(userData)
@@ -232,12 +251,13 @@ func UpdateQuantityAdd(id, productID int) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("🤣🤣", stock)
 	stockfromcart, err := repository.StockFormCart(productID)
 	if err != nil {
 		return err
 	}
 	fmt.Println("✌️✌️✌️✌️", stockfromcart)
-	if stock == stockfromcart {
+	if stock < stockfromcart {
 		return errors.New("its maximum no more updation")
 	}
 	////////////////////////////
@@ -380,103 +400,6 @@ func ForgotPasswordVerifyAndChange(model models.ForgotVerify) error {
 	if err := repository.ChangePassword(id, string(newpassword)); err != nil {
 		return errors.New("could not change password")
 	}
-
-	return nil
-}
-
-// func GetCart(id, cart_id int) (models.GetCartResponse, error) {
-// 	products, err := repository.GetProductsInCart(cart_id)
-// 	if err != nil {
-// 		return models.GetCartResponse{}, errors.New("internal error")
-// 	}
-// 	var product_names []string
-// 	for i := range products {
-// 		product_name, err := repository.FindProductNames(products[i])
-// 		if err != nil {
-// 			return models.GetCartResponse{}, errors.New("internal error")
-// 		}
-// 		product_names = append(product_names, product_name)
-// 	}
-// 	var quantity []int
-// 	for i := range products {
-// 		q, err := repository.FindCartQuantity(cart_id, products[i])
-// 		if err != nil {
-// 			return models.GetCartResponse{}, errors.New("internal error")
-// 		}
-// 		quantity = append(quantity, q)
-// 	}
-
-// 	var price []float64
-// 	for i := range products {
-// 		q, err := repository.FindPrice(products[i])
-// 		if err != nil {
-// 			return models.GetCartResponse{}, errors.New("internal error")
-// 		}
-// 		price = append(price, q)
-// 	}
-// 	var stocks []int
-
-//		for _, v := range products {
-//			stock, err := repository.FindStock(v)
-//			if err != nil {
-//				return models.GetCartResponse{}, errors.New("internal error")
-//			}
-//			stocks = append(stocks, stock)
-//		}
-//		var getcart []models.GetCart
-//		for i := range product_names {
-//			var get models.GetCart
-//			get.ID = products[i]
-//			get.ProductName = product_names[i]
-//			get.Quantity = float64(quantity[i])
-//			get.TotalPrice = price[i]
-//			get.Product.Stock = stocks[i]
-//			getcart = append(getcart, get)
-//		}
-//		var response models.GetCartResponse
-//		response.ID = cart_id
-//		response.Data = getcart
-//		return response, nil
-//	}
-func ApplyReferral(userID int) error {
-	exist, err := repository.DoesCartExist(userID)
-	if err != nil {
-		return err
-	}
-	if !exist {
-		return errors.New("cart does not exist, can't apply offer")
-	}
-	referralAmount, err := repository.GetReferralAndTotalAmount(userID)
-	if err != nil {
-		return err
-	}
-	if referralAmount <= 0.0 {
-		return errors.New("refferral amount not available")
-	}
-	totalCartAmount, err := repository.TotalPriceFromCart(userID)
-	if err != nil {
-		return err
-	}
-
-	if totalCartAmount < referralAmount {
-		return errors.New("referral discount cannot be added as the total amount is less than minimum amount for coupon")
-	}
-	// 	totalCartAmount = totalCartAmount - referralAmount
-	// 	referralAmount = 0
-	// } else {
-	// 	referralAmount = referralAmount - totalCartAmount
-	// 	totalCartAmount = 0
-	// }
-
-	// err = repository.UpdateSomethingBasedOnUserID("referrals", "referral_amount", referralAmount, userID)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// err = repository.UpdateSomethingBasedOnUserID("carts", "total_price", totalCartAmount, userID)
-	// if err != nil {
-	// 	return "", err
-	// }
 
 	return nil
 }

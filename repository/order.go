@@ -162,7 +162,7 @@ func UpdateQuantityOfProduct(orderProducts []models.OrderProducts) error {
 }
 func PaymentAlreadyPaid(orderID int) (bool, error) {
 	var a bool
-	err := db.DB.Raw("SELECT shipment_status = 'processing' AND payment_status = 'paid' FROM orders WHERE id = ?", orderID).Scan(&a).Error
+	err := db.DB.Raw("SELECT shipment_status = 'processing' AND payment_status = 'paid' OR shipment_status = 'order placed' FROM orders WHERE id = ?", orderID).Scan(&a).Error
 	if err != nil {
 		return false, err
 	}
@@ -209,7 +209,13 @@ func OrderItems(ob models.OrderIncoming, price float64) (int, error) {
 	db.DB.Raw(query, ob.UserID, ob.AddressID, ob.PaymentID, price).Scan(&id)
 	return id, nil
 }
-
+func UpdateWallectAfterOrder(userID int, amount float64) error {
+	err := db.DB.Exec("UPDATE wallets SET amount = amount - ? WHERE user_id = ?", amount, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
 func OrderExist(orderID int) error {
 	err := db.DB.Raw("SELECT id FROM orders WHERE id = ?", orderID).Error
 	if err != nil {
@@ -253,12 +259,20 @@ func UpdateCartAfterOrder(userID, productID int, quantity float64) error {
 
 	return nil
 }
-func GetBriefOrderDetails(orderID int) (domain.OrderSuccessResponse, error) {
+func GetBriefOrderDetails(orderID, paymentID int) (domain.OrderSuccessResponse, error) {
+	if paymentID == 3 {
+		err := db.DB.Exec("UPDATE orders SET shipment_status ='processing' , payment_status ='paid' WHERE id = ?", orderID).Error
+		if err != nil {
+			return domain.OrderSuccessResponse{}, err
+
+		}
+	}
 	var orderSuccessResponse domain.OrderSuccessResponse
 	err := db.DB.Raw(`SELECT id as order_id,shipment_status FROM orders WHERE id = ?`, orderID).Scan(&orderSuccessResponse).Error
 	if err != nil {
 		return domain.OrderSuccessResponse{}, err
 	}
+
 	return orderSuccessResponse, nil
 }
 func UpdateStockOfProduct(orderProducts []models.OrderProducts) error {
@@ -381,7 +395,7 @@ func GetPaymentId(paymentID int) bool {
 }
 func TotalAmountInCart(userID int) (float64, error) {
 	var price float64
-	if err := db.DB.Raw("SELECT sum(total_price) FROM carts WHERE  user_id= $1", userID).Scan(&price).Error; err != nil {
+	if err := db.DB.Raw("SELECT SUM(total_price) FROM carts WHERE  user_id= $1", userID).Scan(&price).Error; err != nil {
 		return 0, err
 	}
 	return price, nil
@@ -423,6 +437,18 @@ func UpdateCouponDetails(discount_price float64, UserID int) error {
 	}
 	return nil
 }
+
+// ///////////////
+func WallectAmount(userID int) (float64, error) {
+	var a float64
+	err := db.DB.Raw("SELECT amount FROM wallets WHERE user_id = $1", userID).Scan(&a).Error
+	if err != nil {
+		return 0.0, err
+	}
+	return a, nil
+}
+
+// ////////////////////////
 func GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
 	var addressResponse []models.AddressInfoResponse
 	err := db.DB.Raw(`SELECT * FROM addresses WHERE user_id = $1`, userID).Scan(&addressResponse).Error
@@ -432,14 +458,21 @@ func GetAllAddresses(userID int) ([]models.AddressInfoResponse, error) {
 
 	return addressResponse, nil
 }
-func GetAllPaymentOption() ([]models.PaymentDetails, error) {
-	var paymentMethods []models.PaymentDetails
+func GetAllPaymentOption(userID int) ([]models.PaymentDetails, error) {
+	var fullPaymentDetails []models.PaymentDetails
+	var paymentMethods []models.PaymentDetail
 	err := db.DB.Raw("SELECT * FROM payment_methods").Scan(&paymentMethods).Error
 	if err != nil {
 		return []models.PaymentDetails{}, err
 	}
+	var a float64
+	err = db.DB.Raw("SELECT amount FROM wallets WHERE user_id = ?", userID).Scan(&a).Error
+	if err != nil {
+		return []models.PaymentDetails{}, err
+	}
+	fullPaymentDetails = append(fullPaymentDetails, models.PaymentDetails{PaymentDetail: paymentMethods, WallectAmount: a})
 
-	return paymentMethods, nil
+	return fullPaymentDetails, nil
 
 }
 func GetAddressFromOrderId(orderID int) (models.AddressInfoResponse, error) {

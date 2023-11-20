@@ -320,25 +320,3 @@ func ForgotPasswordVerifyAndChange(c *gin.Context) {
 	success := response.ClientResponse(http.StatusOK, "Successfully Changed the password", nil, nil)
 	c.JSON(http.StatusOK, success)
 }
-// @Summary Apply referrals
-// @Description Apply referrals amount to order
-// @Tags User Checkout
-// @Accept json
-// @Produce json
-// @Security Bearer
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router  /user/referral/apply   [GET]
-func ApplyReferral(c *gin.Context) {
-
-	userID, _ := c.Get("user_id")
-	err := usecase.ApplyReferral(userID.(int))
-	if err != nil {
-		errRes := response.ClientResponse(http.StatusInternalServerError, "could not add referral amount", nil, err.Error())
-		c.JSON(http.StatusInternalServerError, errRes)
-		return
-	}
-	successRes := response.ClientResponse(http.StatusOK, "successfully added referral amount", nil, nil)
-	c.JSON(http.StatusOK, successRes)
-
-}

@@ -71,11 +71,14 @@ type UpdatePassword struct {
 	ConfirmNewPassword string `json:"confirm_new_password" binding:"required"`
 }
 
-type PaymentDetails struct {
+type PaymentDetail struct {
 	ID           uint   `json:"id"`
 	Payment_Name string `json:"payment_name"`
 }
-
+type PaymentDetails struct {
+	PaymentDetail []PaymentDetail
+	WallectAmount float64 `json:"wallet_amount"`
+}
 type CheckoutDetails struct {
 	AddressInfoResponse []AddressInfoResponse
 	Payment_Method      []PaymentDetails

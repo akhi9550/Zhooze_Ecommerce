@@ -278,39 +278,8 @@ func RemoveFromUserProfile(userID, addressID int) error {
 	}
 	return nil
 }
-func GetReferralAndTotalAmount(userID int) (float64, error) {
-	// first check whether the cart is empty -- do this for coupon too
-	var cartDetails struct {
-		ReferralAmount float64
-	}
 
-	err := db.DB.Raw("SELECT referral_amount  AS referral_amount FROM referrals WHERE user_id = ?", userID).Scan(&cartDetails).Error
-	if err != nil {
-		return 0.0, err
-	}
 
-	return cartDetails.ReferralAmount, nil
-
-}
-func TotalPriceFromCart(userID int) (float64, error) {
-	var totalPrice float64
-	err := db.DB.Raw("SELECT COALESCE(SUM(total_price), 0) FROM carts WHERE user_id = ?", userID).Scan(&totalPrice).Error
-	if err != nil {
-		return 0.0, err
-	}
-	return totalPrice, nil
-
-}
-func UpdateSomethingBasedOnUserID(tableName string, columnName string, updateValue float64, userID int) error {
-
-	err := db.DB.Exec("UPDATE "+tableName+" SET "+columnName+" = ? WHERE user_id = ?", updateValue, userID).Error
-	if err != nil {
-		db.DB.Rollback()
-		return err
-	}
-	return nil
-
-}
 func CreateReferralEntry(userDetails models.UserDetailsResponse, userReferral string) error {
 
 	err := db.DB.Exec("INSERT INTO referrals (user_id,referral_code,referral_amount) VALUES (?,?,?)", userDetails.Id, userReferral, 0).Error
@@ -347,4 +316,45 @@ func UpdateReferralAmount(referralAmount float64, referredUserId int, currentUse
 
 	return nil
 
+}
+func AmountInrefferals(userID int) (float64, error) {
+	var a float64
+	err := db.DB.Raw("SELECT referral_amount FROM referrals WHERE user_id = ?", userID).Scan(&a).Error
+	if err != nil {
+		return 0.0, err
+	}
+	return a, nil
+}
+func ExistWallect(userID int) (bool, error) {
+	var count int
+	err := db.DB.Raw("SELECT COUNT(*) FROM wallets WHERE user_id = ?", userID).Scan(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+
+}
+func UpdateWallect(amount float64, userID int) error {
+	err := db.DB.Exec("UPDATE wallets SET amount = amount + ?  WHERE user_id = ? ", amount, userID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func UpdateReferUserWallect(amount float64, userID int) error {
+	err := db.DB.Exec("UPDATE wallets SET amount = amount + ?  WHERE user_id = ? ", amount, userID).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func NewWallect(userID int, amount float64) error {
+	err := db.DB.Exec("INSERT INTO wallets (user_id,amount) VALUES(?,?) ", userID, amount).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

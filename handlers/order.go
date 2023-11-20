@@ -119,7 +119,6 @@ func OrderItemsFromCart(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
-
 	orderSuccessResponse, err := usecase.OrderItemsFromCart(orderFromCart, userID)
 	if err != nil {
 		errorRes := response.ClientResponse(http.StatusInternalServerError, "Could not do the order", nil, err.Error())

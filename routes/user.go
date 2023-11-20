@@ -72,10 +72,10 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 			order.GET("/place-order", handlers.PlaceOrderCOD)
 			order.PUT("", handlers.CancelOrder)
 		}
-
-		r.POST("/coupon/apply", handlers.ApplyCoupon)
-		r.GET("/referral/apply", handlers.ApplyReferral)
-
+		coupon := r.Group("/coupon")
+		{
+			coupon.POST("", handlers.ApplyCoupon)
+		}
 	}
 
 	return r

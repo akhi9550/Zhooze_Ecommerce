@@ -78,6 +78,11 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 		if err := repository.UpdateWallectAfterOrder(userID, FinalPrice); err != nil {
 			return domain.OrderSuccessResponse{}, err
 		}
+		reason := "Amount debited for purchasing products"
+		err = repository.UpdateHistory(userID, order_id, FinalPrice, reason)
+		if err != nil {
+			return domain.OrderSuccessResponse{}, err
+		}
 	}
 	if err := repository.AddOrderProducts(order_id, cartItems); err != nil {
 		return domain.OrderSuccessResponse{}, err
@@ -156,7 +161,13 @@ func CancelOrders(orderID int, userId int) error {
 		if err != nil {
 			return err
 		}
+		reason := "Amount credited for cancellation of order by user"
+		err := repository.UpdateHistory(userId, orderID, amount, reason)
+		if err != nil {
+			return err
+		}
 	}
+
 	return nil
 
 }

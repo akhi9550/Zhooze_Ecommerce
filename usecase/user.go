@@ -63,7 +63,11 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 			if err != nil {
 				return &models.TokenUser{}, err
 			}
-			///////////////
+			referreason := "Amount credited for used referral code"
+			err = repository.UpdateHistory(userData.Id, 0, float64(referralAmount), referreason)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
 			amount, err := repository.AmountInrefferals(userData.Id)
 			if err != nil {
 				return &models.TokenUser{}, err
@@ -73,7 +77,7 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 				return &models.TokenUser{}, err
 			}
 			if !wallectExist {
-				err = repository.NewWallect(userData.Id,amount)
+				err = repository.NewWallect(userData.Id, amount)
 				if err != nil {
 					return &models.TokenUser{}, err
 				}
@@ -82,7 +86,11 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 			if err != nil {
 				return &models.TokenUser{}, err
 			}
-			/////////////////
+			reason := "Amount credited for refer a new person"
+			err = repository.UpdateHistory(referredUserId, 0, amount, reason)
+			if err != nil {
+				return &models.TokenUser{}, err
+			}
 		}
 	}
 	accessToken, err := helper.GenerateAccessToken(userData)
@@ -251,16 +259,13 @@ func UpdateQuantityAdd(id, productID int) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("🤣🤣", stock)
 	stockfromcart, err := repository.StockFormCart(productID)
 	if err != nil {
 		return err
 	}
-	fmt.Println("✌️✌️✌️✌️", stockfromcart)
-	if stock < stockfromcart {
+	if stock <= stockfromcart {
 		return errors.New("its maximum no more updation")
 	}
-	////////////////////////////
 	productPrice, err := repository.GetPriceOfProductFromID(productID)
 	if err != nil {
 
@@ -396,7 +401,7 @@ func ForgotPasswordVerifyAndChange(model models.ForgotVerify) error {
 		return errors.New("error in hashing password")
 	}
 
-	// if user is authenticated then change the password i the database
+	// if user is authenticated then change the password in the database
 	if err := repository.ChangePassword(id, string(newpassword)); err != nil {
 		return errors.New("could not change password")
 	}

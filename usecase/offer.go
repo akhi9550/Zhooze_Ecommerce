@@ -22,13 +22,7 @@ func GetOffers() ([]domain.ProductOffer, error) {
 	return offers, nil
 
 }
-func MakeOfferExpire(id int) error {
-	if err := repository.MakeOfferExpire(id); err != nil {
-		return err
-	}
 
-	return nil
-}
 
 func AddCategoryOffer(model models.CategoryOfferReceiver) error {
 	if err := repository.AddCategoryOffer(model); err != nil {
@@ -45,11 +39,4 @@ func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 	}
 	return offers, nil
 
-}
-func ExpireCategoryOffer(id int) error {
-	if err := repository.ExpireCategoryOffer(id); err != nil {
-		return err
-	}
-
-	return nil
 }

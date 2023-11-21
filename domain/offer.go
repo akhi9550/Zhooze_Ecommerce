@@ -12,7 +12,7 @@ type ProductOffer struct {
 	DiscountPercentage int       `json:"discount_percentage"`
 	StartDate          time.Time `json:"start_date"`
 	EndDate            time.Time `json:"end_date"`
-	// Valid bool `json:"valid" gorm:"default:True"`
+	// Valid bool `json:"valid" gorm:"default:true"`
 }
 
 type CategoryOffer struct {
@@ -23,4 +23,6 @@ type CategoryOffer struct {
 	DiscountPercentage int       `json:"discount_percentage"`
 	StartDate          time.Time `json:"start_date"`
 	EndDate            time.Time `json:"end_date"`
+	// Valid bool `json:"valid" gorm:"default:true"`
+
 }

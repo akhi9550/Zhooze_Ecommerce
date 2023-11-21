@@ -5,7 +5,6 @@ import (
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -72,35 +71,6 @@ func GetProductOffer(c *gin.Context) {
 
 }
 
-// @Summary Delete  Product Offer
-// @Description Add a new Offer for a product by specifying a limit
-// @Tags Admin Offer Management
-// @Accept json
-// @Produce json
-// @Security Bearer
-// @Param	id	query	string	true	"id"
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router /admin/productoffer   [DELETE]
-func DeleteProductOffer(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	if err := usecase.MakeOfferExpire(id); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Coupon cannot be made invalid", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	successRes := response.ClientResponse(http.StatusOK, "Successfully made Coupon as invalid", nil, nil)
-	c.JSON(http.StatusOK, successRes)
-
-}
-
 // @Summary Add Category Offer
 // @Description Add a new Offer for a product by specifying a limit
 // @Tags Admin Offer Management
@@ -158,35 +128,6 @@ func GetCategoryOffer(c *gin.Context) {
 	}
 
 	successRes := response.ClientResponse(http.StatusOK, "Successfully got all offers", categories, nil)
-	c.JSON(http.StatusOK, successRes)
-
-}
-
-// @Summary Delete  Category Offer
-// @Description Add a new Offer for a category by specifying a limit
-// @Tags Admin Offer Management
-// @Accept json
-// @Produce json
-// @Security Bearer
-// @Param	id	query	string	true	"id"
-// @Success 200 {object} response.Response{}
-// @Failure 500 {object} response.Response{}
-// @Router /admin/categoryoffer   [DELETE]
-func DeleteCategoryOffer(c *gin.Context) {
-	id, err := strconv.Atoi(c.Query("id"))
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "fields provided are in wrong format", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	if err := usecase.ExpireCategoryOffer(id); err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Coupon cannot be made invalid", nil, err.Error())
-		c.JSON(http.StatusBadRequest, errorRes)
-		return
-	}
-
-	successRes := response.ClientResponse(http.StatusOK, "Successfully made Coupon as invaid", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 
 }

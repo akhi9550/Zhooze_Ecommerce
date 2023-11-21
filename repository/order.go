@@ -179,7 +179,7 @@ func TotalAmountFromOrder(orderID int) (float64, error) {
 }
 func UserIDFromOrder(orderID int) (int, error) {
 	var a int
-	err := db.DB.Raw("SELECT user_id FROM order WHERE id = ?", orderID).Scan(&a).Error
+	err := db.DB.Raw("SELECT user_id FROM orders WHERE id = ?", orderID).Scan(&a).Error
 	if err != nil {
 		return 0, err
 	}
@@ -187,6 +187,13 @@ func UserIDFromOrder(orderID int) (int, error) {
 }
 func UpdateAmountToWallet(userID int, amount float64) error {
 	err := db.DB.Exec("UPDATE wallets SET amount = amount + ? WHERE user_id = ?", amount, userID).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateHistory(userID, orderID int, amount float64, reason string) error {
+	err := db.DB.Exec("INSERT INTO wallet_histories (user_id ,order_id ,reason ,amount) VALUES (?,?,?,?)", userID, orderID, reason, amount).Error
 	if err != nil {
 		return err
 	}

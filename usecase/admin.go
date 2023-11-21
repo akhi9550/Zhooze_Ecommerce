@@ -156,7 +156,6 @@ func CancelOrderFromAdmin(orderID int) error {
 	if err != nil {
 		return err
 	}
-	//////
 	payment_status, err := repository.PaymentStatus(orderID)
 	if err != nil {
 		return err
@@ -169,8 +168,13 @@ func CancelOrderFromAdmin(orderID int) error {
 	if err != nil {
 		return err
 	}
-	if payment_status == "paid" {
+	if payment_status == "refunded" {
 		err = repository.UpdateAmountToWallet(userID, amount)
+		if err != nil {
+			return err
+		}
+		reason := "Amount credited for  cancellation of order by admin"
+		err := repository.UpdateHistory(userID, orderID, amount, reason)
 		if err != nil {
 			return err
 		}

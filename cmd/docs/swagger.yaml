@@ -361,32 +361,6 @@ paths:
       tags:
       - Admin Category Management
   /admin/categoryoffer:
-    delete:
-      consumes:
-      - application/json
-      description: Add a new Offer for a category by specifying a limit
-      parameters:
-      - description: id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Delete  Category Offer
-      tags:
-      - Admin Offer Management
     get:
       consumes:
       - application/json
@@ -690,32 +664,6 @@ paths:
       tags:
       - Admin Payment Method
   /admin/productoffer:
-    delete:
-      consumes:
-      - application/json
-      description: Add a new Offer for a product by specifying a limit
-      parameters:
-      - description: id
-        in: query
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Delete  Product Offer
-      tags:
-      - Admin Offer Management
     get:
       consumes:
       - application/json
@@ -1298,6 +1246,54 @@ paths:
       summary: Subtract quantity in cart by one
       tags:
       - User Cart Management
+  /user/checkout:
+    get:
+      consumes:
+      - application/json
+      description: Add products to carts  for the purchase
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Checkout section
+      tags:
+      - User Order Management
+    post:
+      consumes:
+      - application/json
+      description: Order all products which is currently present inside  the cart
+      parameters:
+      - description: Order details
+        in: body
+        name: orderBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.OrderFromCart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Order Items from cart
+      tags:
+      - User Order Management
   /user/coupon:
     post:
       consumes:
@@ -1325,7 +1321,7 @@ paths:
       - Bearer: []
       summary: Apply coupon on Checkout Section
       tags:
-      - User Checkout
+      - User Coupon Adding
   /user/forgot-password:
     post:
       consumes:
@@ -1414,33 +1410,6 @@ paths:
       summary: Get Order Details to user side
       tags:
       - User Order Management
-    post:
-      consumes:
-      - application/json
-      description: Order all products which is currently present inside  the cart
-      parameters:
-      - description: Order details
-        in: body
-        name: orderBody
-        required: true
-        schema:
-          $ref: '#/definitions/models.OrderFromCart'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Order Items from cart
-      tags:
-      - User Order Management
     put:
       consumes:
       - application/json
@@ -1465,27 +1434,6 @@ paths:
       security:
       - Bearer: []
       summary: Cancel order
-      tags:
-      - User Order Management
-  /user/order/checkout:
-    get:
-      consumes:
-      - application/json
-      description: Add products to carts  for the purchase
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Checkout section
       tags:
       - User Order Management
   /user/order/place-order:
@@ -1776,6 +1724,48 @@ paths:
       summary: Verify OTP
       tags:
       - User OTP Login
+  /user/wallet:
+    get:
+      consumes:
+      - application/json
+      description: Wallet TotalPrice from User Profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Wallet Details
+      tags:
+      - Wallet
+  /user/wallet/history:
+    get:
+      consumes:
+      - application/json
+      description: Wallet Details from User Profile
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Wallet History Details
+      tags:
+      - Wallet
   /user/wishlist:
     delete:
       consumes:

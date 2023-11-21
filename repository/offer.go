@@ -9,7 +9,6 @@ import (
 )
 
 func AddProductOffer(productOffer models.ProductOfferReceiver) error {
-	// check if the offer with the offer name already exist in the db
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM product_offers WHERE offer_name = ? AND product_id = ?", productOffer.OfferName, productOffer.ProductID).Scan(&count).Error
 	if err != nil {
@@ -53,13 +52,7 @@ func GetOffers() ([]domain.ProductOffer, error) {
 
 	return model, nil
 }
-func MakeOfferExpire(id int) error {
-	if err := db.DB.Exec("DELETE FROM product_offers WHERE id = $1", id).Error; err != nil {
-		return err
-	}
 
-	return nil
-}
 func FindDiscountPercentageForProduct(id int) (int, error) {
 	var percentage int
 	err := db.DB.Raw("SELECT discount_percentage FROM product_offers WHERE product_id= $1 ", id).Scan(&percentage).Error
@@ -70,8 +63,6 @@ func FindDiscountPercentageForProduct(id int) (int, error) {
 	return percentage, nil
 }
 func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
-
-	// check if the offer with the offer name already exist in the db
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM category_offers WHERE offer_name = ?", categoryOffer.OfferName).Scan(&count).Error
 	if err != nil {
@@ -108,13 +99,7 @@ func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 	}
 	return model, nil
 }
-func ExpireCategoryOffer(id int) error {
-	if err := db.DB.Exec("DELETE FROM category_offers WHERE id = $1", id).Error; err != nil {
-		return err
-	}
 
-	return nil
-}
 func FindDiscountPercentageForCategory(id int) (int, error) {
 	var percentage int
 	err := db.DB.Raw("SELECT discount_percentage FROM category_offers WHERE category_id= $1 ", id).Scan(&percentage).Error

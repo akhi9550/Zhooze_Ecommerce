@@ -109,7 +109,7 @@ func GetAllOrderDetailsForAdmin(c *gin.Context) {
 // @Param orderBody body models.OrderFromCart true "Order details"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
-// @Router /user/order [POST]
+// @Router /user/checkout    [POST]
 func OrderItemsFromCart(c *gin.Context) {
 	id, _ := c.Get("user_id")
 	userID := id.(int)
@@ -205,7 +205,7 @@ func CancelOrder(c *gin.Context) {
 // @Security		Bearer
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/user/order/checkout    [GET]
+// @Router			/user/checkout    [GET]
 func CheckOut(c *gin.Context) {
 	userID, _ := c.Get("user_id")
 	checkoutDetails, err := usecase.Checkout(userID.(int))

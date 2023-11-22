@@ -193,7 +193,18 @@ func UpdateAmountToWallet(userID int, amount float64) error {
 	return nil
 }
 func UpdateHistory(userID, orderID int, amount float64, reason string) error {
-	err := db.DB.Exec("INSERT INTO wallet_histories (user_id ,order_id ,reason ,amount) VALUES (?,?,?,?)", userID, orderID, reason, amount).Error
+	err := db.DB.Exec("INSERT INTO wallet_histories (user_id ,order_id ,description ,amount) VALUES (?,?,?,?)", userID, orderID, reason, amount).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func UpdateHistoryForDebit(userID, orderID int, amount float64, reason string) error {
+	err := db.DB.Exec("INSERT INTO wallet_histories (user_id ,order_id ,description ,amount) VALUES (?,?,?,?)", userID, orderID, reason, amount).Error
+	if err != nil {
+		return err
+	}
+	err = db.DB.Exec("UPDATE wallet_histories SET is_credited = 'false' where user_id = ? AND order_id = ?", userID, orderID).Error
 	if err != nil {
 		return err
 	}

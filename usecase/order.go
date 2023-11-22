@@ -79,7 +79,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 			return domain.OrderSuccessResponse{}, err
 		}
 		reason := "Amount debited for purchasing products"
-		err = repository.UpdateHistory(userID, order_id, FinalPrice, reason)
+		err = repository.UpdateHistoryForDebit(userID, order_id, FinalPrice, reason)
 		if err != nil {
 			return domain.OrderSuccessResponse{}, err
 		}

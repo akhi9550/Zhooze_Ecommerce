@@ -16,7 +16,7 @@ import (
 
 // @title Go + Gin Zhooze E-Commerce API
 // @version 1.0.0
-// @description Zhooze is an E-commerce platform to purchase and sell shoes
+// @description Zhooze is an E-commerce platform to purchasing and selling shoes
 // @contact.name API Support
 // @securityDefinitions.apikey Bearer
 // @in header

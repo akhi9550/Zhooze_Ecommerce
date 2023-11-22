@@ -4,7 +4,6 @@ import (
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -178,7 +177,6 @@ func FilteredSalesReport(c *gin.Context) {
 func SalesReportByDate(c *gin.Context) {
 	startDateStr := c.Query("start")
 	endDateStr := c.Query("end")
-	fmt.Println("🥱", startDateStr, endDateStr)
 	if startDateStr == "" || endDateStr == "" {
 		err := response.ClientResponse(http.StatusBadRequest, "start or end date is empty", nil, "Empty date string")
 		c.JSON(http.StatusBadRequest, err)

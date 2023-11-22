@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Zhooze is an E-commerce platform to purchase and sell shoes",
+        "description": "Zhooze is an E-commerce platform to purchasing and selling shoes",
         "title": "Go + Gin Zhooze E-Commerce API",
         "contact": {
             "name": "API Support"

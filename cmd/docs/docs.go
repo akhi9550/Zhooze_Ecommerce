@@ -2915,7 +2915,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Go + Gin Zhooze E-Commerce API",
-	Description:      "Zhooze is an E-commerce platform to purchase and sell shoes",
+	Description:      "Zhooze is an E-commerce platform to purchasing and selling shoes",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

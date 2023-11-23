@@ -9,4 +9,5 @@ type WalletHistory struct {
 	OrderID     int     `json:"order_id"`
 	Description string  `json:"description"`
 	Amount      float64 `json:"amount"`
+	IsCredited  bool    `json:"is_credited"`
 }

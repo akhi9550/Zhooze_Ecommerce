@@ -6,6 +6,7 @@ import (
 	"Zhooze/repository"
 	"Zhooze/utils/models"
 	"errors"
+	"fmt"
 	"mime/multipart"
 )
 
@@ -181,10 +182,12 @@ func UpdateProductImage(id int, file *multipart.FileHeader) error {
 
 	url, err := helper.AddImageToS3(file)
 	if err != nil {
+		fmt.Println("error in s3", err)
 		return err
 	}
 	err = repository.UpdateProductImage(id, url)
 	if err != nil {
+		fmt.Println("error in updation", err)
 		return err
 	}
 	return nil

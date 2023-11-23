@@ -4,6 +4,7 @@ import (
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -226,7 +227,7 @@ func UpdateProduct(c *gin.Context) {
 // @Produce json
 // @Security Bearer
 // @Param product_id query int  true "Product_id"
-// @Param files formData file true "Image files to upload" collectionFormat "multi"
+// @Param files formData file true "Image file to upload" collectionFormat "multi"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/products/upload-image 	[POST]
@@ -245,7 +246,7 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 
-	files := form.File["file"]
+	files := form.File["files"]
 	if len(files) == 0 {
 		errorRes := response.ClientResponse(http.StatusBadRequest, "No files provided", nil, nil)
 		c.JSON(http.StatusBadRequest, errorRes)
@@ -255,12 +256,13 @@ func UploadImage(c *gin.Context) {
 	for _, file := range files {
 		err := usecase.UpdateProductImage(id, file)
 		if err != nil {
+			log.Println(err)
 			errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change one or more images", nil, err.Error())
 			c.JSON(http.StatusBadRequest, errorRes)
 			return
 		}
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "Successfully uploaded images", nil, nil)
+	successRes := response.ClientResponse(http.StatusOK, "Successfully changed images", nil, nil)
 	c.JSON(http.StatusOK, successRes)
 }

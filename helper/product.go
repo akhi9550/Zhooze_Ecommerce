@@ -35,11 +35,13 @@ func GetImageMimeType(filename string) string {
 func AddImageToS3(file *multipart.FileHeader) (string, error) {
 	f, openErr := file.Open()
 	if openErr != nil {
+
 		fmt.Println("opening error:", openErr)
 		return "", openErr
 	}
 	defer f.Close()
 	if err := godotenv.Load(); err != nil {
+		fmt.Println("error 1", err)
 		return "", err
 	}
 	mimeType := GetImageMimeType(file.Filename)
@@ -52,6 +54,7 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 		),
 	})
 	if err != nil {
+		fmt.Println("error in session config", err)
 		return "", err
 	}
 	// Create an S3 uploader with the session and default options
@@ -65,6 +68,7 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 		ContentType: aws.String(mimeType),
 	})
 	if err != nil {
+		fmt.Println("error 2", err)
 		return "", err
 	}
 	url := fmt.Sprintf("https://d2jkb5eqmpty2t.cloudfront.net/%s", file.Filename)

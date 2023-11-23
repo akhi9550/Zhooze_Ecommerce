@@ -834,7 +834,7 @@ paths:
         name: product_id
         required: true
         type: integer
-      - description: Image files to upload
+      - description: Image file to upload
         in: formData
         name: files
         required: true

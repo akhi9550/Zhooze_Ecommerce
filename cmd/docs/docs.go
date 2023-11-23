@@ -979,7 +979,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Image files to upload",
+                        "description": "Image file to upload",
                         "name": "files",
                         "in": "formData",
                         "required": true

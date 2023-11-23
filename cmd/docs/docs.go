@@ -979,8 +979,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "file",
-                        "description": "Image file to upload",
-                        "name": "file",
+                        "description": "Image files to upload",
+                        "name": "files",
                         "in": "formData",
                         "required": true
                     }
@@ -2866,6 +2866,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
+                    "type": "string"
+                },
+                "referral_code": {
                     "type": "string"
                 }
             }

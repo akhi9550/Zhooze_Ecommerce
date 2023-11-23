@@ -226,7 +226,7 @@ func UpdateProduct(c *gin.Context) {
 // @Produce json
 // @Security Bearer
 // @Param product_id query int  true "Product_id"
-// @Param file formData file true "Image file to upload" collectionFormat "multi"
+// @Param files formData file true "Image files to upload" collectionFormat "multi"
 // @Success 200 {object} response.Response{}
 // @Failure 500 {object} response.Response{}
 // @Router /admin/products/upload-image 	[POST]
@@ -238,21 +238,29 @@ func UploadImage(c *gin.Context) {
 		return
 	}
 
-	file, err := c.FormFile("file")
+	form, err := c.MultipartForm()
 	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Retrieving image from form error", nil, err.Error())
+		errorRes := response.ClientResponse(http.StatusBadRequest, "Retrieving images from form error", nil, err.Error())
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 
-	err = usecase.UpdateProductImage(id, file)
-	if err != nil {
-		errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change the image", nil, err.Error())
+	files := form.File["file"]
+	if len(files) == 0 {
+		errorRes := response.ClientResponse(http.StatusBadRequest, "No files provided", nil, nil)
 		c.JSON(http.StatusBadRequest, errorRes)
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "Successfully changed image", nil, nil)
+	for _, file := range files {
+		err := usecase.UpdateProductImage(id, file)
+		if err != nil {
+			errorRes := response.ClientResponse(http.StatusBadRequest, "Could not change one or more images", nil, err.Error())
+			c.JSON(http.StatusBadRequest, errorRes)
+			return
+		}
+	}
+
+	successRes := response.ClientResponse(http.StatusOK, "Successfully uploaded images", nil, nil)
 	c.JSON(http.StatusOK, successRes)
-
 }

@@ -206,6 +206,8 @@ definitions:
         type: string
       phone:
         type: string
+      referral_code:
+        type: string
     type: object
   models.VerifyData:
     properties:
@@ -832,9 +834,9 @@ paths:
         name: product_id
         required: true
         type: integer
-      - description: Image file to upload
+      - description: Image files to upload
         in: formData
-        name: file
+        name: files
         required: true
         type: file
       produces:

@@ -74,6 +74,10 @@ func UserDetails(userID int) (models.UsersProfileDetails, error) {
 	if err != nil {
 		return models.UsersProfileDetails{}, err
 	}
+	err = db.DB.Raw("SELECT referral_code FROM referrals WHERE user_id = ?", userID).Scan(&userDetails.ReferralCode).Error
+	if err != nil {
+		return models.UsersProfileDetails{}, err
+	}
 	return userDetails, nil
 }
 func CheckUserAvailabilityWithUserID(userID int) bool {
@@ -278,7 +282,6 @@ func RemoveFromUserProfile(userID, addressID int) error {
 	}
 	return nil
 }
-
 
 func CreateReferralEntry(userDetails models.UserDetailsResponse, userReferral string) error {
 

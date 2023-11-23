@@ -15,7 +15,7 @@ func GetWallet(userID int) (models.WalletAmount, error) {
 }
 func GetWalletHistory(userID int) ([]models.WalletHistory, error) {
 	var history []models.WalletHistory
-	err := db.DB.Raw("SELECT id,order_id,reason,amount FROM wallet_histories WHERE user_id = ?", userID).Scan(&history).Error
+	err := db.DB.Raw("SELECT id,order_id,description,amount FROM wallet_histories WHERE user_id = ?", userID).Scan(&history).Error
 	if err != nil {
 		return []models.WalletHistory{}, err
 	}

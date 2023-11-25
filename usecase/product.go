@@ -47,7 +47,17 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 
 		productDetails[j].DiscountedPrice = productDetails[j].DiscountedPrice - categorydiscount
 	}
-	return productDetails, nil
+	var updatedproductDetails []models.ProductBrief
+	for _, p := range productDetails {
+		img, err := repository.GetImage(int(p.ID))
+		if err != nil {
+			return nil, err
+		}
+		p.Image = img
+		updatedproductDetails = append(updatedproductDetails, p)
+	}
+
+	return updatedproductDetails, nil
 }
 
 func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
@@ -85,7 +95,18 @@ func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error
 
 		productDetails[j].DiscountedPrice = productDetails[j].DiscountedPrice - categorydiscount
 	}
-	return productDetails, nil
+	var updatedproductDetails []models.ProductBrief
+	for _, p := range productDetails {
+		img, err := repository.GetImage(int(p.ID))
+		if err != nil {
+			return nil, err
+		}
+		p.Image = img
+		updatedproductDetails = append(updatedproductDetails, p)
+	}
+
+	return updatedproductDetails, nil
+
 }
 func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	err := repository.CheckValidateCategory(data)
@@ -112,6 +133,7 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 				ProductFromCategory = append(ProductFromCategory, products)
 			}
 		}
+
 	}
 	for j := range ProductFromCategory {
 		discount_percentage, err := repository.FindDiscountPercentageForProduct(int(ProductFromCategory[j].ID))
@@ -135,7 +157,17 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 
 		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].DiscountedPrice - categorydiscount
 	}
-	return ProductFromCategory, nil
+	var updatedproductDetails []models.ProductBrief
+	for _, p := range ProductFromCategory {
+		img, err := repository.GetImage(int(p.ID))
+		if err != nil {
+			return nil, err
+		}
+		p.Image = img
+		updatedproductDetails = append(updatedproductDetails, p)
+	}
+
+	return updatedproductDetails, nil
 }
 
 func AddProducts(product models.Product) (domain.Product, error) {

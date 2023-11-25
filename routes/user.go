@@ -26,7 +26,7 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 	{
 		products.GET("", handlers.ShowAllProducts)
 		products.POST("/filter", handlers.FilterCategory)
-		products.GET("/image", handlers.ShowImages)
+		// products.GET("/image", handlers.ShowImages)
 
 	}
 

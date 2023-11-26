@@ -21,6 +21,7 @@ type UserDetailsAtAdmin struct {
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email"`
 	Phone     string `json:"phone"`
+	Blocked   bool   `json:"blocked"`
 }
 type TokenUser struct {
 	Users        UserDetailsResponse

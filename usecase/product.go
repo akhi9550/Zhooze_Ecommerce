@@ -157,7 +157,7 @@ func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 
 		ProductFromCategory[j].DiscountedPrice = ProductFromCategory[j].DiscountedPrice - categorydiscount
 	}
-	var updatedproductDetails []models.ProductBrief
+	updatedproductDetails := make([]models.ProductBrief, 0)
 	for _, p := range ProductFromCategory {
 		img, err := repository.GetImage(int(p.ID))
 		if err != nil {

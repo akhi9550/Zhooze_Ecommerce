@@ -73,26 +73,6 @@ func FilterCategory(c *gin.Context) {
 	c.JSON(http.StatusOK, success)
 }
 
-// // @Summary Get Products Details to users
-// // @Description Retrieve all product Details with pagination to users
-// // @Tags User Product
-// // @Accept json
-// // @Produce json
-// // @Success 200 {object} response.Response{}
-// // @Failure 500 {object} response.Response{}
-// // @Router /products   [GET]
-// func AllProducts(c *gin.Context) {
-// 	products, err := usecase.SeeAllProducts()
-// 	if err != nil {
-// 		errs := response.ClientResponse(http.StatusInternalServerError, "Couldn't retrieve products", nil, err.Error())
-// 		c.JSON(http.StatusInternalServerError, errs)
-// 		return
-// 	}
-// 	success := response.ClientResponse(http.StatusOK, "Successfully Retrieved all products", products, nil)
-// 	c.JSON(http.StatusOK, success)
-
-// }
-
 // @Summary Get Products Details
 // @Description Retrieve all product Details
 // @Tags Admin Product Management

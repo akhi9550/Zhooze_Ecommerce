@@ -4,6 +4,7 @@ import (
 	"Zhooze/usecase"
 	"Zhooze/utils/models"
 	"Zhooze/utils/response"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -254,7 +255,8 @@ func PlaceOrderCOD(c *gin.Context) {
 		c.JSON(http.StatusOK, success)
 	}
 	if paymentMethodID == 2 {
-		success := response.ClientResponse(http.StatusOK, "Placed Order with razor pay", nil, nil)
+		link := fmt.Sprintf("http://localhost:8000/user/razorpay?order_id=%d", order_id)
+		success := response.ClientResponse(http.StatusOK, "Placed Order with razor pay following link", link, nil)
 		c.JSON(http.StatusOK, success)
 	}
 }

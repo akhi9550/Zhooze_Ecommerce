@@ -65,3 +65,10 @@ type OrderIncoming struct {
 	PaymentID int `json:"payment_id"`
 	AddressID int `json:"address_id"`
 }
+type Invoice struct {
+    ProductID     uint    `json:"product_id"`
+    ProductName   string  `json:"product_name"`
+    Quantity      float64 `json:"quantity"`
+    DiscountPrice float64 `json:"discount_price"`
+    TotalPrice    float64 `json:"total_price"`
+}

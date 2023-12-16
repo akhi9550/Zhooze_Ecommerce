@@ -352,22 +352,6 @@ func GetAllOrderDetailsBrief(page, count int) ([]models.CombinedOrderDetails, er
 
 }
 
-//	func ExistProductID(userid int) ([]int, error) {
-//		var a []int
-//		err := db.DB.Raw("SELECT product_id FROM carts WHERE user_id = ?", userid).Scan(&a).Error
-//		if err != nil {
-//			return 0, err
-//		}
-//		return a, nil
-//	}
-//
-//	func CheckStock(productID int) error {
-//		err := db.DB.Raw("SELECT stock FROM products WHERE id = ?", productID).Error
-//		if err != nil {
-//			return err
-//		}
-//		return nil
-//	}
 func AddpaymentMethod(paymentID int, orderID uint) error {
 	fmt.Println("payment id : ", orderID)
 	err := db.DB.Exec(`UPDATE orders SET payment_method_id = $1 WHERE id = $2`, paymentID, orderID).Error
@@ -599,4 +583,49 @@ func FindStock(id int) (int, error) {
 	}
 
 	return stock, nil
+}
+func GetDetailedOrderThroughId(orderId int) (models.CombinedOrderDetails, error) {
+	var body models.CombinedOrderDetails
+	query := `
+	SELECT 
+        o.id AS order_id,
+        o.final_price AS final_price,
+        o.shipment_status AS shipment_status,
+        o.payment_status AS payment_status,
+        u.firstname AS firstname,
+        u.email AS email,
+        u.phone AS phone,
+        a.house_name AS house_name,
+        a.street AS street,
+        a.city AS city,
+		a.state AS state,
+        a.pin AS pin
+	FROM orders o
+	JOIN users u ON o.user_id = u.id
+	JOIN addresses a ON o.address_id = a.id 
+	WHERE o.id = ?
+	`
+	if err := db.DB.Raw(query, orderId).Scan(&body).Error; err != nil {
+		err = errors.New("error in getting detailed order through id in repository: " + err.Error())
+		return models.CombinedOrderDetails{}, err
+	}
+	fmt.Println("body in repo", body.OrderId)
+	return body, nil
+}
+
+func  GetItemsByOrderId(orderId int) ([]models.Invoice, error) {
+	var items []models.Invoice
+
+	query := `
+	SELECT oi.id AS order_id, oi.name as product_name, oi.quantity, oi.total_price, o.id AS id, o.created_at, o.final_price, o.shipment_status, o.payment_status
+	FROM orders o
+	JOIN order_items oi ON o.id = oi.order_id
+	WHERE o.id = ?;
+	`go
+
+	if err := db.DB.Raw(query, oderId).Scan(&items).Error; err != nil {
+		return []models.Invoice{}, err
+	}
+
+	return items, nil
 }

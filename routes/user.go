@@ -75,6 +75,7 @@ func UserRoutes(r *gin.RouterGroup, db *gorm.DB) *gin.RouterGroup {
 		{
 			checkout.GET("", handlers.CheckOut)
 			checkout.POST("", handlers.OrderItemsFromCart)
+			checkout.GET("/print", handlers.PrintInvoice)
 
 		}
 		coupon := r.Group("/coupon")

@@ -617,7 +617,7 @@ func GetItemsByOrderId(orderId int) ([]models.Invoice, error) {
 	var items []models.Invoice
 
 	query := `
-	SELECT oi.id AS id,product_id, oi.quantity, oi.total_price, o.id AS order_id, o.created_at,
+	SELECT oi.id AS id,product_id, oi.quantity, oi.total_price, o.id AS order_id, o.created_at, o.final_price, o.shipment_status, o.payment_status
 	FROM orders o
 	JOIN order_items oi ON o.id = oi.order_id
 	WHERE o.id = ?;

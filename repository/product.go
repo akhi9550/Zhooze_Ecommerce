@@ -201,28 +201,3 @@ func GetImage(productID int) ([]string, error) {
 	return url, nil
 
 }
-
-// func AddProducts(product models.Product) (domain.Product, error) {
-// var p domain.Product
-// query := `
-// INSERT INTO products (name, description, category_id, sku, size, stock, price)
-// VALUES ($1, $2, $3, $4, $5, $6, $7)
-// RETURNING name, description, category_id, sku, size, stock, price
-// `
-
-// err := db.DB.Raw(query, product.Name, product.Description, product.CategoryID, product.SKU, product.Size, product.Stock, product.Price).Scan(&p).Error
-// if err != nil {
-// 	log.Println(err.Error())
-// 	return domain.Product{}, err
-// }
-
-// var ProductResponses domain.Product
-
-// err = db.DB.Raw("SELECT * FROM products WHERE name = ?", p.Name).Scan(&ProductResponses).Error
-// if err != nil {
-// 	log.Println(err.Error())
-// 	return domain.Product{}, err
-// }
-
-// return ProductResponses, nil
-// }

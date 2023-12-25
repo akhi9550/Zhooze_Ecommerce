@@ -1296,6 +1296,33 @@ paths:
       summary: Order Items from cart
       tags:
       - User Order Management
+  /user/checkout/print:
+    get:
+      consumes:
+      - application/json
+      description: Print Purchase Invoice
+      parameters:
+      - description: order_id
+        in: query
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Checkout section
+      tags:
+      - User Order Management
   /user/coupon:
     post:
       consumes:

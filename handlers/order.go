@@ -271,7 +271,7 @@ func PlaceOrderCOD(c *gin.Context) {
 // @Param   order_id  query string true "order_id"
 // @Success		200	{object}	response.Response{}
 // @Failure		500	{object}	response.Response{}
-// @Router			/user/order/print     [GET]
+// @Router			/user/checkout/print     [GET]
 func PrintInvoice(c *gin.Context) {
 	orderId := c.Query("order_id")
 	orderIdInt, err := strconv.Atoi(orderId)
@@ -295,7 +295,7 @@ func PrintInvoice(c *gin.Context) {
 
 	err = pdf.OutputFileAndClose(pdfFilePath)
 	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadGateway, "error in printing invoice", nil, err)
+		errRes := response.ClientResponse(http.StatusBadGateway, "error in printing invoice2", nil, err)
 		c.JSON(http.StatusBadRequest, errRes)
 		return
 	}
@@ -309,11 +309,11 @@ func PrintInvoice(c *gin.Context) {
 
 	err = pdf.Output(c.Writer)
 	if err != nil {
-		errRes := response.ClientResponse(http.StatusBadGateway, "error in printing invoice", nil, err)
+		errRes := response.ClientResponse(http.StatusBadGateway, "error in printing invoice1", nil, err)
 		c.JSON(http.StatusBadRequest, errRes)
 		return
 	}
 
-	successRes := response.ClientResponse(http.StatusOK, "the request was succesful", pdf, nil)
+	successRes := response.ClientResponse(http.StatusOK, "the request was successfull", pdf, nil)
 	c.JSON(http.StatusOK, successRes)
 }

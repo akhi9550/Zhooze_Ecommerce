@@ -609,7 +609,6 @@ func GetDetailedOrderThroughId(orderId int) (models.CombinedOrderDetails, error)
 		err = errors.New("error in getting detailed order through id in repository: " + err.Error())
 		return models.CombinedOrderDetails{}, err
 	}
-	fmt.Println("body in repo", body.OrderId)
 	return body, nil
 }
 
@@ -617,13 +616,13 @@ func GetItemsByOrderId(orderId int) ([]models.Invoice, error) {
 	var items []models.Invoice
 
 	query := `
-	SELECT oi.id AS id,product_id, oi.quantity, oi.total_price, o.id AS order_id, o.created_at, o.final_price, o.shipment_status, o.payment_status
-	FROM orders o
-	JOIN order_items oi ON o.id = oi.order_id
-	WHERE o.id = ?;
+	SELECT oi.id ,oi.product_id, oi.quantity, oi.total_price, oi.order_id, o.created_at, o.final_price, o.shipment_status, o.payment_status
+	FROM order_items AS oi
+	JOIN orders AS o ON oi.order_id = o.id
+	WHERE o.id = ? ;
 	`
 
-	if err := db.DB.Raw(query, orederId).Scan(&items).Error; err != nil {
+	if err := db.DB.Raw(query, orderId).Scan(&items).Error; err != nil {
 		return []models.Invoice{}, err
 	}
 

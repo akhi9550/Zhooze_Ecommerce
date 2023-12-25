@@ -255,7 +255,7 @@ func PrintInvoice(orderId int) (*gofpdf.Fpdf, error) {
 	fmt.Println("order details ", order)
 	fmt.Println("itemssss", items)
 	fmt.Println("order status", order.ShipmentStatus)
-	if order.ShipmentStatus != "DELIVERED" {
+	if order.ShipmentStatus != "order placed" {
 		return nil, errors.New("wait for the invoice until the product is received")
 	}
 

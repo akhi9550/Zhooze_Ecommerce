@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"mime/multipart"
+	"strings"
 )
 
 func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
@@ -223,4 +224,26 @@ func UpdateProductImage(id int, file *multipart.FileHeader) error {
 		return err
 	}
 	return nil
+}
+func SearchProductsOnPrefix(prefix string) ([]models.ProductBrief, error) {
+
+	inventoryList, err := repository.GetInventory(prefix)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var filteredProducts []models.ProductBrief
+
+	for _, product := range inventoryList {
+		if strings.HasPrefix(strings.ToLower(product.Name), strings.ToLower(prefix)) {
+			filteredProducts = append(filteredProducts, product)
+		}
+	}
+
+	if len(filteredProducts) == 0 {
+		return nil, errors.New("no items matching your keyword")
+	}
+
+	return filteredProducts, nil
 }

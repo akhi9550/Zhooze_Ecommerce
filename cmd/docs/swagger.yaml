@@ -170,6 +170,11 @@ definitions:
       stock:
         type: integer
     type: object
+  models.SearchItems:
+    properties:
+      product_name:
+        type: string
+    type: object
   models.SetNewName:
     properties:
       current:
@@ -740,35 +745,6 @@ paths:
       summary: Delete product
       tags:
       - Admin Product Management
-    get:
-      consumes:
-      - application/json
-      description: Retrieve all product Details
-      parameters:
-      - description: Page number
-        in: query
-        name: page
-        type: string
-      - description: Page Count
-        in: query
-        name: count
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/response.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.Response'
-      security:
-      - Bearer: []
-      summary: Get Products Details
-      tags:
-      - Admin Product Management
     post:
       consumes:
       - application/json
@@ -821,6 +797,64 @@ paths:
       security:
       - Bearer: []
       summary: Update Products quantity
+      tags:
+      - Admin Product Management
+  /admin/products/getproduct:
+    post:
+      consumes:
+      - application/json
+      description: Retrieve all product Details
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: string
+      - description: Page Count
+        in: query
+        name: count
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get Products Details
+      tags:
+      - Admin Product Management
+  /admin/products/search:
+    get:
+      consumes:
+      - application/json
+      description: Search for a product
+      parameters:
+      - description: Product details
+        in: body
+        name: prefix
+        required: true
+        schema:
+          $ref: '#/definitions/models.SearchItems'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Response'
+      security:
+      - Bearer: []
+      summary: Get Products Details
       tags:
       - Admin Product Management
   /admin/products/upload-image:

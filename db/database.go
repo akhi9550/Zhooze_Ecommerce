@@ -3,6 +3,7 @@ package db
 import (
 	"Zhooze/config"
 	"Zhooze/domain"
+	"Zhooze/helper"
 	"fmt"
 
 	"gorm.io/driver/postgres"
@@ -37,5 +38,28 @@ func ConnectDatabase(confg config.Config) (*gorm.DB, error) {
 	db.AutoMigrate(&domain.WishList{})
 	db.AutoMigrate(&domain.Image{})
 	db.AutoMigrate(&domain.Wallet{})
+	CheckAndCreateAdmin(db)
 	return DB, err
+}
+func CheckAndCreateAdmin(db *gorm.DB) {
+	var count int64
+	db.Model(&domain.User{}).Count(&count)
+	if count == 0 {
+		password := "admin@123"
+		hashPassword, err := helper.PasswordHash(password)
+		if err != nil {
+			return
+		}
+		admin := domain.User{
+			ID:        1,
+			Firstname: "Zhooze",
+			Lastname:  "Admin",
+			Email:     "admin@zhooze.com",
+			Password:  hashPassword,
+			Phone:     "+919061757507",
+			Blocked:   false,
+			Isadmin:   true,
+		}
+		db.Create(&admin)
+	}
 }

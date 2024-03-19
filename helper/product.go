@@ -57,10 +57,8 @@ func AddImageToS3(file *multipart.FileHeader) (string, error) {
 		fmt.Println("error in session config", err)
 		return "", err
 	}
-	// Create an S3 uploader with the session and default options
 	uploader := s3manager.NewUploader(sess)
 	BucketName := "zhooze"
-	//upload data(video or image)
 	_, err = uploader.Upload(&s3manager.UploadInput{
 		Bucket:      aws.String(BucketName),
 		Key:         aws.String(file.Filename),

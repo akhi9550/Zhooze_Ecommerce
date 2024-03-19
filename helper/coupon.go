@@ -1,14 +1,10 @@
 package helper
 
 import (
-	"fmt"
-
 	"gorm.io/gorm"
 )
 
 func GetCouponDiscountPrice(userID int, TotalPrice float64, DB *gorm.DB) (float64, error) {
-
-	// If there is no coupons added for this user, return 0 as discount price
 	var count int
 	err := DB.Raw("SELECT COUNT(*) FROM used_coupons WHERE user_id = ? AND used = false", userID).Scan(&count).Error
 	if err != nil {
@@ -54,7 +50,6 @@ func GetReferralDiscountPrice(FinalPrice float64, userID int, DB *gorm.DB) (floa
 	if count < 0 {
 		return 0.0, nil
 	}
-	fmt.Println("🤷‍♂️", FinalPrice, "finallllll")
 	var Price float64
 	err = DB.Raw("SELECT referral_amount FROM referrals WHERE user_id = ? ", userID).Scan(&Price).Error
 	if err != nil {

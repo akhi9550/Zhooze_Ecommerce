@@ -3,7 +3,6 @@ package middleware
 import (
 	"Zhooze/helper"
 	"Zhooze/utils/response"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,7 +23,6 @@ func UserAuthMiddleware() gin.HandlerFunc {
 		}
 		userID, userEmail, err := helper.ExtractUserIDFromToken(tokenString)
 		if err != nil {
-			fmt.Println("error is 👺 ", err)
 			response := response.ClientResponse(http.StatusUnauthorized, "Invalid Token ", nil, err.Error())
 			c.JSON(http.StatusUnauthorized, response)
 			c.AbortWithStatus(http.StatusUnauthorized)

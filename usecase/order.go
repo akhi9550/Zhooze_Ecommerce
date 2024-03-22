@@ -104,6 +104,7 @@ func OrderItemsFromCart(orderFromCart models.OrderFromCart, userID int) (domain.
 	}
 	return orderSuccessResponse, nil
 }
+
 func GetOrderDetails(userId int, page int, count int) ([]models.FullOrderDetails, error) {
 
 	fullOrderDetails, err := repository.GetOrderDetails(userId, page, count)
@@ -169,9 +170,7 @@ func CancelOrders(orderID int, userId int) error {
 			return err
 		}
 	}
-
 	return nil
-
 }
 
 func Checkout(userID int) (models.CheckoutDetails, error) {
@@ -199,6 +198,7 @@ func Checkout(userID int) (models.CheckoutDetails, error) {
 		Total_Price:         grandTotal.FinalPrice,
 	}, nil
 }
+
 func PaymentMethodID(order_id int) (int, error) {
 	id, err := repository.PaymentMethodID(order_id)
 	if err != nil {
@@ -206,6 +206,7 @@ func PaymentMethodID(order_id int) (int, error) {
 	}
 	return id, nil
 }
+
 func ExecutePurchaseCOD(orderID int) error {
 	err := repository.OrderExist(orderID)
 	if err != nil {
@@ -232,10 +233,9 @@ func ExecutePurchaseCOD(orderID int) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
-
 }
+
 func PrintInvoice(orderId int) (*gofpdf.Fpdf, error) {
 
 	if orderId < 1 {

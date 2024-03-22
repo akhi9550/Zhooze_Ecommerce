@@ -43,7 +43,6 @@ func main() {
 	routes.AdminRoutes(adminGroup, db)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.Static("uploads", "./uploads")
-
 	listenAdder := fmt.Sprintf("%s:%s", cfig.DBPort, cfig.DBHost)
 	fmt.Printf("Starting server on %s..\n", cfig.BASE_URL)
 	if err := router.Run(cfig.BASE_URL); err != nil {

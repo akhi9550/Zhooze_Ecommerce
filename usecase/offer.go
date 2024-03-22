@@ -13,6 +13,7 @@ func AddProductOffer(model models.ProductOfferReceiver) error {
 
 	return nil
 }
+
 func GetOffers() ([]domain.ProductOffer, error) {
 
 	offers, err := repository.GetOffers()
@@ -23,7 +24,6 @@ func GetOffers() ([]domain.ProductOffer, error) {
 
 }
 
-
 func AddCategoryOffer(model models.CategoryOfferReceiver) error {
 	if err := repository.AddCategoryOffer(model); err != nil {
 		return err
@@ -31,6 +31,7 @@ func AddCategoryOffer(model models.CategoryOfferReceiver) error {
 
 	return nil
 }
+
 func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 
 	offers, err := repository.GetCategoryOffer()

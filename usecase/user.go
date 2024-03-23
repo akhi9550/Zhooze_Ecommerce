@@ -107,6 +107,7 @@ func UsersSignUp(user models.UserSignUp) (*models.TokenUser, error) {
 		RefreshToken: refreshToken,
 	}, nil
 }
+
 func UsersLogin(user models.LoginDetail) (*models.TokenUser, error) {
 	email, err := repository.CheckUserExistsByEmail(user.Email)
 	if err != nil {
@@ -142,6 +143,7 @@ func UsersLogin(user models.LoginDetail) (*models.TokenUser, error) {
 		RefreshToken: refreshToken,
 	}, nil
 }
+
 func AddAddress(userID int, address models.AddressInfo) error {
 	err := repository.AddAddress(userID, address)
 	if err != nil {
@@ -149,6 +151,7 @@ func AddAddress(userID int, address models.AddressInfo) error {
 	}
 	return nil
 }
+
 func GetAllAddress(userId int) ([]models.AddressInfoResponse, error) {
 	addressInfo, err := repository.GetAllAddress(userId)
 	if err != nil {
@@ -157,9 +160,11 @@ func GetAllAddress(userId int) ([]models.AddressInfoResponse, error) {
 	return addressInfo, nil
 
 }
+
 func UserDetails(userID int) (models.UsersProfileDetails, error) {
 	return repository.UserDetails(userID)
 }
+
 func UpdateUserDetails(userDetails models.UsersProfileDetails, userID int) (models.UsersProfileDetails, error) {
 	userExist := repository.CheckUserAvailabilityWithUserID(userID)
 	if !userExist {
@@ -240,6 +245,7 @@ func ChangePassword(id int, old string, password string, repassword string) erro
 	}
 	return repository.ChangePassword(id, string(newpassword))
 }
+
 func UpdateQuantityAdd(id, productID int) error {
 	productExist, err := repository.ProductExistCart(id, productID)
 	if !productExist {

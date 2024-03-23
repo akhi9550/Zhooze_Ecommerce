@@ -109,6 +109,7 @@ func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error
 	return updatedproductDetails, nil
 
 }
+
 func FilterCategory(data map[string]int) ([]models.ProductBrief, error) {
 	err := repository.CheckValidateCategory(data)
 	if err != nil {
@@ -184,8 +185,10 @@ func AddProducts(product models.Product) (domain.Product, error) {
 	if !stock {
 		return domain.Product{}, errors.New("stock is invalid input")
 	}
+	
 	return productResponse, nil
 }
+
 func DeleteProducts(id string) error {
 	err := repository.DeleteProducts(id)
 	if err != nil {
@@ -193,6 +196,7 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
+
 func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	if stock <= 0 {
 		return models.ProductUpdateReciever{}, errors.New("stock doesnot update invalid input")
@@ -211,6 +215,7 @@ func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	return newcat, err
 
 }
+
 func UpdateProductImage(id int, file *multipart.FileHeader) error {
 
 	url, err := helper.AddImageToS3(file)
@@ -225,6 +230,7 @@ func UpdateProductImage(id int, file *multipart.FileHeader) error {
 	}
 	return nil
 }
+
 func SearchProductsOnPrefix(prefix string) ([]models.ProductBrief, error) {
 
 	inventoryList, err := repository.GetInventory(prefix)

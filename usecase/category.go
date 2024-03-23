@@ -15,6 +15,7 @@ func GetCategory() ([]domain.Category, error) {
 	return category, nil
 
 }
+
 func AddCategory(category models.Category) (domain.Category, error) {
 	exists, err := repository.CheckIfCategoryAlreadyExists(category.Category)
 	if err != nil {
@@ -30,6 +31,7 @@ func AddCategory(category models.Category) (domain.Category, error) {
 	}
 	return categories, nil
 }
+
 func UpdateCategory(current string, new string) (domain.Category, error) {
 	categries, err := repository.CheckCategory(current)
 	if err != nil {
@@ -44,6 +46,7 @@ func UpdateCategory(current string, new string) (domain.Category, error) {
 	}
 	return newCate, nil
 }
+
 func DeleteCategory(id int) error {
 	err := repository.DeleteCategory(id)
 	if err != nil {

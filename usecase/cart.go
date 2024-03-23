@@ -35,7 +35,6 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 
 		return models.CartResponse{}, err
 	}
-	/////////////
 	discount_percentage, err := repository.FindDiscountPercentageForProduct(product_id)
 	if err != nil {
 		return models.CartResponse{}, errors.New("there was some error in finding the discounted prices")
@@ -62,7 +61,6 @@ func AddToCart(product_id int, user_id int) (models.CartResponse, error) {
 	}
 
 	FinalPrice := Price - discountcategory
-	//////////////////////
 	if QuantityOfProductInCart == 0 {
 		err := repository.AddItemIntoCart(user_id, product_id, 1, FinalPrice)
 		if err != nil {
@@ -149,6 +147,7 @@ func RemoveFromCart(product_id, user_id int) (models.CartResponse, error) {
 	}, nil
 
 }
+
 func DisplayCart(user_id int) (models.CartResponse, error) {
 	cart, err := repository.DisplayCart(user_id)
 	if err != nil {
@@ -164,6 +163,7 @@ func DisplayCart(user_id int) (models.CartResponse, error) {
 		Cart:       cart,
 	}, nil
 }
+
 func EmptyCart(userID int) (models.CartResponse, error) {
 	ok, err := repository.CartExist(userID)
 	if err != nil {

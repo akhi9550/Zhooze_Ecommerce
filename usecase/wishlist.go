@@ -35,6 +35,7 @@ func AddToWishlist(userID, productID int) error {
 	}
 	return nil
 }
+
 func RemoveFromWishlist(productID, userID int) error {
 	productExistInWishList, err := repository.ProductExistInWishList(productID, userID)
 	if err != nil {

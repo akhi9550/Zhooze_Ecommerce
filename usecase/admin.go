@@ -71,6 +71,7 @@ func DashBoard() (models.CompleteAdminDashboard, error) {
 		DashboardAmount:  amountDetails,
 	}, nil
 }
+
 func ShowAllUsers(page, count int) ([]models.UserDetailsAtAdmin, error) {
 	users, err := repository.ShowAllUsersIn(page, count)
 	if err != nil {
@@ -78,6 +79,7 @@ func ShowAllUsers(page, count int) ([]models.UserDetailsAtAdmin, error) {
 	}
 	return users, nil
 }
+
 func BlockedUser(id string) error {
 	user, err := repository.GetUserByID(id)
 	if err != nil {
@@ -94,6 +96,7 @@ func BlockedUser(id string) error {
 	}
 	return nil
 }
+
 func UnBlockedUser(id string) error {
 	user, err := repository.GetUserByID(id)
 	if err != nil {
@@ -110,6 +113,7 @@ func UnBlockedUser(id string) error {
 	}
 	return nil
 }
+
 func GetAllOrderDetailsForAdmin(page, pagesize int) ([]models.CombinedOrderDetails, error) {
 	orderDetail, err := repository.GetAllOrderDetailsBrief(page, pagesize)
 	if err != nil {
@@ -117,6 +121,7 @@ func GetAllOrderDetailsForAdmin(page, pagesize int) ([]models.CombinedOrderDetai
 	}
 	return orderDetail, nil
 }
+
 func ApproveOrder(orderId int) error {
 	ShipmentStatus, err := repository.GetShipmentStatus(orderId)
 	if err != nil {
@@ -138,6 +143,7 @@ func ApproveOrder(orderId int) error {
 	// if the shipment status is not processing or cancelled. Then it is defenetely cancelled
 	return nil
 }
+
 func CancelOrderFromAdmin(orderID int) error {
 	ok, err := repository.CheckOrderID(orderID)
 	fmt.Println(err)

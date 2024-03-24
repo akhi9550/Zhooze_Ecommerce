@@ -43,6 +43,7 @@ func AddProductOffer(productOffer models.ProductOfferReceiver) error {
 	return nil
 
 }
+
 func GetOffers() ([]domain.ProductOffer, error) {
 	var model []domain.ProductOffer
 	err := db.DB.Raw("SELECT * FROM product_offers").Scan(&model).Error
@@ -62,6 +63,7 @@ func FindDiscountPercentageForProduct(id int) (int, error) {
 
 	return percentage, nil
 }
+
 func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM category_offers WHERE offer_name = ?", categoryOffer.OfferName).Scan(&count).Error
@@ -91,6 +93,7 @@ func AddCategoryOffer(categoryOffer models.CategoryOfferReceiver) error {
 	}
 	return nil
 }
+
 func GetCategoryOffer() ([]domain.CategoryOffer, error) {
 	var model []domain.CategoryOffer
 	err := db.DB.Raw("SELECT * FROM category_offers").Scan(&model).Error

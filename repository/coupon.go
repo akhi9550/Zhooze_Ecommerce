@@ -7,7 +7,6 @@ import (
 )
 
 func CouponExist(couponName string) (bool, error) {
-
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM coupons WHERE coupon = ?", couponName).Scan(&count).Error
 	if err != nil {
@@ -17,8 +16,8 @@ func CouponExist(couponName string) (bool, error) {
 	return count > 0, nil
 
 }
-func CouponValidity(couponName string) (bool, error) {
 
+func CouponValidity(couponName string) (bool, error) {
 	var validity bool
 	err := db.DB.Raw("SELECT validity FROM coupons WHERE coupon = ?", couponName).Scan(&validity).Error
 	if err != nil {
@@ -28,8 +27,8 @@ func CouponValidity(couponName string) (bool, error) {
 	return validity, nil
 
 }
-func CouponRevalidateIfExpired(couponName string) (bool, error) {
 
+func CouponRevalidateIfExpired(couponName string) (bool, error) {
 	var isValid bool
 	err := db.DB.Raw("SELECT validity FROM coupons WHERE coupon = ?", couponName).Scan(&isValid).Error
 	if err != nil {
@@ -55,6 +54,7 @@ func AddCoupon(coupon models.AddCoupon) error {
 	return nil
 
 }
+
 func GetCoupon() ([]models.Coupon, error) {
 	var coupons []models.Coupon
 	err := db.DB.Raw("SELECT id,coupon,discount_percentage,minimum_price,Validity FROM coupons").Scan(&coupons).Error
@@ -63,8 +63,8 @@ func GetCoupon() ([]models.Coupon, error) {
 	}
 	return coupons, nil
 }
-func ExistCoupon(couponID int) (bool, error) {
 
+func ExistCoupon(couponID int) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM coupons WHERE id = ?", couponID).Scan(&count).Error
 	if err != nil {
@@ -73,6 +73,7 @@ func ExistCoupon(couponID int) (bool, error) {
 
 	return count > 0, nil
 }
+
 func CouponAlreadyExpired(couponID int) error {
 	var valid bool
 	err := db.DB.Raw("SELECT validity FROM coupons WHERE id = ?", couponID).Scan(&valid).Error
@@ -88,6 +89,7 @@ func CouponAlreadyExpired(couponID int) error {
 	}
 	return errors.New("already expired")
 }
+
 func GetCouponMinimumAmount(coupon string) (float64, error) {
 
 	var MinDiscountPrice float64
@@ -97,8 +99,8 @@ func GetCouponMinimumAmount(coupon string) (float64, error) {
 	}
 	return MinDiscountPrice, nil
 }
-func DidUserAlreadyUsedThisCoupon(coupon string, userID int) (bool, error) {
 
+func DidUserAlreadyUsedThisCoupon(coupon string, userID int) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM used_coupons WHERE coupon_id = (SELECT id FROM coupons WHERE coupon = ?) AND user_id = ?", coupon, userID).Scan(&count).Error
 	if err != nil {
@@ -108,6 +110,7 @@ func DidUserAlreadyUsedThisCoupon(coupon string, userID int) (bool, error) {
 	return count > 0, nil
 
 }
+
 func UpdateUsedCoupon(coupon string, userID int) (bool, error) {
 	var couponID uint
 	err := db.DB.Raw("SELECT id FROM coupons WHERE coupon = ?", coupon).Scan(&couponID).Error

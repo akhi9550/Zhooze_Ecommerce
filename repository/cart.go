@@ -27,6 +27,7 @@ func DisplayCart(userID int) ([]models.Cart, error) {
 	return cartResponse, nil
 
 }
+
 func GetTotalPrice(userID int) (models.CartTotal, error) {
 
 	var cartTotal models.CartTotal
@@ -46,6 +47,7 @@ func GetTotalPrice(userID int) (models.CartTotal, error) {
 	return cartTotal, nil
 
 }
+
 func CartExist(userID int) (bool, error) {
 	var count int
 	if err := db.DB.Raw("SELECT COUNT(*) FROM carts WHERE user_id = ? ", userID).Scan(&count).Error; err != nil {
@@ -54,12 +56,14 @@ func CartExist(userID int) (bool, error) {
 	return count > 0, nil
 
 }
+
 func EmptyCart(userID int) error {
 	if err := db.DB.Exec("DELETE FROM carts WHERE  user_id = ?", userID).Error; err != nil {
 		return err
 	}
 	return nil
 }
+
 func CheckProduct(product_id int) (bool, string, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id = ?", product_id).Scan(&count).Error
@@ -77,6 +81,7 @@ func CheckProduct(product_id int) (bool, string, error) {
 	}
 	return false, "", nil
 }
+
 func QuantityOfProductInCart(userId int, productId int) (int, error) {
 	var productQty int
 	err := db.DB.Raw("SELECT quantity FROM carts WHERE user_id = ? AND product_id = ?", userId, productId).Scan(&productQty).Error
@@ -85,6 +90,7 @@ func QuantityOfProductInCart(userId int, productId int) (int, error) {
 	}
 	return productQty, nil
 }
+
 func AddItemIntoCart(userId int, productId int, Quantity int, productprice float64) error {
 	if err := db.DB.Exec("insert into carts (user_id,product_id,quantity,total_price) values(?,?,?,?)", userId, productId, Quantity, productprice).Error; err != nil {
 		return err
@@ -101,6 +107,7 @@ func TotalPriceForProductInCart(userID int, productID int) (float64, error) {
 	}
 	return totalPrice, nil
 }
+
 func UpdateCart(quantity int, price float64, userID int, product_id int) error {
 	if err := db.DB.Exec(`UPDATE carts
 	SET quantity = ?, total_price = ? 
@@ -111,6 +118,7 @@ func UpdateCart(quantity int, price float64, userID int, product_id int) error {
 	return nil
 
 }
+
 func ProductExist(userID int, productID int) (bool, error) {
 	var count int
 	if err := db.DB.Raw("SELECT count(*) FROM carts  WHERE carts.user_id = ? AND product_id = ?", userID, productID).Scan(&count).Error; err != nil {
@@ -119,6 +127,7 @@ func ProductExist(userID int, productID int) (bool, error) {
 	return count > 0, nil
 
 }
+
 func GetQuantityAndProductDetails(userId int, productId int, cartDetails struct {
 	Quantity   int
 	TotalPrice float64
@@ -134,6 +143,7 @@ func GetQuantityAndProductDetails(userId int, productId int, cartDetails struct 
 	}
 	return cartDetails, nil
 }
+
 func RemoveProductFromCart(userID int, product_id int) error {
 
 	if err := db.DB.Exec("DELETE FROM carts WHERE user_id = ? AND product_id = ?", uint(userID), uint(product_id)).Error; err != nil {
@@ -142,6 +152,7 @@ func RemoveProductFromCart(userID int, product_id int) error {
 
 	return nil
 }
+
 func UpdateCartDetails(cartDetails struct {
 	Quantity   int
 	TotalPrice float64
@@ -152,6 +163,7 @@ func UpdateCartDetails(cartDetails struct {
 	return nil
 
 }
+
 func CartAfterRemovalOfProduct(user_id int) ([]models.Cart, error) {
 	var cart []models.Cart
 	if err := db.DB.Raw("SELECT carts.product_id,products.name as product_name,carts.quantity,carts.total_price FROM carts INNER JOIN products on carts.product_id = products.id WHERE carts.user_id = ?", user_id).Scan(&cart).Error; err != nil {
@@ -159,6 +171,7 @@ func CartAfterRemovalOfProduct(user_id int) ([]models.Cart, error) {
 	}
 	return cart, nil
 }
+
 func GetAllItemsFromCart(userID int) ([]models.Cart, error) {
 	var count int
 	var cartResponse []models.Cart
@@ -181,6 +194,7 @@ func GetAllItemsFromCart(userID int) ([]models.Cart, error) {
 	}
 	return cartResponse, nil
 }
+
 func GetTotalPriceFromCart(userID int) (float64, error) {
 	var totalPrice float64
 	err := db.DB.Raw("SELECT COALESCE(SUM(total_price), 0) FROM carts WHERE user_id = ?", userID).Scan(&totalPrice).Error

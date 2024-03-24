@@ -18,6 +18,7 @@ func LoginHandler(adminDetails models.AdminLogin) (domain.Admin, error) {
 	}
 	return details, nil
 }
+
 func DashBoardUserDetails() (models.DashBoardUser, error) {
 	var userDetails models.DashBoardUser
 	err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE isadmin='false'").Scan(&userDetails.TotalUsers).Error
@@ -43,6 +44,7 @@ func DashBoardProductDetails() (models.DashBoardProduct, error) {
 	}
 	return productDetails, nil
 }
+
 func ShowAllUsersIn(page, count int) ([]models.UserDetailsAtAdmin, error) {
 	var user []models.UserDetailsAtAdmin
 	if page <= 0 {
@@ -55,6 +57,7 @@ func ShowAllUsersIn(page, count int) ([]models.UserDetailsAtAdmin, error) {
 	}
 	return user, nil
 }
+
 func GetUserByID(id string) (domain.User, error) {
 	user_id, err := strconv.Atoi(id)
 	if err != nil {
@@ -84,6 +87,7 @@ func UpdateBlockUserByID(user domain.User) error {
 	}
 	return nil
 }
+
 func DashBoardOrder() (models.DashboardOrder, error) {
 	var orderDetail models.DashboardOrder
 	err := db.DB.Raw("SELECT COUNT(*) FROM orders WHERE payment_status= 'paid' AND approval =true").Scan(&orderDetail.CompletedOrder).Error
@@ -110,6 +114,7 @@ func DashBoardOrder() (models.DashboardOrder, error) {
 	}
 	return orderDetail, nil
 }
+
 func TotalRevenue() (models.DashboardRevenue, error) {
 	var revenueDetails models.DashboardRevenue
 	startTime := time.Now().AddDate(0, 0, -1)
@@ -143,6 +148,7 @@ func AmountDetails() (models.DashboardAmount, error) {
 	}
 	return amountDetails, nil
 }
+
 func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesReport, error) {
 	var salesReport models.SalesReport
 	result := db.DB.Raw("SELECT COALESCE(SUM(final_price),0) FROM orders WHERE payment_status='paid' AND approval = true AND created_at >= ? AND created_at <= ?", startTime, endTime).Scan(&salesReport.TotalSales)
@@ -172,6 +178,7 @@ func FilteredSalesReport(startTime time.Time, endTime time.Time) (models.SalesRe
 	}
 	return salesReport, nil
 }
+
 func AddPaymentMethod(pay models.NewPaymentMethod) (domain.PaymentMethod, error) {
 	var payment string
 	if err := db.DB.Raw("INSERT INTO payment_methods (payment_name) VALUES (?) RETURNING payment_name", pay.PaymentName).Scan(&payment).Error; err != nil {

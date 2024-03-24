@@ -15,6 +15,7 @@ func GetCategory() ([]domain.Category, error) {
 	}
 	return category, nil
 }
+
 func CheckIfCategoryAlreadyExists(category string) (bool, error) {
 	var count int64
 	err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE category = $1", category).Scan(&count).Error
@@ -23,6 +24,7 @@ func CheckIfCategoryAlreadyExists(category string) (bool, error) {
 	}
 	return count > 0, nil
 }
+
 func AddCategory(category models.Category) (domain.Category, error) {
 	var categore string
 	err := db.DB.Raw("INSERT INTO categories (category) VALUES (?) RETURNING category", category.Category).Scan(&categore).Error
@@ -36,6 +38,7 @@ func AddCategory(category models.Category) (domain.Category, error) {
 	}
 	return categoriesResponse, nil
 }
+
 func DeleteCategory(id int) error {
 	var count int
 	if err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE id=?", id).Scan(&count).Error; err != nil {
@@ -50,6 +53,7 @@ func DeleteCategory(id int) error {
 	}
 	return nil
 }
+
 func UpdateCategory(current string, new string) (domain.Category, error) {
 	if db.DB == nil {
 		return domain.Category{}, errors.New("database connection is nil")
@@ -63,6 +67,7 @@ func UpdateCategory(current string, new string) (domain.Category, error) {
 	}
 	return newcat, nil
 }
+
 func CheckCategory(current string) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM categories WHERE category=?", current).Scan(&count).Error

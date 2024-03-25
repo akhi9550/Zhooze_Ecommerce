@@ -22,6 +22,7 @@ func FindUserByPhoneNumber(phone string) (*domain.User, error) {
 	}
 	return &user, nil
 }
+
 func UserDetailsUsingPhone(phone string) (models.UserDetailsResponse, error) {
 	var userDeatils models.UserDetailsResponse
 	if err := db.DB.Raw("SELECT * FROM users WHERE phone = ?", phone).Scan(&userDeatils).Error; err != nil {
@@ -30,6 +31,7 @@ func UserDetailsUsingPhone(phone string) (models.UserDetailsResponse, error) {
 
 	return userDeatils, nil
 }
+
 func FindUsersByEmail(email string) (bool, error) {
 	var count int
 	if err := db.DB.Raw("SELECT COUNT(*) FROM users WHERE email = ?", email).Scan(&count).Error; err != nil {
@@ -37,6 +39,7 @@ func FindUsersByEmail(email string) (bool, error) {
 	}
 	return count > 0, nil
 }
+
 func GetUserPhoneByEmail(email string) (string, error) {
 	fmt.Println(email)
 	var phone string

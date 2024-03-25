@@ -13,6 +13,7 @@ func GetWallet(userID int) (models.WalletAmount, error) {
 	}
 	return walletAmount, nil
 }
+
 func GetWalletHistory(userID int) ([]models.WalletHistory, error) {
 	var history []models.WalletHistory
 	err := db.DB.Raw("SELECT id,order_id,description,amount,is_credited FROM wallet_histories WHERE user_id = ?", userID).Scan(&history).Error

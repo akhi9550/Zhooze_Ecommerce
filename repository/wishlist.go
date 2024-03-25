@@ -14,6 +14,7 @@ func GetWishList(userID int) ([]models.WishListResponse, error) {
 	}
 	return wishList, nil
 }
+
 func ProductExistInWishList(productID, userID int) (bool, error) {
 	var count int
 	err := db.DB.Raw("SELECT COUNT(*) FROM wish_lists WHERE user_id = ? AND product_id = ?", userID, productID).Scan(&count).Error
@@ -22,6 +23,7 @@ func ProductExistInWishList(productID, userID int) (bool, error) {
 	}
 	return count > 0, nil
 }
+
 func AddToWishlist(userID, productID int) error {
 	err := db.DB.Exec("INSERT INTO wish_lists (user_id,product_id) VALUES (?,?)", userID, productID).Error
 	if err != nil {
@@ -29,6 +31,7 @@ func AddToWishlist(userID, productID int) error {
 	}
 	return nil
 }
+
 func RemoveFromWishList(userID, productID int) error {
 	err := db.DB.Exec("DELETE FROM wish_lists WHERE user_id = ? AND product_id = ?", userID, productID).Error
 	if err != nil {

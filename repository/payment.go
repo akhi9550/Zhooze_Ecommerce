@@ -12,6 +12,7 @@ func CheckPaymentStatus(orderID int) (string, error) {
 	}
 	return paymentStatus, nil
 }
+
 func UpdatePaymentDetails(orderID int, paymentID string) error {
 	err := db.DB.Exec("UPDATE razer_pays set payment_id = ? WHERE order_id= ?", paymentID, orderID).Error
 	if err != nil {
@@ -19,6 +20,7 @@ func UpdatePaymentDetails(orderID int, paymentID string) error {
 	}
 	return nil
 }
+
 func AddRazorPayDetails(orderID int, razorPayOrderID string) error {
 	err := db.DB.Exec("INSERT INTO razer_pays (order_id,razor_id) VALUES (?,?)", orderID, razorPayOrderID).Error
 	if err != nil {
@@ -26,6 +28,7 @@ func AddRazorPayDetails(orderID int, razorPayOrderID string) error {
 	}
 	return nil
 }
+
 func UpdateShipmentAndPaymentByOrderID(shipmentStatus string, paymentStatus string, orderID int) error {
 	err := db.DB.Exec("UPDATE orders SET payment_status = ?,shipment_status = ?  WHERE id = ?", paymentStatus, shipmentStatus, orderID).Error
 	if err != nil {

@@ -21,6 +21,7 @@ func ShowAllProducts(page int, count int) ([]models.ProductBrief, error) {
 	}
 	return productBrief, nil
 }
+
 func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error) {
 	if page == 0 {
 		page = 1
@@ -33,6 +34,7 @@ func ShowAllProductsFromAdmin(page int, count int) ([]models.ProductBrief, error
 	}
 	return productBrief, nil
 }
+
 func CheckValidateCategory(data map[string]int) error {
 	for _, id := range data {
 		var count int
@@ -46,6 +48,7 @@ func CheckValidateCategory(data map[string]int) error {
 	}
 	return nil
 }
+
 func GetProductFromCategory(id int) ([]models.ProductBrief, error) {
 	var product []models.ProductBrief
 	err := db.DB.Raw(`SELECT * FROM products JOIN categories ON products.category_id=categories.id WHERE categories.id=?`, id).Scan(&product).Error
@@ -54,6 +57,7 @@ func GetProductFromCategory(id int) ([]models.ProductBrief, error) {
 	}
 	return product, nil
 }
+
 func GetQuantityFromProductID(id int) (int, error) {
 	var quantity int
 	err := db.DB.Raw("SELECT stock FROM products WHERE id= ?", id).Scan(&quantity).Error
@@ -63,6 +67,7 @@ func GetQuantityFromProductID(id int) (int, error) {
 
 	return quantity, nil
 }
+
 func GetPriceOfProductFromID(prodcut_id int) (float64, error) {
 	var productPrice float64
 
@@ -79,6 +84,7 @@ func ProductAlreadyExist(Name string) bool {
 	}
 	return count > 0
 }
+
 func FindCategoryID(id int) (int, error) {
 	var a int
 	if err := db.DB.Raw("SELECT category_id FROM products WHERE id = ?", id).Scan(&a).Error; err != nil {
@@ -86,6 +92,7 @@ func FindCategoryID(id int) (int, error) {
 	}
 	return a, nil
 }
+
 func StockInvalid(Name string) bool {
 	var count int
 	if err := db.DB.Raw("SELECT SUM(stock) FROM products WHERE name = ? AND stock >= 0", Name).Scan(&count).Error; err != nil {
@@ -93,6 +100,7 @@ func StockInvalid(Name string) bool {
 	}
 	return count > 0
 }
+
 func AddProducts(product models.Product) (domain.Product, error) {
 	var p domain.Product
 	query := `
@@ -133,6 +141,7 @@ func DeleteProducts(id string) error {
 	}
 	return nil
 }
+
 func CheckProductExist(pid int) (bool, error) {
 	var a int
 	err := db.DB.Raw("SELECT COUNT(*) FROM products WHERE id=?", pid).Scan(&a).Error
@@ -144,6 +153,7 @@ func CheckProductExist(pid int) (bool, error) {
 	}
 	return true, err
 }
+
 func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	if stock <= 0 {
 		return models.ProductUpdateReciever{}, errors.New("stock doesnot update invalid input")
@@ -163,6 +173,7 @@ func UpdateProduct(pid int, stock int) (models.ProductUpdateReciever, error) {
 	newdetails.Stock = newQuantity
 	return newdetails, nil
 }
+
 func DoesProductExist(productID int) (bool, error) {
 	var count int
 	err := db.DB.Raw("select count(*) from products where id = ?", productID).Scan(&count).Error
@@ -180,6 +191,7 @@ func UpdateProductImage(productID int, url string) error {
 	}
 	return nil
 }
+
 func DisplayImages(productID int) (domain.Product, []domain.Image, error) {
 	var product domain.Product
 	var image []domain.Image
@@ -193,6 +205,7 @@ func DisplayImages(productID int) (domain.Product, []domain.Image, error) {
 	}
 	return product, image, nil
 }
+
 func GetImage(productID int) ([]string, error) {
 	var url []string
 	if err := db.DB.Raw(`SELECT url FROM Images WHERE product_id=?`, productID).Scan(&url).Error; err != nil {
@@ -204,15 +217,12 @@ func GetImage(productID int) ([]string, error) {
 
 func GetInventory(prefix string) ([]models.ProductBrief, error) {
 	var productDetails []models.ProductBrief
-
 	query := `
 	SELECT i.*
 	FROM products i
 	LEFT JOIN categories c ON i.category_id = c.id
 	WHERE i.product_name ILIKE '%' || $1 || '%'
-    OR c.category ILIKE '%' || $1 || '%';
-
-`
+    OR c.category ILIKE '%' || $1 || '%';`
 	if err := db.DB.Raw(query, prefix).Scan(&productDetails).Error; err != nil {
 		return []models.ProductBrief{}, err
 	}
